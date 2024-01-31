@@ -1,86 +1,76 @@
 import React, { useEffect, useState } from 'react'
 
-export default function Index() {
+export default function Prueba() {
 
-  const [msg, setMsg] = useState("Loading...");
-  const [people, setPeople] = useState([]);
+  const [rerender, setRerender] = useState(false);
+  const [userData, setUserData] = useState({})
+  const CLIENT_ID = "720509f4c43ea363e705";
 
   useEffect(() => {
-    // let our frontend know that we´re going to be fetching data from this url in the backend
-    fetch("http://localhost:8080/api/home").then(
-      response => response.json()
-    ).then(
-      data => {
-        // set the value of our msg variable to the message of the backend
-        setMsg(data.message)
-        setPeople(data.people)
-      }
-    )
-  }, [])
-  return (
-    <div>
-      {msg}
-      {
-        people.map((person, index) => (
-          <div key={index}>{person}</div>
-        ))
-      }
+    const querycallback = new URLSearchParams(window.location.search);
+    const codeParam = querycallback.get("code");
 
-    </div>
+    async function getAccessToken() {
+      await fetch("http://localhost:8080/getAccessToken?code=" + codeParam, {
+        method: "GET"
+      }).then((response) => {
+        return response.json();
+      }).then((data) => {
+        if (data.access_token) {
+          localStorage.setItem("accessToken", data.access_token)
+          setRerender(!rerender); // to make react rerender
+        }
+      });
+    }
+    
+    // if we have the param and dont have an access token, grab it
+    if (codeParam && (localStorage.getItem("accessToken") === null)) {
+      getAccessToken();
+    }    
+  }, [])
+
+  async function getUserData() {
+    await fetch("http://localhost:8080/getUserData", {
+      method: "GET",
+      headers: {
+        "Authorization" : "Bearer " + localStorage.getItem("accessToken") // Bearer ACCESSTOKEN
+      }
+    }).then((response) => {
+      return response.json();
+    }).then((data) => {
+      setUserData(data);
+    })
+  }
+
+  function loginWithGithub() {
+    window.location.assign("https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID);
+  }
+
+  return (
+  <section>
+    {
+      localStorage.getItem("accessToken") ? 
+      <>
+        <h1>We have the access token</h1>
+        <button onClick={() => {localStorage.removeItem("accessToken"); setRerender(!rerender); }}>
+          Log out
+        </button>
+        <h2>Get user data from GH API</h2>
+        <button onClick={getUserData}>Get user data</button>
+        { Object.keys(userData).length !== 0 ?
+        <>
+          <h3>Hey there {userData.login} </h3>
+        </>
+        :
+        <>
+        </>
+        }
+      </>
+      : 
+      <>
+      <button onClick={loginWithGithub}>Login with Github</button>
+      </>
+    }
+  </section>
   )
 }
-
-// import { useEffect, useState } from "react"
-// import { Octokit} from "octokit"
-
-// export default function Prueba() {
-
-//   // consider to take the state (oauth) into account
-
-//   const [code, setCode] = useState("");
-  
-//   useEffect(() => {
-//     const querycallback = new URLSearchParams(window.location.search);
-//     const codeParam = querycallback.get("code");
-//     console.log(codeParam)
-//     if (codeParam) {
-//       setCode(codeParam);
-//       accesstoken();
-//       listissues();
-//     }
-//   }, [])
-
-//   function accesstoken() {
-//     fetch('https://github.com/login/oauth/access_token', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Accept': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
-//         client_secret: process.env.NEXT_PUBLIC_GITHUB_CLIENT_SECRET,
-//         code: code
-//       })
-//     }).then(response => response.json())
-//     .then(data => {
-//       localStorage.setItem("accessToken", data.access_token);
-//     })
-//   }
-
-//   async function listissues() {
-//     const octokit = new Octokit({ auth: localStorage.getItem("accessToken")});
-//     await octokit.request('GET /issues').then((response) => console.log(response))
-//   }
-
-//   function loginWithGithub() {
-//     window.location.assign("https://github.com/login/oauth/authorize?client_id=" + process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID);
-//   }
-
-//   return (
-//   <section>
-//     <h1>Esto es una prueba para conseguir autenticarse en GH</h1>
-//     <button onClick={loginWithGithub}>Login with Github</button>
-//   </section>
-//   )
-// }
