@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-const bp = require('body-parser')
+const bp = require('body-parser');
+const { Octokit } = require("octokit");
 
 const GITHUB_CLIENT_ID = "720509f4c43ea363e705";
 const GITHUB_CLIENT_SECRET = "46e72f4046306b311c866f00473366c4e7253a6a";
@@ -47,3 +48,28 @@ app.get("/getUserData", async function (req, res) {
         res.json(data);
     })
 });
+
+app.get("/authorizeGH", async function (req, res) {
+    // use res.redirect 
+    res.redirect("https://github.com/login/oauth/authorize?client_id=" + GITHUB_CLIENT_ID);
+});
+
+app.get("/getIssues", async function (req, res) {
+    req.get("Authorization"); // Bearer ACCESSTOKEN
+    // todo: will have to pass the username to list the issues of the authenticated user
+    await fetch('https://api.github.com/search/issues?q=author:garciafdezpatricia', {
+        method: "GET",
+        headers: {
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Authorization': req.get("Authorization"),
+            'Accept': 'application/vnd.github+json'
+        }
+    })
+    .then((response) => {
+        console.log(response);
+        return response.json();
+    }).then((data) => {
+        console.log(data)
+        res.json(data);
+    })
+})
