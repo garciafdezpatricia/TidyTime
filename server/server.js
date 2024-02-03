@@ -2,10 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const bp = require('body-parser');
-const { Octokit } = require("octokit");
+const {Session} = require("@inrupt/solid-client-authn-node");
 
 const GITHUB_CLIENT_ID = "720509f4c43ea363e705";
 const GITHUB_CLIENT_SECRET = "46e72f4046306b311c866f00473366c4e7253a6a";
+
+const INRUPT_CLIENT_ID = "d6b54755-92d4-4cb1-af75-7886e3273764";
+const INRUPT_CLIENT_SECRET = "635414dc-9337-47af-9ec9-cefd04cdff22";
 
 const app = express();
 const PORT = 8080;
@@ -72,4 +75,20 @@ app.get("/getIssues", async function (req, res) {
         console.log(data)
         res.json(data);
     })
+})
+
+app.get("/getProfile", async function (req, res) {
+    // create session object
+    // const session = new Session();
+    // session.login({
+    //     redirectUrl: "http://localhost:3000",
+    //     oidcIssuer: "https://login.inrupt.com",
+    // }).then(() => {
+    //     if (session.info.isLoggedIn){
+    //         // send the webID to the frontend
+    //         res.send(session.info.webId)
+    //     }
+    // })
+    const webId = req.query.webId;
+    res.json(webId);
 })

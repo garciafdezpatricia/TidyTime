@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react'
+import { login, handleIncomingRedirect, getDefaultSession, Session, fetch } from '@inrupt/solid-client-authn-browser';
+import { getPodUrlAll } from '@inrupt/solid-client';
 
 export default function Prueba() {
 
   const [userData, setUserData] = useState({login: ""})
   const [authorized, setAuthorized] = useState(false);
-  const [issues, setIssues] = useState("")
+  const [issues, setIssues] = useState("") 
+  const [pod, setPod] = useState("")
+  const [session, setSession] = useState<Session>()
+  
 
   useEffect(() => {
     // get the url when the page is redirected from the authentication in GH
@@ -69,9 +74,41 @@ export default function Prueba() {
     })
   }
 
+  async function loginInrupt() {
+    // await fetch("http://localhost:8080/loginInrupt", {
+    //   method: "GET"
+    // }).then((response) => {
+    //   console.log(response);
+    //   return response.text();
+    // }).then((data) => {
+    //   setInrupt(data);
+    // })
+
+    await login({
+      oidcIssuer: "https://login.inrupt.com",
+      redirectUrl: window.location.href,
+      clientName: "TidyTimeDev"
+    })
+  }
+
+  handleIncomingRedirect().then((info) => {
+    if (info?.isLoggedIn && info.webId){
+      setSession(getDefaultSession())
+    }
+  })
+
+  async function doSomething(){
+    const pods = await getPodUrlAll(session?.info.webId as string, { fetch: fetch});
+    setPod(pods[0]);
+  }
+
   return (
   <section>
-    {
+    <button onClick={loginInrupt}>LOGIN INRUPT</button>
+    <div>{session?.info.webId}</div>
+    <button onClick={doSomething}>DO SOMETHING</button>
+    <div>{pod}</div>
+    {/* {
       authorized ? 
       <>
         <h1>We have the access token</h1>
@@ -97,7 +134,7 @@ export default function Prueba() {
       <>
       <button onClick={loginWithGithub}>Login with Github</button>
       </>
-    }
+    } */}
   </section>
   )
 }
