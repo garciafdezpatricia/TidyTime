@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { login, handleIncomingRedirect, getDefaultSession, Session, fetch } from '@inrupt/solid-client-authn-browser';
-import { getPodUrlAll } from '@inrupt/solid-client';
+import {getSolidDataset, getPodUrlAll, getThingAll, createThing, createSolidDataset, removeThing, saveSolidDatasetAt, setThing, addUrl, addStringNoLocale, getStringNoLocale}  from '@inrupt/solid-client';
+import { SCHEMA_INRUPT, RDF, AS } from "@inrupt/vocab-common-rdf"
 
 export default function Prueba() {
 
@@ -99,7 +100,66 @@ export default function Prueba() {
 
   async function doSomething(){
     const pods = await getPodUrlAll(session?.info.webId as string, { fetch: fetch});
-    setPod(pods[0]);
+
+    const readingListUrl = `${pods[0]}getting-started/readingList/myList`;
+
+    let titles = ["t1", "t2", "t3", "t4"];
+
+    // Fetch or create a new reading list.
+    let myReadingList:any;
+
+    try {
+      // Attempt to retrieve the reading list in case it already exists.
+      myReadingList = await getSolidDataset(readingListUrl, { fetch: fetch });
+      // Clear the list to override the whole list
+      let items = getThingAll(myReadingList);
+      items.forEach((item) => {
+        myReadingList = removeThing(myReadingList, item);
+      });
+    } catch (error:any) {
+      if (typeof error.statusCode === "number" && error.statusCode === 404) {
+        // if not found, create a new SolidDataset (i.e., the reading list)
+        myReadingList = createSolidDataset();
+      } else {
+        console.error(error.message);
+      }
+    }
+
+    // Add titles to the Dataset
+    let i = 0;
+    titles.forEach((title) => {
+      if (title.trim() !== "") {
+        let item = createThing({ name: "title" + i });
+        item = addUrl(item, RDF.type, AS.Article);
+        item = addStringNoLocale(item, SCHEMA_INRUPT.name, title);
+        myReadingList = setThing(myReadingList, item);
+        i++;
+      }
+    });
+
+    try {
+      // Save the SolidDataset
+      let savedReadingList = await saveSolidDatasetAt(
+        readingListUrl,
+        myReadingList,
+        { fetch: fetch }
+      );
+
+      // Refetch the Reading List
+      savedReadingList = await getSolidDataset(readingListUrl, { fetch: fetch });
+
+      let items = getThingAll(savedReadingList);
+
+      let listcontent = "";
+      for (let i = 0; i < items.length; i++) {
+        let item = getStringNoLocale(items[i], SCHEMA_INRUPT.name);
+        if (item !== null) {
+          listcontent += item + "\n";
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
