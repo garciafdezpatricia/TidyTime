@@ -1,0 +1,99 @@
+@font-face {
+    font-family: 'Kadwa';
+    src: url('../assets/fonts/Kadwa/Kadwa-Regular.ttf');
+}
+
+
+* {
+    font-family: 'Kadwa';
+    margin: 0px;
+    padding: 0px;
+}
+
+.layout {
+    display: flex;
+    // flex-direction: row; default value
+    color: #000000
+}
+
+.sidebar-menu {
+    background-color: #3E5B41;
+    height: 100vh;
+    width: 15%;
+    max-width: 25vw;
+    display: grid;
+    align-items: center;
+    grid-template-rows: 1fr 4fr 1fr;
+    justify-items: center;
+    color: #FFFFFF
+}
+
+.sidebar-menu-features {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: .3em;
+    align-self: start;
+    grid-row: 2/3;
+}
+
+.sidebar-menu-settings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: .8em;
+    grid-row: 3/-1;
+}
+
+.sidebar-menu-title {
+    font-size: 2em;
+    font-weight: 100;
+    grid-row: 1/1;
+}
+
+button {
+    border-radius: 0.5em;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.primary-button, .menu-button {
+    outline-color: #3E5B41;
+    background-color: #3E5B41;
+    color: #FFFFFF;
+}
+
+.menu-button {
+    border: none;
+    font-size: 1em;
+    font-weight: 100;
+    display: flex;
+    width: calc(100% / 2);
+    flex-direction: row;
+    align-items: center;
+    gap: .5em; 
+    padding: .3em; 
+    &:hover {
+        outline: solid #FFFFFF 1px;
+    }
+}
+
+.auth-button {
+    border-color: #3E5B41;
+    background-color: #FFFFFF;
+    color:#000000;
+    font-size: 1em;
+    gap: .5em;
+    &:hover {
+        outline: solid #3E5B41 1px
+    }
+}
+
+.btn-icon {
+    width: 1em;
+    height: auto;
+}
