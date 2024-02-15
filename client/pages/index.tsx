@@ -1,86 +1,93 @@
 import React, { useEffect, useState } from 'react'
+import { login, handleIncomingRedirect, getDefaultSession, Session, fetch } from '@inrupt/solid-client-authn-browser';
+import { getPodUrlAll } from '@inrupt/solid-client';
+import GitHub from './components/Auth/GitHubAuth';
+import { MenuSideBar } from './components/Menu/Menu';
 
-export default function Index() {
+export default function Prueba() {
+  
+  const [issues, setIssues] = useState("") 
+  const [pod, setPod] = useState("")
+  const [session, setSession] = useState<Session>()
 
-  const [msg, setMsg] = useState("Loading...");
-  const [people, setPeople] = useState([]);
-
-  useEffect(() => {
-    // let our frontend know that we´re going to be fetching data from this url in the backend
-    fetch("http://localhost:8080/api/home").then(
-      response => response.json()
-    ).then(
-      data => {
-        // set the value of our msg variable to the message of the backend
-        setMsg(data.message)
-        setPeople(data.people)
+  async function getIssues() {
+    // todo: the username will be necessary
+    await fetch("http://localhost:8080/getIssues", {
+      method: "GET",
+      headers: {
+        "Authorization" : "Bearer " + localStorage.getItem("accessToken") // Bearer ACCESSTOKEN
       }
-    )
-  }, [])
+    }).then((response) => {
+      return response.json();
+    }).then((data) => {
+      setIssues(data);
+    })
+  }
+
+  // async function loginInrupt() {
+  //   // await fetch("http://localhost:8080/loginInrupt", {
+  //   //   method: "GET"
+  //   // }).then((response) => {
+  //   //   console.log(response);
+  //   //   return response.text();
+  //   // }).then((data) => {
+  //   //   setInrupt(data);
+  //   // })
+
+  //   await login({
+  //     oidcIssuer: "https://login.inrupt.com",
+  //     redirectUrl: window.location.href,
+  //     clientName: "TidyTimeDev"
+  //   })
+  // }
+
+  // handleIncomingRedirect().then((info) => {
+  //   if (info?.isLoggedIn && info.webId){
+  //     setSession(getDefaultSession())
+  //   }
+  // })
+
+  // async function doSomething(){
+  //   const pods = await getPodUrlAll(session?.info.webId as string, { fetch: fetch});
+  //   setPod(pods[0]);
+  // }
+
   return (
-    <div>
-      {msg}
-      {
-        people.map((person, index) => (
-          <div key={index}>{person}</div>
-        ))
-      }
-
-    </div>
+  <section>
+    {/* <button onClick={loginInrupt}>LOGIN INRUPT</button>
+    <div>{session?.info.webId}</div>
+    <button onClick={doSomething}>DO SOMETHING</button>
+    <div>{pod}</div> */}
+    {
+      // authorized ? 
+      // <>
+      //   <h1>We have the access token</h1>
+      //   <button onClick={() => {localStorage.removeItem("accessToken"); setAuthorized(false); }}>
+      //     Log out
+      //   </button>
+      //   <h2>Get user data from GH API</h2>
+      //   <button onClick={getUserData}>Get user data</button>
+      //   { Object.keys(userData).length !== 0 ?
+      //   <>
+      //     <h3>Hey there {userData.login} </h3>
+      //   </>
+      //   :
+      //   <>
+      //   </>
+      //   }
+      //   <button onClick={getIssues}>Get issues</button>
+      //   {
+      //     issues !== "" ? <>Tenemos issues!! {console.log(issues)}</> : <>No tenemos issues</>
+      //   }
+      // </>
+      // : 
+      // <>
+      // <button onClick={loginWithGithub}>Login with Github</button>
+      // </>
+      // <MenuSideBar>
+      //</MenuSideBar>
+    }
+    
+  </section>
   )
 }
-
-// import { useEffect, useState } from "react"
-// import { Octokit} from "octokit"
-
-// export default function Prueba() {
-
-//   // consider to take the state (oauth) into account
-
-//   const [code, setCode] = useState("");
-  
-//   useEffect(() => {
-//     const querycallback = new URLSearchParams(window.location.search);
-//     const codeParam = querycallback.get("code");
-//     console.log(codeParam)
-//     if (codeParam) {
-//       setCode(codeParam);
-//       accesstoken();
-//       listissues();
-//     }
-//   }, [])
-
-//   function accesstoken() {
-//     fetch('https://github.com/login/oauth/access_token', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Accept': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
-//         client_secret: process.env.NEXT_PUBLIC_GITHUB_CLIENT_SECRET,
-//         code: code
-//       })
-//     }).then(response => response.json())
-//     .then(data => {
-//       localStorage.setItem("accessToken", data.access_token);
-//     })
-//   }
-
-//   async function listissues() {
-//     const octokit = new Octokit({ auth: localStorage.getItem("accessToken")});
-//     await octokit.request('GET /issues').then((response) => console.log(response))
-//   }
-
-//   function loginWithGithub() {
-//     window.location.assign("https://github.com/login/oauth/authorize?client_id=" + process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID);
-//   }
-
-//   return (
-//   <section>
-//     <h1>Esto es una prueba para conseguir autenticarse en GH</h1>
-//     <button onClick={loginWithGithub}>Login with Github</button>
-//   </section>
-//   )
-// }
