@@ -25,7 +25,8 @@
     align-items: center;
     grid-template-rows: 1fr 4fr 1fr;
     justify-items: center;
-    color: #FFFFFF
+    color: #FFFFFF;
+    z-index: 1;
 }
 
 .sidebar-menu-features {
@@ -141,4 +142,19 @@ button {
     grid-row: 1/2;
     padding: .5em .8em;
     align-self: center;
+}
+
+.calendar-container {
+    width: 100%;
+    padding: 1em;
+}
+
+.tidier-container {
+    width: 100%;
+    padding: 1em;
+}
+
+.board-container {
+    width: 100%;
+    padding: 1em;
 }

@@ -1,7 +1,7 @@
 // go to this page as /board
 export default function List() {
     return (
-    <div>
+    <div className="board-container">
         <h1>Hello Board!</h1>
     </div>)
 }
