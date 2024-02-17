@@ -1,0 +1,50 @@
+@use "../../../../styles/variables" as var;
+
+.backdrop {
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+
+.prompt-modal {
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    top: 50%;
+    bottom: 50%;
+    transform: translate(-50%, -50%);
+    width: 40em;
+    height: 25em;
+    border: 1px solid var.$black;
+    z-index: 9999;
+    background-color: var.$white;
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+}
+
+.prompt-modal button {
+    width: 10em;
+    height: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prompt-modal-button-section {
+    display: flex;
+    gap: 2em;
+    align-self: flex-end;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: auto;
+}
+
+.prompt-modal-secondary-btn {
+    background-color: var.$white;
+}

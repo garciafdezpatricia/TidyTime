@@ -1,0 +1,6 @@
+@use "../../styles/variables" as var;
+
+.settings-container {
+    width: var.$view-width;
+    padding: var.$view-padding;
+}
