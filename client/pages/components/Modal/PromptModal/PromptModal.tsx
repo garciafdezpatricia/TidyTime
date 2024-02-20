@@ -3,12 +3,13 @@ import { Button } from "../../Button/Button";
 
 export interface Props {
     onClose?: () => void;
-    onPrimaryAction?: () => void;
-    onSecondaryAction?: () => void;
+    onPrimaryAction?: (arg?:any) => void | any;
+    onSecondaryAction?: (arg?:any) => void | any;
     primaryActionText?: string;
     secondaryActionText?: string;
     title?: string;
     children?: ReactNode;
+    variant?: string;
 }
 
 export default function PromptModal({
@@ -18,12 +19,13 @@ export default function PromptModal({
     primaryActionText,
     secondaryActionText,
     title,
-    children} : Props) {
+    children, 
+    variant} : Props) {
 
     return (
         <>
             <div className="backdrop"></div>
-            <article className="prompt-modal">
+            <article className={variant ? variant : "prompt-modal"}>
                 <h1>{title}</h1>
                 {children}
                 <div className="prompt-modal-button-section">

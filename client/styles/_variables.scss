@@ -7,10 +7,17 @@ $view-padding: 1em;
 $view-width: 100%;
 
 // ## FONT PROPERTIES
+@font-face {
+    font-family: 'Franklin';
+    src: url('../assets/fonts/Libre_Franklin/static/LibreFranklin-Regular.ttf');
+}
+
 $bold: 800;
 $semi-bold: 800;
 $normal: 800;
 $light: 800;
+
+$secondary: 'Franklin';
 
 
 // ## COLORS

@@ -10,15 +10,21 @@
 @use "../pages/tidier/tidier.scss";
 @use "../pages/settings/settings.scss";
 @use "../pages/components/Form/NewEventForm/NewEventForm.scss";
+@use "../pages/components/SearchBar/SearchBar.scss";
 
 
 @font-face {
-    font-family: 'Kadwa';
+    font-family: 'Primaria';
     src: url('../assets/fonts/Kadwa/Kadwa-Regular.ttf');
 }
 
+@font-face {
+    font-family: 'Secundaria';
+    src: url('../assets/fonts/Libre_Franklin/static/LibreFranklin-Regular.ttf');
+}
+
 * {
-    font-family: 'Kadwa';
+    font-family: 'Primaria';
     margin: 0px;
     padding: 0px;
 }

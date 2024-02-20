@@ -8,7 +8,22 @@ import NewEventForm from "../Form/NewEventForm/NewEventForm";
 export default function CalendarComponent() {
   const localizer = dayjsLocalizer(dayjs);
   const events = [
-    {}
+    {start: dayjs("2024-02-18T12:00:00").toDate(), 
+      end: dayjs("2024-02-18T14:00:00").toDate(),
+      title: "Comida con Manolo"  
+    },
+    {start: dayjs("2024-02-18T15:00:00").toDate(), 
+      end: dayjs("2024-02-18T16:00:00").toDate(),
+      title: "Comida con Manolo2"  
+    },
+    {start: dayjs("2024-02-18T20:00:00").toDate(), 
+      end: dayjs("2024-02-18T21:00:00").toDate(),
+      title: "Comida con Manolo4"  
+    },
+    {start: dayjs("2024-02-18T18:00:00").toDate(), 
+      end: dayjs("2024-02-18T19:00:00").toDate(),
+      title: "Comida con Manolo3"  
+    }
   ];
 
   const [myEvents, setEvents] = useState(events);
