@@ -71,7 +71,7 @@
     height: 3em;
 }
 
-.task {
+.task, .task-done {
     display: flex;
     gap: 1rem;
     width: 100%;
@@ -79,4 +79,16 @@
     padding-top: .7rem;
     padding-bottom: .7rem;
     padding-left: 1rem;
+    cursor: pointer;
+}
+
+.task-done {
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    background-color: var.$hover-green;
+}
+
+.task-content {
+    display: flex;
+    gap: 2rem;
 }

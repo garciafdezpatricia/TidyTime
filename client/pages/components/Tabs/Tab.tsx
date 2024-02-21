@@ -1,28 +1,28 @@
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import PromptModal from "../Modal/PromptModal/PromptModal";
 
 export default function Tab() {
 
-    const [toggleState, setToggleState] = useState(0);
+    const [selectedList, setSelectedList] = useState(0);
     const [tabs, setTabs] = useState<Array<string>>(['Tasks', 'Home', 'Work']);
-    const [content, setContent] = useState([
+    const [todo, setToDo] = useState([
         [
-            {title : 'Task1', desc: 'Go to the gym'},
-            {title : 'Task2', desc: 'Call granny'},
-            {title : 'Task3', desc: 'Buy vacuum'},
-            {title : 'Task4', desc: 'This is content 4'},
+            {done: false, title : 'Task1', desc: 'Go to the gym'},
+            {done: false, title : 'Task2', desc: 'Call granny'},
+            {done: false, title : 'Task3', desc: 'Buy vacuum'},
+            {done: false, title : 'Task4', desc: 'This is content 4'},
         ], 
         [
-            {title : 'Task1', desc: 'Load dishwasher'},
-            {title : 'Task2', desc: 'Cleaning the bathroom'},
-            {title : 'Task3', desc: 'Do laundry'},
-            {title : 'Task4', desc: 'Mop'},
+            {done: false, title : 'Task1', desc: 'Load dishwasher'},
+            {done: false, title : 'Task2', desc: 'Cleaning the bathroom'},
+            {done: false, title : 'Task3', desc: 'Do laundry'},
+            {done: false, title : 'Task4', desc: 'Mop'},
         ], 
         [
-            {title : 'Task1', desc: 'Call Giselle'},
-            {title : 'Task2', desc: 'Print EDP reports'},
-            {title : 'Task3', desc: 'Update documentation'},
-            {title : 'Task4', desc: 'Clean calendar'},
+            {done: false, title : 'Task1', desc: 'Call Giselle'},
+            {done: false, title : 'Task2', desc: 'Print EDP reports'},
+            {done: false, title : 'Task3', desc: 'Update documentation'},
+            {done: false, title : 'Task4', desc: 'Clean calendar'},
         ]])
     const [isNewList, setNewList] = useState(false);
     const [title, setTitle] = useState('');
@@ -38,8 +38,27 @@ export default function Tab() {
         setTitle('');
     }
 
-    const toggleTabAndContent = (index: SetStateAction<number>) => {
-        setToggleState(index)
+    const handleListSelection = (index: SetStateAction<number>) => {
+        setSelectedList(index)
+    }
+
+    const handleCheck = (event:any, itemIndex:any) => {
+        setToDo(prevTodo => {
+            return prevTodo.map((list, index) => {
+                if (index === selectedList) {
+                    // remove item from list
+                    const updatedList = list.filter((_, i) => i !== itemIndex);
+                    // if event is not done, it is being marked as done
+                    if (!event.done) {
+                        return [...updatedList, { ...list[itemIndex], done: !list[itemIndex].done }];
+                    } 
+                    else {
+                        return [{ ...list[itemIndex], done: !list[itemIndex].done }, ...updatedList];
+                    }
+                }
+                return list;
+            });
+        });
     }
 
     return (
@@ -48,9 +67,9 @@ export default function Tab() {
                 {
                     tabs.map((tab, index) => (
                         <section 
-                            className={toggleState === index ? "active-tab" : "tab"} 
+                            className={selectedList === index ? "active-tab" : "tab"} 
                             key={index} 
-                            onClick={() => toggleTabAndContent(index)}
+                            onClick={() => handleListSelection(index)}
                         >{tab}
                         </section>
                     ))
@@ -62,19 +81,19 @@ export default function Tab() {
             <button className="tab-container add-tab" onClick={addTab}>Add New List</button>
             <section className="tab-content-container">
                 {
-                    content.map((content, index) => (
-                        <section className={toggleState === index ? "active-content" : "content"}
+                    todo.map((content, index) => (
+                        <ul className={selectedList === index ? "active-content" : "content"}
                             key={index}>
                                 {
-                                    //TODO: make tasks checkable
                                     content.map((item, itemIndex) => (
-                                        <article className="task" key={itemIndex}>
-                                            <h4>{item.title}</h4>
-                                            <p>{item.desc}</p>
-                                        </article>
+                                        <li className={item.done ? "task-done" : "task"} key={itemIndex} onClick={(e) => handleCheck(item, itemIndex)}>
+                                            <div className="task-content">
+                                                <h4>{item.title}</h4>
+                                            </div>
+                                        </li>
                                     ))
                                 }
-                        </section>
+                        </ul>
                     ))
                 }
             </section>
