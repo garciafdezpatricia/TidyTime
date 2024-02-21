@@ -1,0 +1,33 @@
+// ## BREAKPOINTS
+
+
+
+// ## MEASURES
+$view-padding: 1em;
+$view-width: 100%;
+
+// ## FONT PROPERTIES
+@font-face {
+    font-family: 'Franklin';
+    src: url('../assets/fonts/Libre_Franklin/static/LibreFranklin-Regular.ttf');
+}
+
+$bold: 800;
+$semi-bold: 800;
+$normal: 800;
+$light: 800;
+
+$secondary: 'Franklin';
+
+
+// ## COLORS
+
+// GREEN
+$primary-green: #3E5B41;
+$hover-green: #D5E2D6;
+
+// WHITE
+$white: #FFFFFF;
+
+// BLACK
+$black: #000000;

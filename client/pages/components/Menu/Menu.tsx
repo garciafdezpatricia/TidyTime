@@ -29,7 +29,7 @@ export function MenuSideBar() {
             <section className="sidebar-menu-settings">
                 <Button className="menu-button" onClick={() => router.push('/settings')}>
                     <Icon src="menu/settings.png" alt="Settings" />
-                    Settings
+                    Preferences
                 </Button>
             </section>
         </section>

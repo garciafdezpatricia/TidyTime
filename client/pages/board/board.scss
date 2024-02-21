@@ -1,0 +1,6 @@
+@use "../../styles/variables" as var;
+
+.board-container {
+    width: var.$view-width;
+    padding: var.$view-padding;
+}
