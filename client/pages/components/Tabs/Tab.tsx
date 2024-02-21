@@ -24,7 +24,7 @@ export default function Tab() {
             {done: false, title : 'Task3', desc: 'Update documentation'},
             {done: false, title : 'Task4', desc: 'Clean calendar'},
         ]])
-    const [isNewList, setNewList] = useState(false);
+    const [isCreateList, setNewList] = useState(false);
     const [title, setTitle] = useState('');
 
     const addTab = () => {
@@ -98,7 +98,7 @@ export default function Tab() {
                 }
             </section>
             {
-                isNewList && (
+                isCreateList && (
                     <PromptModal 
                         variant="new-list" 
                         title="Add new list"

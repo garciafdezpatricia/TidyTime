@@ -1,3 +1,4 @@
+import NewTaskForm from "../components/Form/NewTaskForm/NewTaskForm";
 import SearchBar from "../components/SearchBar/SearchBar";
 import Tab from "../components/Tabs/Tab";
 
@@ -10,10 +11,15 @@ export default function List() {
         // TODO: get the tasks that match the searched string
     }
 
+    function addNewTask(e:any) {
+        console.log(e)
+    }
+
 
     return (
         <div className="list-container">
             <SearchBar onChange={search}/>
             <Tab></Tab>
+            <NewTaskForm onSubmit={addNewTask} />
         </div>)
 }
