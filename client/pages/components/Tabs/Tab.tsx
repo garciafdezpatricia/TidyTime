@@ -1,28 +1,31 @@
 import { SetStateAction, useEffect, useState } from "react";
 import PromptModal from "../Modal/PromptModal/PromptModal";
+import { FaRegCircle, FaCheckCircle } from "react-icons/fa";
+import { IoIosArrowDropdown } from "react-icons/io";
 
 export default function Tab() {
 
+    const [deleting, setDeleting] = useState(false);
     const [selectedList, setSelectedList] = useState(0);
     const [tabs, setTabs] = useState<Array<string>>(['Tasks', 'Home', 'Work']);
     const [todo, setToDo] = useState([
         [
-            {done: false, title : 'Task1', desc: 'Go to the gym'},
-            {done: false, title : 'Task2', desc: 'Call granny'},
-            {done: false, title : 'Task3', desc: 'Buy vacuum'},
-            {done: false, title : 'Task4', desc: 'This is content 4'},
+            {done: false, title: 'Go to the gym'},
+            {done: false, title: 'Call granny'},
+            {done: false, title: 'Buy vacuum'},
+            {done: false, title: 'This is content 4'},
         ], 
         [
-            {done: false, title : 'Task1', desc: 'Load dishwasher'},
-            {done: false, title : 'Task2', desc: 'Cleaning the bathroom'},
-            {done: false, title : 'Task3', desc: 'Do laundry'},
-            {done: false, title : 'Task4', desc: 'Mop'},
+            {done: false, title: 'Load dishwasher'},
+            {done: false, title: 'Cleaning the bathroom'},
+            {done: false, title: 'Do laundry'},
+            {done: false, title: 'Mop'},
         ], 
         [
-            {done: false, title : 'Task1', desc: 'Call Giselle'},
-            {done: false, title : 'Task2', desc: 'Print EDP reports'},
-            {done: false, title : 'Task3', desc: 'Update documentation'},
-            {done: false, title : 'Task4', desc: 'Clean calendar'},
+            {done: false, title: 'Call Giselle'},
+            {done: false, title: 'Print EDP reports'},
+            {done: false, title: 'Update documentation'},
+            {done: false, title: 'Clean calendar'},
         ]])
     const [isCreateList, setNewList] = useState(false);
     const [title, setTitle] = useState('');
@@ -36,6 +39,7 @@ export default function Tab() {
         title === '' ? setTabs([...tabs, `List ${tabs.length + 1}`]) : setTabs([...tabs, title]);
         setNewList(false);
         setTitle('');
+        setSelectedList(tabs.length)
     }
 
     const handleListSelection = (index: SetStateAction<number>) => {
@@ -61,6 +65,23 @@ export default function Tab() {
         });
     }
 
+    const deleteList = (index:any) => {
+        setDeleting(true);
+        setTabs(prevTabs => {
+            return prevTabs.filter((_, i) => i !== index)
+        })
+        setToDo(prevTodo => {
+            return prevTodo.filter((_, i) => i !== index)
+        });
+    }
+
+    useEffect(() => {
+        if (deleting) {
+            setSelectedList(0);
+            setDeleting(false);
+        }
+    }, [deleting])
+
     return (
         <article className="tab-container">
             <section className="tab-container bloc-tabs">
@@ -71,13 +92,15 @@ export default function Tab() {
                             key={index} 
                             onClick={() => handleListSelection(index)}
                         >{tab}
+                        <IoIosArrowDropdown 
+                            size={"1rem"}
+                            color={"#3E5B41"}
+                            onClick={() => deleteList(index)}
+                            />
                         </section>
                     ))
                 }
             </section>
-            {
-            // TODO:Add styles to the button 
-            }
             <button className="tab-container add-tab" onClick={addTab}>Add New List</button>
             <section className="tab-content-container">
                 {
@@ -86,7 +109,17 @@ export default function Tab() {
                             key={index}>
                                 {
                                     content.map((item, itemIndex) => (
-                                        <li className={item.done ? "task-done" : "task"} key={itemIndex} onClick={(e) => handleCheck(item, itemIndex)}>
+                                        <li className={item.done ? "task-done" : "task"} key={itemIndex} >
+                                            <div className="icon-container">
+                                                <FaRegCircle 
+                                                    className={item.done ? "circle-disappear" : ""}
+                                                    onClick={(e) => handleCheck(item, itemIndex)} 
+                                                />
+                                                <FaCheckCircle 
+                                                    className={item.done ? "" : "circle-disappear"}
+                                                    onClick={(e) => handleCheck(item, itemIndex)} 
+                                                />
+                                            </div>
                                             <div className="task-content">
                                                 <h4>{item.title}</h4>
                                             </div>

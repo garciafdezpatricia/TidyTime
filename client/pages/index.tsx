@@ -87,7 +87,7 @@ export default function Prueba() {
       // <MenuSideBar>
       //</MenuSideBar>
     }
-    
+    <h1>Hi</h1>
   </section>
   )
 }

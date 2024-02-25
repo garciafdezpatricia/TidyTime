@@ -19,7 +19,6 @@
     transform: translate(-50%, -50%);
     width: 40em;
     height: 25em;
-    border: 1px solid var.$black;
     z-index: 9999;
     background-color: var.$white;
     padding: 2em;
@@ -47,4 +46,8 @@
 
 .prompt-modal-secondary-btn {
     background-color: var.$white;
+    border: 1px solid var.$black;
+    &:hover {
+        outline: 1px solid var.$primary-green;
+    }
 }

@@ -23,5 +23,10 @@
 
     button {
         padding-inline: .5rem;
+        border: .15rem solid $primary-green;
+        background-color: $white;
+        &:hover {
+            background-color: $hover-green;
+        }
     }
 }

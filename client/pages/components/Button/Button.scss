@@ -9,9 +9,12 @@ button {
 }
 
 .primary-button {
-    outline-color: var.$primary-green;
-    background-color: var.$primary-green;
-    color: var.$white;
+    border: 1px solid var.$primary-green;
+    background-color: var.$hover-green;
+    color: var.$black;
+    &:hover {
+        outline: 1px solid var.$primary-green;
+    }
 }
 
 .auth-button {
