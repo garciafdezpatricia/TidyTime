@@ -8,6 +8,7 @@ export interface Props {
     primaryActionText?: string;
     secondaryActionText?: string;
     title?: string;
+    backdrop: boolean;
     children?: ReactNode;
     variant?: string;
 }
@@ -19,12 +20,13 @@ export default function PromptModal({
     primaryActionText,
     secondaryActionText,
     title,
+    backdrop,
     children, 
     variant} : Props) {
 
     return (
         <>
-            <div className="backdrop"></div>
+            { backdrop && <div className="backdrop"></div>}
             <article className={variant ? variant : "prompt-modal"}>
                 <h1>{title}</h1>
                 {children}

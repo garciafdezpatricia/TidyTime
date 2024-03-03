@@ -1,53 +1,111 @@
 @use "../../../../styles/variables" as var;
 
 .backdrop {
-    background-color: rgba(0, 0, 0, 0.2);
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    top: 0;
-    left: 0;
-    position: absolute;
+	background-color: rgba(0, 0, 0, 0.2);
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	top: 0;
+	left: 0;
+	position: absolute;
 }
-
+.prompt-modal,
+.rename-list-modal,
+.confirmation-modal {
+	position: absolute;
+	transform: translate(-50%, -50%);
+	z-index: 9999;
+	background-color: var.$white;
+	display: flex;
+	flex-direction: column;
+	border-radius: 5px;
+}
 .prompt-modal {
-    position: absolute;
-    left: 50%;
-    right: 50%;
-    top: 50%;
-    bottom: 50%;
-    transform: translate(-50%, -50%);
-    width: 40em;
-    height: 25em;
-    z-index: 9999;
-    background-color: var.$white;
-    padding: 2em;
-    display: flex;
-    flex-direction: column;
-    border-radius: 5px;
+	top: 50%;
+	left: 50%;
+	right: 50%;
+	bottom: 50%;
+	padding: 2em;
+	width: 40em;
+	height: 25em;
+	button {
+		width: 10em;
+		height: 3em;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
-
-.prompt-modal button {
-    width: 10em;
-    height: 3em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .prompt-modal-button-section {
-    display: flex;
-    gap: 2em;
-    align-self: flex-end;
-    width: 100%;
-    justify-content: flex-end;
-    margin-top: auto;
+	display: flex;
+	gap: 2em;
+	align-self: flex-end;
+	width: 100%;
+	justify-content: flex-end;
+	margin-top: auto;
+}
+.prompt-modal-secondary-btn {
+	background-color: var.$white;
+	border: 1px solid var.$black;
+	&:hover {
+		outline: 1px solid var.$primary-green;
+	}
 }
 
-.prompt-modal-secondary-btn {
-    background-color: var.$white;
-    border: 1px solid var.$black;
-    &:hover {
-        outline: 1px solid var.$primary-green;
-    }
+.confirmation-modal {
+	top: 15%;
+	left: 50%;
+	right: 50%;
+	width: 20rem;
+	height: 5rem;
+	padding: 1rem;
+	border: 1px solid var.$primary-grey;
+	align-items: center;
+	.primary-button {
+		border: 0.13rem solid var.$remove-red;
+		&:hover {
+			background-color: var.$hover-red;
+		}
+	}
+	.prompt-modal-secondary-btn {
+		border: 1px solid var.$black;
+		&:hover {
+			background-color: var.$primary-grey;
+		}
+	}
+	button {
+		background-color: var.$white;
+		width: 5em;
+		align-items: center;
+		justify-content: center;
+		&:hover {
+			outline: none;
+		}
+	}
+}
+
+.rename-list-modal {
+	top: 15%;
+	left: 40%;
+	padding: 1rem;
+	width: 15rem;
+	height: 7rem;
+	border: solid 1px var.$primary-grey;
+	button {
+		display: flex;
+		padding-inline: 0.5rem;
+	}
+	input {
+		border: solid 1px var.$primary-grey;
+		outline: none;
+		padding-left: 0.2rem;
+		padding-top: 0.1rem;
+		padding-bottom: 0.1rem;
+		border-radius: 0.4rem;
+		&:active,
+		&:focus,
+		&:hover {
+			border: solid 1px var.$primary-grey;
+		}
+	}
 }

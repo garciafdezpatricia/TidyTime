@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaPlusCircle } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 
@@ -8,34 +8,42 @@ export interface Props {
 
 export default function NewTaskForm(props : Props) {
 
-    const [newTask, setNewTask] = useState("");
-
+    // use a reference instead of state: we don't want to rerender everytime we type in the input
+    const newTask = useRef(null);
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         // Verificar si la tecla presionada es Enter (código de tecla 13)
         if (e.key === 'Enter') {
             e.preventDefault(); // Evitar el comportamiento predeterminado de enviar el formulario
-            if (newTask !== "") {
-                props.onSubmit(newTask); // Llamar a la función onSubmit pasada como prop
-            }
+            createNewTask();
         }
     };
-
-    const handleChange = (e:any) => {
-        setNewTask(e.target.value);
+    
+    const createNewTask = () => {
+        // @ts-ignore
+        if (newTask.current.value !== '') {
+           // @ts-ignore
+        props.onSubmit(newTask.current.value); // Llamar a la función onSubmit pasada como prop
+        // @ts-ignore
+        newTask.current.value = '';
+        }
     }
 
     return (
         <form className="create-task-form" >
             {// TODO: add onclick handler to the icon (create task too)
             }
-            <IoIosAddCircle size={"1.5rem"} color={"#3E5B41"}/>
+            <IoIosAddCircle 
+                size={"1.5rem"} 
+                color={"#3E5B41"}
+                cursor={"pointer"}
+                onClick={createNewTask}/>
             <input 
-                placeholder="New task..." 
-                onChange={(e) => handleChange(e)}
+                placeholder="New task..."
+                ref={newTask} 
+                type="text"
                 onKeyDown={handleKeyPress}
             >
             </input>
         </form>
-
     )
 }

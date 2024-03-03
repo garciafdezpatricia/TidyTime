@@ -6,6 +6,8 @@ export interface Task {
     initDate?: string,
     endDate?: string,
     difficulty?: number,
-    done?: boolean,
+    done: boolean,
     important?: boolean,
 }
+
+export type TaskList = Task[];

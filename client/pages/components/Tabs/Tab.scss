@@ -6,6 +6,7 @@
     grid-template-rows: auto 1fr;
     grid-template-columns: 1fr auto;
     padding-right: 4rem;
+    height: 75%;
 }
 
 .bloc-tabs {
@@ -34,29 +35,39 @@
     display: flex;
     align-items: flex-start;
     gap: .3rem;
-    height: 100%;
     background-color: var.$hover-green;
     padding-left: .8rem;
     padding-right: .4rem;
+}
+
+.edit-dropdown {
+    position: relative;
 }
 
 .tab-content-container {
     padding: 1rem;
     grid-row: 2/-1;
     grid-column: 1/-1;
+    overflow-y: scroll;
+    height: 90%;
+    max-height: 90%;
 }
 
 .content {
     display: none;
 }
 
-.add-tab {
+.add-list {
     grid-column: 2/-1;
     grid-row: 1/2;
     padding: .3em .8em;
     align-self: center;
     border: .15rem solid var.$primary-green;
     background-color: var.$white;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: .2rem;
     &:hover {
         background-color: var.$hover-green;
     }
@@ -77,6 +88,7 @@
     display: flex;
     flex-direction: column;
     border-radius: 5px;
+    border: solid 1px var.$black;
     h1 {
         padding-bottom: 1rem;
     } 
@@ -110,7 +122,6 @@
     padding-top: .7rem;
     padding-bottom: .7rem;
     padding-left: 1rem;
-    cursor: pointer;
 }
 
 .task-done {
@@ -127,7 +138,21 @@
 .icon-container {
     display: flex;
     align-items: center;
+    cursor: pointer;
     .circle-disappear {
         display: none;
+    }
+}
+
+.see-done-task {
+    padding-inline: .4rem;
+    width:fit-content;
+    margin-inline: auto;
+    gap: .5rem;
+    background-color: var.$white;
+    outline: none;
+    border: 0.13rem solid var.$dark-grey;
+    &:hover {
+        background-color: var.$primary-grey;
     }
 }
