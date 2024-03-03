@@ -1,44 +1,33 @@
-import {CredentialResponse, useGoogleLogin} from "@react-oauth/google";
+import {useGoogleLogin} from "@react-oauth/google";
 import { useEffect, useState } from "react";
-import {jwtDecode} from 'jwt-decode';
 
-
-export interface Props {
-    onSuccess: (credentialResponse: CredentialResponse) => void,
-    onError: (() => void) | undefined
-}
-
-interface tokens {
-    accessToken: string,
-    refreshToken: string,
-    profile: string
+interface interfaceToken {
+    access_token: string,
+    expires_in: number,
+    id_token: string,
+    refresh_token: string,
+    scope: string,
+    token_type: string,
 }
 
 export default function LoginGoogleCalendar() {
-
-    const [user, setUserInfo] = useState<tokens>();
-
-    function handleError() {
-        console.log("Login failed");
-    }
-
-    const handleLoginSuccess = (tokens:any) => {
-        setUserInfo({
-            accessToken: tokens.access_token,
-            refreshToken: tokens.refresh_token,
-            profile: tokens.id_token
-        })
-    }
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [tokenslocal, setTokensLocal] = useState<interfaceToken>()
 
     useEffect(() => {
-        if (user) {
-            console.log(jwtDecode(user.profile))
-        }
-    }, [user]);
+        if (localStorage.getItem("GTokens")){
+            setTokensLocal(JSON.parse(localStorage.getItem("GTokens") as string))
+        }   
+    }, [isLoggedIn])
+
+    const handleLoginSuccess = (tokens:any) => {
+        //TODO: securely save them
+        localStorage.setItem("GTokens", JSON.stringify(tokens));
+        setIsLoggedIn(true);
+    }
 
     const googleLogin = useGoogleLogin({
         onSuccess: (tokenResponse) => {
-            console.log('Google login successful', tokenResponse);
             fetch('http://localhost:8080/api/auth/google', {
                 method: 'POST',
                 headers: {
@@ -56,19 +45,33 @@ export default function LoginGoogleCalendar() {
               });
         },
         onError: () => {
-            handleError();
+            console.log("Error login");
         },
         flow: 'auth-code',
-        
+        scope: 'https://www.googleapis.com/auth/calendar openid https://www.googleapis.com/auth/userinfo.profile',
     })
 
     return (
         <>
-            <button 
-                onClick={() => googleLogin()}
-            >Sign in with Google
-            </button>
-            <p>{user && user.profile}</p>
+            { !isLoggedIn && 
+                <button 
+                    onClick={() => googleLogin()}
+                >Sign in with Google
+                </button>
+            }
         </>
     )
 }
+
+    // function getCalendar() {
+    //     if (tokenslocal) {
+    //         fetch('http://localhost:8080/google/calendar', {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Authorization': 'Bearer ' + tokenslocal.access_token
+    //             }
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => console.log(data))
+    //     }
+    // } 

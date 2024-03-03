@@ -3,8 +3,11 @@
 .calendar-container {
     width: var.$view-width;
     padding: var.$view-padding;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
-// need to be more specific than the default class
+// needs to be more specific than the default class
 .rbc-toolbar span button {
     border: 1px solid var.$primary-green; 
     color: var.$black;
