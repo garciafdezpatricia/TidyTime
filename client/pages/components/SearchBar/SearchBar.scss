@@ -1,0 +1,32 @@
+@use "../../../styles/variables" as *;
+
+.search-bar-container {
+    display: flex;
+    justify-content: center;
+    padding-top: .2rem;
+    padding-bottom: 2rem;
+    
+    input {
+        width: 20rem;
+        margin-right: 1rem;
+        padding-left: .5rem;
+        padding-top: .3rem;
+        padding-bottom: .3rem;
+        border-radius: .4rem;
+        outline: none;
+        border: 2px solid #7c7c7c;
+        &:active, &:focus {
+            outline: none;
+            border: 2px solid $primary-green;
+        }
+    }
+
+    button {
+        padding-inline: .5rem;
+        border: .15rem solid $primary-green;
+        background-color: $white;
+        &:hover {
+            background-color: $hover-green;
+        }
+    }
+}

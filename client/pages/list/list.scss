@@ -1,0 +1,11 @@
+@use "../../styles/variables" as var;
+
+.list-container {
+    width: var.$view-width;
+    height: 100%;
+    padding: var.$view-padding;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}

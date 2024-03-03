@@ -1,0 +1,49 @@
+@use "../../styles/variables" as var;
+
+.calendar-container {
+    width: var.$view-width;
+    padding: var.$view-padding;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+// needs to be more specific than the default class
+.rbc-toolbar span button {
+    border: 1px solid var.$primary-green; 
+    color: var.$black;
+    background-color: var.$white;
+    &:hover {
+        color: var.$black;
+        border: 1px solid var.$primary-green;
+        background-color: var.$hover-green;
+    }
+    &:focus {
+        color: var.$black;
+        background-color: var.$white;
+        box-shadow: 0;
+        border: 1px solid var.$primary-green; 
+    }
+}
+
+.rbc-toolbar span button.rbc-active {
+    background-color: var.$primary-green;
+    color: var.$white;
+    &:hover, &:focus {
+        color: var.$white;
+        background-color: var.$primary-green;
+        border-color: var.$primary-green;
+    }
+}
+
+.rbc-time-slot span.rbc-label {
+    font-size: 1em;
+}
+
+div.rbc-today {
+    background-color: var.$hover-green;
+    border-color: var.$white;
+}
+
+.rbc-agenda-time-cell {
+    border-left: 1px solid #ddd;
+}

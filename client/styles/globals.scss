@@ -1,0 +1,32 @@
+@use "./variables" as var;
+@use "../pages/components/Button/Button.scss";
+@use "../pages/components/Menu/Menu.scss";
+@use "../pages/components/Tabs/Tab.scss";
+@use "../pages/components/Layout/Layout.scss";
+@use "../pages/components/Modal/PromptModal/PromptModal.scss";
+@use "../pages/components/Modal/EditModal/EditModal.scss";
+@use "../pages/calendar/calendar.scss";
+@use "../pages/board/board.scss";
+@use "../pages/list/list.scss";
+@use "../pages/tidier/tidier.scss";
+@use "../pages/settings/settings.scss";
+@use "../pages/components/Form/NewEventForm/NewEventForm.scss";
+@use "../pages/components/SearchBar/SearchBar.scss";
+@use "../pages/components/Form/NewTaskForm/NewTaskForm.scss";
+
+
+@font-face {
+    font-family: 'Primaria';
+    src: url('../assets/fonts/Kadwa/Kadwa-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Secundaria';
+    src: url('../assets/fonts/Libre_Franklin/static/LibreFranklin-Regular.ttf');
+}
+
+* {
+    font-family: 'Primaria';
+    margin: 0px;
+    padding: 0px;
+}
