@@ -21,17 +21,15 @@ export default function NewTaskForm(props : Props) {
     const createNewTask = () => {
         // @ts-ignore
         if (newTask.current.value !== '') {
-           // @ts-ignore
-        props.onSubmit(newTask.current.value); // Llamar a la función onSubmit pasada como prop
-        // @ts-ignore
-        newTask.current.value = '';
+            // @ts-ignore
+            props.onSubmit(newTask.current.value); // Llamar a la función onSubmit pasada como prop
+            // @ts-ignore
+            newTask.current.value = '';
         }
     }
 
     return (
         <form className="create-task-form" >
-            {// TODO: add onclick handler to the icon (create task too)
-            }
             <IoIosAddCircle 
                 size={"1.5rem"} 
                 color={"#3E5B41"}

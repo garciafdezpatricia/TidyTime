@@ -16,10 +16,7 @@ export default function List() {
 		setToDo((prevTodo) => {
 			return prevTodo.map((list, index) => {
 				if (index === selectedListIndex) {
-                    return [
-                        ...list,
-                        { title: e, done: false },
-                    ];
+                    return [{ title: e, done: false }, ...list];
                 } 
                 return list;
             });

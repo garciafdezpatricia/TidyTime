@@ -1,0 +1,123 @@
+@use "../../../../styles/variables" as *;
+
+.edit-task-modal {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: $white;
+    color: $black;
+    height: 100%;
+    width: 30rem;
+    z-index: 10;
+    box-shadow: -.2rem -.1rem 2.1rem -.2rem rgba(195,195,195);
+    overflow: auto;
+}
+
+.edit-task-modal-header {
+    display: flex;
+    padding: 2rem 2rem 1rem;
+    align-items: flex-start;
+    gap: 1rem;
+    .close-button {
+        background-color: $white;
+        margin-left: auto;
+        border: none;
+        color: $dark-grey;
+        &:hover {
+            color: $black;
+        }
+    }
+}
+
+.edit-task-modal-body {
+    display: flex;
+    flex-direction: column;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-bottom: 2rem;
+
+    .main-info {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+        border-radius: .4rem;
+        padding: .5rem .8rem 1rem;
+        margin-bottom: 3rem;
+        box-shadow: -.2rem -.1rem 2.1rem -.2rem rgb(195, 195, 195);
+
+        .task-title {
+            border: none;
+            font-size: 1.2rem;
+            &:active, &:focus {
+                border: none;
+                outline: none;
+            }
+        }
+        textarea {
+            padding-left: .5rem;
+            min-height: 5rem;
+            resize: vertical;
+        }
+    }
+
+    .difficulty, .date-picker, .label-picker {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .5rem .8rem;
+    }
+
+    .additional-info {
+        display: flex;
+        flex-direction: column;
+        border-radius: .4rem;
+        padding: .5rem .8rem;
+        box-shadow: -.2rem -.1rem 2.1rem -.2rem rgba(195,195,195);
+        margin-bottom: 1rem;
+        gap: .5rem;
+    }
+
+    .important {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: .4rem;
+        padding: .5rem .8rem;
+        box-shadow: -.2rem -.1rem 2.1rem -.2rem rgba(195,195,195);
+        margin-bottom: 1rem;
+    }
+
+    .labels {
+        display: flex;
+        align-items: center;
+        padding-inline: .8rem;
+        gap: 1rem;
+        label {
+            font-size: .8rem;
+            padding-inline: .5rem;
+            border: .15rem solid $black;
+            border-radius: .6rem;
+        }
+    }
+}
+
+.edit-task-modal-footer {
+    display: flex;
+    margin-top: auto;
+    justify-content: center;
+    margin-bottom: 3rem;
+
+    .cancel {
+        padding: .3rem .8rem;
+        background-color: $medium-grey;
+        color: $white;
+        outline: none;
+        border: none;
+        &:hover {
+            background-color: $remove-red;
+            color: $white;
+        }
+    }
+}

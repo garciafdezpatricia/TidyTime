@@ -1,4 +1,4 @@
-import { TaskList } from "@/src/task/Task";
+import { TaskList, Label } from "@/src/task/Task";
 import { ReactNode, createContext, useContext, useState } from "react";
 
 /**
@@ -7,6 +7,7 @@ import { ReactNode, createContext, useContext, useState } from "react";
 export interface ITaskContext {
     tabs: string[],
     todo: TaskList[],
+    labels: Label[],
     selectedListIndex: number,
     setTabs: React.Dispatch<React.SetStateAction<string[]>>,
     setToDo: React.Dispatch<React.SetStateAction<TaskList[]>>,
@@ -16,10 +17,10 @@ export interface ITaskContext {
 // TODO: replace it with solid logic
 // const with default context (it's not the one from the user's pod)
 const defaultContext: ITaskContext ={
-    tabs: ["Tasks", "Home", "Work"],
+    tabs: ["TFG", "Home", "Work"],
     todo: [
         [
-            { done: false, title: "Go to the gym" },
+            { done: false, title: "Disable button if new list name is empty string" },
             { done: false, title: "Call granny" },
             { done: false, title: "Buy vacuum" },
             { done: false, title: "This is content 4" },
@@ -39,6 +40,7 @@ const defaultContext: ITaskContext ={
             { done: false, title: "Clean calendar" },
         ],
     ],
+    labels: [{color: "#ad30ad", name: "school"}, {color: "#5930ab", name: "work"}, {color: "#e6a937", name: "home"}],
     selectedListIndex: 0,
     setTabs: () => {},
     setToDo: () => {},
@@ -68,8 +70,8 @@ export function TaskProvider({children} : ITaskContextProvider) {
     const [tabs, setTabs] = useState(defaultContext.tabs);
     const [todo, setToDo] = useState(defaultContext.todo);
     const [selectedListIndex, setSelectedListIndex] = useState(defaultContext.selectedListIndex);
-    
-    const value ={tabs, todo, selectedListIndex, setTabs, setToDo, setSelectedListIndex};
+    const labels = defaultContext.labels;
+    const value ={tabs, todo, selectedListIndex, setTabs, setToDo, setSelectedListIndex, labels};
 
     return (
         <TaskContext.Provider value={value}>
