@@ -2,9 +2,11 @@
 @use "../pages/components/Button/Button.scss";
 @use "../pages/components/Menu/Menu.scss";
 @use "../pages/components/Tabs/Tab.scss";
+@use "../pages/components/ToggleSwitch/ToggleSwitch.scss";
 @use "../pages/components/Layout/Layout.scss";
 @use "../pages/components/Modal/PromptModal/PromptModal.scss";
-@use "../pages/components/Modal/EditModal/EditModal.scss";
+@use "../pages/components/Modal/EditModal/EditListModal.scss";
+@use "../pages/components/Modal/EditModal/EditTaskModal.scss";
 @use "../pages/calendar/calendar.scss";
 @use "../pages/board/board.scss";
 @use "../pages/list/list.scss";
@@ -12,7 +14,9 @@
 @use "../pages/settings/settings.scss";
 @use "../pages/components/Form/NewEventForm/NewEventForm.scss";
 @use "../pages/components/SearchBar/SearchBar.scss";
+@use "../pages/components/ComboBox/ComboBox.scss";
 @use "../pages/components/Form/NewTaskForm/NewTaskForm.scss";
+@use "../pages/components/DifficultyRate/DifficultyRate.scss";
 
 
 @font-face {

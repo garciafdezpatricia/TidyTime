@@ -1,0 +1,12 @@
+@use "../../../styles/variables" as *;
+
+.difficulty-rate {
+    display: flex;
+    gap: .1rem;
+    align-items: center;
+
+    label {
+        display: flex;
+        cursor: pointer;
+    }
+}

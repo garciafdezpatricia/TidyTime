@@ -114,7 +114,8 @@
 }
 
 .task, .task-done {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr 1fr auto;
     align-items: center;
     gap: 1rem;
     width: 100%;
@@ -131,11 +132,60 @@
 }
 
 .task-content {
+    grid-column: 2/2;
     display: flex;
+    align-items: center;
     gap: 2rem;
 }
 
+.task-properties {
+    grid-column: 3/3;
+    display: grid;
+    grid-template-columns: .2fr .4fr 1fr .2fr;
+    grid-template-rows: 1fr;
+    align-items: center;
+
+    .end-date, .difficulty, .important, .labels {
+        display: flex;
+        align-items: center;
+        grid-row: 1/1;
+    }
+    .end-date {
+        grid-column: 1/1;
+    }
+
+    .difficulty {
+        grid-column: 2/2;
+    }
+
+    .task-labels {
+        grid-column: 3/3;
+        font-size: .8rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        label {
+            border-width: .1rem;
+            border-style: solid;
+            padding-inline: .2rem;
+            border-radius: .5rem;
+        }
+    }
+
+    .important {
+        grid-column: 4/-1;
+    }
+}
+
+.edit-icon {
+    grid-column: 4/-1;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: 1rem;
+}
+
 .icon-container {
+    grid-column: 1/1;
     display: flex;
     align-items: center;
     cursor: pointer;
