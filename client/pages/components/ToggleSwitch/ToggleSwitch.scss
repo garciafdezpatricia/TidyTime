@@ -47,7 +47,7 @@
   input:focus + .slider {
     box-shadow: 0 0 1px $primary-green;
   }
-  
+
   input:checked + .slider:before {
     -webkit-transform: translateX(1.3rem);
     -ms-transform: translateX(1.3rem);
