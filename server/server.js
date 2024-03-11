@@ -3,7 +3,11 @@ const express = require("express");
 const cors = require("cors");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const bp = require("body-parser");
+const uuidv4 = require("uuid").v4;
 const { Session } = require("@inrupt/solid-client-authn-node");
+const session = require('express-session');
+const connectDB = require('./db/mongo.db')
+
 
 // APPLICATION CONFIGURATIONS
 const app = express();
@@ -11,11 +15,15 @@ const PORT = 8080;
 
 app.use(cors()); // allows request to come from any origin
 app.use(bp.json()); // allows send data to our express routes in a JSON format
-
-// run application
-app.listen(PORT, () => {
-  console.log("Server started on port " + PORT);
-});
+app.use(session({
+  secret: 'thisismysecretlol!',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, //cambiar a true con https
+    maxAge: 3600000 // una hora
+  }
+}))
 
 // ######### ROUTES #########
 // -> GOOGLE
@@ -28,7 +36,7 @@ app.post("/api/auth/google", (req, res) => {
   const client_id = process.env.GOOGLE_OAUTH_CLIENT_ID;
   const client_secret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
   const redirect_uri = process.env.GOOGLE_OAUTH_REDIRECT_URI;
-
+  
   fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: {
@@ -45,7 +53,6 @@ app.post("/api/auth/google", (req, res) => {
   })
   .then((response) => response.json())
   .then((tokens) => {
-    // Send the tokens back to the frontend. 
     // TODO: store them securely and create a session
     // access_token , expires_in, id_token, refresh_token, scope, token_type
     res.json(tokens);
@@ -161,5 +168,4 @@ app.get("/getProfile", async function (req, res) {
   const webId = req.query.webId;
   res.json(webId);
 });
-
 

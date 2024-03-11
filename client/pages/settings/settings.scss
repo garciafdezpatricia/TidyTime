@@ -2,5 +2,7 @@
 
 .settings-container {
     width: var.$view-width;
+    height: 100%;
     padding: var.$view-padding;
+    box-sizing: border-box;
 }
