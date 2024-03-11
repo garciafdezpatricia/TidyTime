@@ -6,7 +6,9 @@ const bp = require("body-parser");
 const uuidv4 = require("uuid").v4;
 const { Session } = require("@inrupt/solid-client-authn-node");
 const session = require('express-session');
-const connectDB = require('./db/mongo.db')
+const getUserEmail = require('./googleAuth/googleHelpers');
+const saveTokensToDB = require('./dbconnection/db-connection');
+const mongoose = require('mongoose');
 
 
 // APPLICATION CONFIGURATIONS
@@ -15,15 +17,31 @@ const PORT = 8080;
 
 app.use(cors()); // allows request to come from any origin
 app.use(bp.json()); // allows send data to our express routes in a JSON format
+
+// session
 app.use(session({
+  name: 'SessionCookie',
+  genid: function (req) {
+    return uuidv4(); // created session id
+  },
   secret: 'thisismysecretlol!',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: false, // if we dont change the session, cookies are not created
   cookie: {
     secure: false, //cambiar a true con https
     maxAge: 3600000 // una hora
   }
 }))
+
+
+const mongoUri = process.env.MONGO_URI;
+
+mongoose.connect(mongoUri)
+.then(console.log("Succesfully connected to MongoDB"));
+
+app.listen(PORT, () => {
+  console.log("Server started on port " + PORT);
+});
 
 // ######### ROUTES #########
 // -> GOOGLE
@@ -42,7 +60,6 @@ app.post("/api/auth/google", (req, res) => {
       headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       },
-
       body: new URLSearchParams({
           code,
           client_id,
@@ -53,12 +70,19 @@ app.post("/api/auth/google", (req, res) => {
   })
   .then((response) => response.json())
   .then((tokens) => {
-    // TODO: store them securely and create a session
-    // access_token , expires_in, id_token, refresh_token, scope, token_type
-    res.json(tokens);
+    getUserEmail(tokens)
+    .then(userEmail => {
+      req.session.userEmail = userEmail; // save email in cookie
+      saveTokensToDB(userEmail, tokens)
+      .then(res => {
+      })
+      .catch(err => console.error("Error al guardar los tokens en la base de datos", err));
+    })
+    .catch(error => {
+      console.error("Error getting email from tokens: ", error);
+    })
   })
   .catch((error) => {
-    // Handle errors in the token exchange
     console.error("Token exchange error:", error);
   });
 });
