@@ -48,7 +48,7 @@ export default function LoginGoogleCalendar() {
             console.log("Error login");
         },
         flow: 'auth-code',
-        scope: 'https://www.googleapis.com/auth/calendar openid https://www.googleapis.com/auth/userinfo.profile',
+        scope: 'https://www.googleapis.com/auth/calendar openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
     })
 
     return (
