@@ -7,15 +7,17 @@ const uuidv4 = require("uuid").v4;
 const { Session } = require("@inrupt/solid-client-authn-node");
 const session = require('express-session');
 const getUserEmail = require('./googleAuth/googleHelpers');
-const saveTokensToDB = require('./dbconnection/db-connection');
+const {saveTokensToDB, emailExistsInDB, getTokensFromDB} = require('./dbconnection/db-connection');
 const mongoose = require('mongoose');
-
 
 // APPLICATION CONFIGURATIONS
 const app = express();
 const PORT = 8080;
 
-app.use(cors()); // allows request to come from any origin
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
 app.use(bp.json()); // allows send data to our express routes in a JSON format
 
 // session
@@ -28,8 +30,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false, // if we dont change the session, cookies are not created
   cookie: {
-    secure: false, //cambiar a true con https
-    maxAge: 3600000 // una hora
+    secure: false, //change to true to use https
+    maxAge: 3600000 // one hour
   }
 }))
 
@@ -67,33 +69,48 @@ app.post("/api/auth/google", (req, res) => {
           redirect_uri,
           grant_type,
       }),
+      credentials: 'include',
   })
   .then((response) => response.json())
   .then((tokens) => {
     getUserEmail(tokens)
     .then(userEmail => {
       req.session.userEmail = userEmail; // save email in cookie
-      saveTokensToDB(userEmail, tokens)
-      .then(res => {
+      console.log("Sesion cookie", req.session);
+      emailExistsInDB(userEmail)
+      .then(exists => {
+        if (!exists){
+          saveTokensToDB(userEmail, tokens)
+          .then(response => {
+            res.json({success: true, message: "Succesfully stored user authentication data"});
+          })
+          .catch(err => console.error("Error when saving tokens to the DB", err));
+        } else {
+          res.json({success: true, message: "Succesfully retrieved user authentication data from archives"})
+        }
+
       })
-      .catch(err => console.error("Error al guardar los tokens en la base de datos", err));
+      .catch(err => res.json({success: false, message: "Error on checking email"}));
+
     })
     .catch(error => {
       console.error("Error getting email from tokens: ", error);
     })
+
   })
   .catch((error) => {
     console.error("Token exchange error:", error);
   });
+
 });
 
 /**
  * Handler for getting resources from the google calendar API.
  */
-app.get("/google/calendar", async function (req, res) {
-  console.log(req.get('Authorization'))
+app.get("/google/events", async function (req, res) {
+  const tokens = await getTokensFromDB(req.session.userEmail);
   // need to pass the access_token in this way (?)
-  fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?access_token=' + req.get('Authorization').split('Bearer ')[1], {
+  fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?access_token=' + tokens.access_token, {
       method: 'GET',
   })
   .then(response => response.json())

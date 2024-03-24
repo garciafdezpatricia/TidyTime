@@ -1,5 +1,10 @@
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
+/**
+ * Gets user email by making an authenticated request to google endpoint
+ * @param {*} tokens 
+ * @returns 
+ */
 async function getUserEmail(tokens) {
     return fetch("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + tokens.access_token, {
         method: "GET",

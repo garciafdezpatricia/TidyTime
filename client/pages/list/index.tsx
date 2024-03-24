@@ -1,7 +1,7 @@
-import { useTaskContext } from "../components/Context/TaskContext";
-import NewTaskForm from "../components/Form/NewTaskForm/NewTaskForm";
-import SearchBar from "../components/SearchBar/SearchBar";
-import Tab from "../components/Tabs/Tab";
+import { useTaskContext } from "../../src/components/Context/TaskContext";
+import NewTaskForm from "../../src/components/Form/NewTaskForm/NewTaskForm";
+import SearchBar from "../../src/components/SearchBar/SearchBar";
+import Tab from "../../src/components/Tabs/Tab";
 
 // go to this page as /list
 export default function List() {

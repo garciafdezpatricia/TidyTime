@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { login, handleIncomingRedirect, getDefaultSession, Session, fetch } from '@inrupt/solid-client-authn-browser';
 import { getPodUrlAll } from '@inrupt/solid-client';
-import GitHub from './components/Auth/GitHubAuth';
-import { MenuSideBar } from './components/Menu/Menu';
+import GitHub from '../src/components/Auth/GitHubAuth';
+import { MenuSideBar } from '../src/components/Menu/Menu';
 
 export default function Prueba() {
   

@@ -21,4 +21,22 @@ async function saveTokensToDB(userEmail, tokens) {
     })
 }
 
-module.exports = saveTokensToDB;
+async function emailExistsInDB(userEmail) {
+    const db = mongoose.connection.useDb("TidyTimeDev");
+    const collection = db.collection("GoogleTokens");
+  
+    // check if email exists on db
+    const userTokens = await collection.findOne({email: userEmail});
+    return userTokens != null;
+}
+
+async function getTokensFromDB(userEmail) {
+    const db = mongoose.connection.useDb("TidyTimeDev");
+    const collection = db.collection("GoogleTokens");
+  
+    // check if email exists on db
+    const user = await collection.findOne({email: userEmail});
+    return user.tokens;
+}
+
+module.exports = {saveTokensToDB, emailExistsInDB, getTokensFromDB};

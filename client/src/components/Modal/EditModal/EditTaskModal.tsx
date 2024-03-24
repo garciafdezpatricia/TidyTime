@@ -2,7 +2,7 @@ import { ImCross } from "react-icons/im";
 import { useTaskContext } from "../../Context/TaskContext";
 import DifficultyRate from "../../DifficultyRate/DifficultyRate";
 import Toggle from "../../ToggleSwitch/ToggleSwitch";
-import CheckableComboBox from "../../ComboBox/ComboBox";
+import CheckableComboBox from "../../ComboBox/CheckableComboBox";
 import { useEffect, useState } from "react";
 import { Label, Task } from "@/src/task/Task";
 
@@ -33,7 +33,7 @@ export default function EditTaskModal({taskIndex, onClose, onSave} : Props) {
         setImportant(taskToEdit.important ?? false)
     }
 
-    const close = () => {
+    const saveAndClose = () => {
         const updatedToDo = [...todo];
         const updatedTask = {...taskToEdit};
 
@@ -66,14 +66,14 @@ export default function EditTaskModal({taskIndex, onClose, onSave} : Props) {
             <header className="edit-task-modal-header">
                 <button 
                     title="Close"
-                    onClick={close} 
+                    onClick={saveAndClose} 
                     className="close-button">
                         <ImCross />
                 </button>
             </header>
             <section className="edit-task-modal-body">
                 <section className="important">
-                    <label>Important: </label>
+                    <label>Urgent: </label>
                     <Toggle isChecked={important} onChange={(e) => setImportant(e)}/>
                 </section>
                 <section className="main-info">
@@ -130,7 +130,12 @@ export default function EditTaskModal({taskIndex, onClose, onSave} : Props) {
                 <button 
                     className="cancel"
                     onClick={onCancel}>
-                    Cancel all changes
+                    Reset
+                </button>
+                <button
+                    className="save"
+                    onClick={saveAndClose}>
+                    Save
                 </button>
             </section>
         </article>

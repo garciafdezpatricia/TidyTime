@@ -33,10 +33,10 @@ export default function CheckableComboBox({checkedLabels, onChange} : Props) {
 
     return (
         <div className="combobox-select">
-        <div className="dropdown-header" onClick={toggleDropdown}>
-            Select options
-            <IoIosArrowDropdownCircle />
-        </div>
+            <div className="dropdown-header" onClick={toggleDropdown}>
+                Select options
+                <IoIosArrowDropdownCircle />
+            </div>
         {isOpen && (
             <div className="dropdown-content">
             {labels.map((option, index) => (
