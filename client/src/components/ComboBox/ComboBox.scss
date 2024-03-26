@@ -1,0 +1,43 @@
+@use "../../../styles/variables" as *;
+
+.combobox {
+    display: flex;
+    align-items: flex-start;
+}
+
+.combobox-header {
+    border-radius: .4rem;
+    display: flex;
+    gap: .4rem;
+    align-items: center;
+    width: fit-content;
+    padding: .2rem .5rem;
+    border: .1rem solid $dark-grey;
+    .combobox-selected-color {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 100%;
+    }
+}
+
+.combobox-content {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: calc(100% - 1.5rem);
+    gap: .5rem;
+    margin-left: .2rem;
+    width: fit-content;
+    border-radius: .4rem;
+    padding: .5rem;
+    border: .1rem solid transparent;
+    box-shadow: 4px -1px 29px -1px rgba(189,189,189,1);
+    .combo-color-option {
+        width: 1rem;
+        height: 1rem;
+        background-color: transparent;
+        border: .1rem solid transparent;
+        &:hover {
+            border: .1rem solid $black;
+        }
+    }
+}

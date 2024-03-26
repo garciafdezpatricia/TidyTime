@@ -28,7 +28,7 @@ export default function PromptModal({
         <>
             { backdrop && <div className="backdrop"></div>}
             <article className={variant ? variant : "prompt-modal"}>
-                <h1>{title}</h1>
+                <h2>{title}</h2>
                 {children}
                 <div className="prompt-modal-button-section">
                     <Button

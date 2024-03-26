@@ -1,0 +1,86 @@
+@use "./../../../styles/variables" as *;
+
+
+.calendar-menu-popup {
+    font-size: .9rem;
+    position:absolute;
+    top: 3.1rem;
+    left: 1rem;
+    background-color: $white;
+    height: calc(100% - 3.5rem);
+    width: 23rem;
+    z-index: 5;
+    //box-shadow: -.7rem .2rem 3.5rem -.3rem rgb(147, 151, 147);
+    border-radius: .2rem;
+    border: .1rem solid $light-grey;
+    padding: 1rem;
+    overflow-y: auto;
+    box-sizing: border-box;
+    &:hover {
+        border-color: $medium-grey;
+    }
+
+    .calendar-menu-events {
+        display: flex;
+        flex-direction: column;
+        font-size: .8rem;
+
+        .calendar-menu-buttons {
+            display: flex;
+            gap: .6rem;
+
+            .confirm-btn {
+                display: flex;
+                align-items: center;
+                border: none;
+                background-color: $primary-green;
+                color: $white;
+                padding: .1rem .5rem;
+                border-radius: .3rem;
+                font-size: .8rem;
+                width: fit-content;
+                margin-bottom: .2rem;
+            }
+        }
+    }
+
+    .create-new-event, .import-google-btn {
+        display: flex;
+        align-items: center;
+        gap: .4rem;
+        border-radius: .3rem;
+        border: none;
+        width: fit-content;
+        padding: .1rem .5rem;
+        font-size: .8rem;
+        color: $black;
+    }
+
+    .create-new-event {
+        margin-bottom: .2rem;
+        &:hover {
+            background-color: $hover-green;
+        }
+    }
+
+    .import-google-btn {
+        &:hover {
+            background-color: $light-blue;
+        }
+    }
+
+    .calendar-menu-google {
+        padding-top: 2rem;
+
+        .calendar-menu-google-header {
+            display: flex;
+            gap: .5rem;
+        }
+
+        .calendar-menu-google-body {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+    }
+}

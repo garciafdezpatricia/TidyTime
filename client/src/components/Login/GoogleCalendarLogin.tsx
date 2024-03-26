@@ -1,29 +1,14 @@
 import {useGoogleLogin} from "@react-oauth/google";
 import { useEffect, useState } from "react";
-
-interface interfaceToken {
-    access_token: string,
-    expires_in: number,
-    id_token: string,
-    refresh_token: string,
-    scope: string,
-    token_type: string,
-}
+import { Icon } from "../Icon/Icon";
 
 export default function LoginGoogleCalendar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [tokenslocal, setTokensLocal] = useState<interfaceToken>()
+    const [loginMessage, setLoginMessage] = useState("");
 
-    useEffect(() => {
-        if (localStorage.getItem("GTokens")){
-            setTokensLocal(JSON.parse(localStorage.getItem("GTokens") as string))
-        }   
-    }, [isLoggedIn])
-
-    const handleLoginSuccess = (tokens:any) => {
-        //TODO: securely save them
-        localStorage.setItem("GTokens", JSON.stringify(tokens));
-        setIsLoggedIn(true);
+    const handleLoginSuccess = (response:any) => {
+        setIsLoggedIn(response.success) 
+        setLoginMessage(response.message);
     }
 
     const googleLogin = useGoogleLogin({
@@ -34,10 +19,10 @@ export default function LoginGoogleCalendar() {
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ code: tokenResponse.code }),
+                credentials: 'include',
               })
               .then(response => response.json())
               .then(data => {
-                console.log('Backend response:', data);
                 handleLoginSuccess(data);
               })
               .catch(error => {
@@ -55,23 +40,13 @@ export default function LoginGoogleCalendar() {
         <>
             { !isLoggedIn && 
                 <button 
-                    onClick={() => googleLogin()}
-                >Sign in with Google
+                    className="google-login-button"
+                    onClick={() => googleLogin()}>
+                <Icon src={"./google.svg"} alt={"Connect to Google"} />
+                Connect to Google
                 </button>
             }
+            { loginMessage!== "" && <p>{loginMessage}</p>}
         </>
     )
 }
-
-    // function getCalendar() {
-    //     if (tokenslocal) {
-    //         fetch('http://localhost:8080/google/calendar', {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Authorization': 'Bearer ' + tokenslocal.access_token
-    //             }
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => console.log(data))
-    //     }
-    // } 

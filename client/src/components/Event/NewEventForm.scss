@@ -1,0 +1,58 @@
+@use "../../../styles/variables" as *;
+
+
+.new-event-form {
+    padding: 1.5rem 1.5rem 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: .8rem;
+
+    label {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    input[type="text"], textarea {
+        border-radius: .3rem;
+        padding: .2rem .4rem;
+        border: .1rem solid $light-grey;
+        font-size: .8rem;
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    input[type="datetime-local"] {
+        border-radius: .3rem;
+        padding: 0 .4rem;
+        border: .1rem solid $light-grey;
+        width: fit-content;
+        font-size: .8rem;
+    }
+
+    input[type="color"] {
+        width: 2rem;
+        background-color: $hover-green;
+        padding: .2rem;
+        border: none;
+    }
+
+    .create-new-event-btn {
+        width: fit-content;
+        align-self: center;
+        border: .1rem solid $medium-grey;
+        color: $black;
+        background-color: $primary-grey;
+        padding: 0 .4rem;
+        display: flex;
+        gap: .5rem;
+        &:hover {
+            background-color: $hover-green;
+            border-color: $primary-green;
+        }
+    }
+}

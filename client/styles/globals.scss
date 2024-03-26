@@ -1,23 +1,27 @@
 @use "./variables" as var;
-@use "../pages/components/Button/Button.scss";
-@use "../pages/components/Menu/Menu.scss";
-@use "../pages/components/Panel/ApplicationPanel.scss";
-@use "../pages/components/Tabs/Tab.scss";
-@use "../pages/components/ToggleSwitch/ToggleSwitch.scss";
-@use "../pages/components/Layout/Layout.scss";
-@use "../pages/components/Modal/PromptModal/PromptModal.scss";
-@use "../pages/components/Modal/EditModal/EditListModal.scss";
-@use "../pages/components/Modal/EditModal/EditTaskModal.scss";
+@use "../src/components/Button/Button.scss";
+@use "../src/components/Menu/Menu.scss";
+@use "../src/components/Menu/CalendarMenu.scss";
+@use "../src/components/Panel/ApplicationPanel.scss";
+@use "../src/components/Tabs/Tab.scss";
+@use "../src/components/ToggleSwitch/ToggleSwitch.scss";
+@use "../src/components/Layout/Layout.scss";
+@use "../src/components/Modal/PromptModal/PromptModal.scss";
+@use "../src/components/Modal/EditModal/EditListModal.scss";
+@use "../src/components/Modal/EditModal/EditTaskModal.scss";
 @use "../pages/calendar/calendar.scss";
 @use "../pages/board/board.scss";
 @use "../pages/list/list.scss";
 @use "../pages/tidier/tidier.scss";
 @use "../pages/settings/settings.scss";
-@use "../pages/components/Form/NewEventForm/NewEventForm.scss";
-@use "../pages/components/SearchBar/SearchBar.scss";
-@use "../pages/components/ComboBox/ComboBox.scss";
-@use "../pages/components/Form/NewTaskForm/NewTaskForm.scss";
-@use "../pages/components/DifficultyRate/DifficultyRate.scss";
+@use "../src/components/SearchBar/SearchBar.scss";
+@use "../src/components/ComboBox/CheckableComboBox.scss";
+@use "../src/components/ComboBox/ComboBox.scss";
+@use "../src/components/Form/NewTaskForm/NewTaskForm.scss";
+@use "../src/components/DifficultyRate/DifficultyRate.scss";
+@use "../src/components/Login/GoogleCalendarLogin.scss";
+@use "../src/components/Event/NewEventForm.scss";
+@use "../src/components/Modal/EditModal/EditEventModal.scss";
 
 
 @font-face {
@@ -34,4 +38,5 @@
     font-family: 'Primaria';
     margin: 0px;
     padding: 0px;
+    font-weight: 400;
 }
