@@ -30,18 +30,21 @@ const defaultContext: IEventContext={
           desc: "una pequeña descripcion",
           title: "Comida con Manolo2",
           eventId: uuid(),
+          color: "#3E5B41"
         },
         {start: new Date("2024-02-18T20:00:00"), 
           end: new Date("2024-02-18T21:00:00"),
           desc: "una pequeña descripcion",
           title: "Comida con Manolo4",
           eventId: uuid(),
+          color: "#3E5B41"
         },
         {start: new Date("2024-02-18T18:00:00"), 
           end: new Date("2024-02-18T19:00:00"),
           desc: "una pequeña descripcion",
           title: "Comida con Manolo3",
           eventId: uuid(),
+          color: "#3E5B41"
         }
     ],
     selectedEventId: "",

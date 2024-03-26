@@ -76,3 +76,10 @@ div.rbc-event {
 div.rbc-event.rbc-selected {
     background-color: var.$primary-green;
 }
+
+.rbc-agenda-content {
+    tr {
+        color: var.$black;
+        background-color: transparent;
+    }
+}

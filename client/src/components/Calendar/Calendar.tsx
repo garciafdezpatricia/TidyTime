@@ -19,11 +19,12 @@ const components = {
   }
 }
 
-const eventStyleGetter = (event:any) => {
+const eventStyleGetter = (event:any, view:any) => {
   const style = {
     backgroundColor: event.color, 
-    borderColor: event.color, // Opcional: también puedes cambiar el color del borde si lo deseas
+    borderColor: 'white', // Opcional: también puedes cambiar el color del borde si lo deseas
     color: 'white',
+    cursor: 'pointer',
   };
   return {
     style: style
@@ -46,6 +47,7 @@ export default function CalendarComponent() {
   const { events, setEvents, selectedEventId, setSelectedEventId } = useEventContext()
   const [isOpenNewEventModal, setOpenNewEventModal] = useState(false);
   const [isOpenEditEventModal, setOpenEditEventModal] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("");
   const titleRef = useRef(null);
   const infoRef = useRef(null);
   const fromDateRef = useRef(null);
@@ -62,8 +64,6 @@ export default function CalendarComponent() {
   const handleSelectEvent = ({eventId} : {eventId:string}) => {
     setOpenEditEventModal(true);
     setSelectedEventId(eventId);
-    // TODO: get values from modal and update events
-    // setEvents((prev) => [...prev, {start, end, title}])
   }
 
   function areFieldsCompleted(title:string, from:string, to:string) {
@@ -87,18 +87,25 @@ export default function CalendarComponent() {
   }
 
   const handleCreateEvent = () => {
-    createEvent();
-    setOpenNewEventModal(false);
+    if (createEvent()) {
+      setOpenNewEventModal(false);
+    }
   }
+
+  const handleColorChange = (color:string) => {
+    setSelectedColor(color);
+}
 
   const createEvent = () => {    
     // @ts-ignore
     const title = titleRef.current.value; const info = infoRef.current.value; const from = fromDateRef.current.value; const to = toDateRef.current.value;
     if (areFieldsCompleted(title, from, to)) {
       setEvents((prev) => 
-        [...prev, {start: new Date(from), end: new Date(to), title: title, desc: info, eventId: uuid()}]
+        [...prev, {start: new Date(from), end: new Date(to), title: title, desc: info, eventId: uuid(), color: selectedColor}]
       );
+      return true;
     }
+    return false;
   }
 
 /* Para poner los botones de la cabecera en español, pasar el const messages como prop de Calendar
@@ -139,12 +146,13 @@ export default function CalendarComponent() {
             backdrop={false} 
             variant="shadow-modal">
             <NewEventForm 
-              startDate={newEvent?.start} 
-              endDate={newEvent?.end} 
-              titleRef={titleRef} 
-              infoRef={infoRef} 
-              fromDateRef={fromDateRef} 
-              toDateRef={toDateRef} />
+              startDate={newEvent?.start}
+              endDate={newEvent?.end}
+              titleRef={titleRef}
+              infoRef={infoRef}
+              fromDateRef={fromDateRef}
+              toDateRef={toDateRef} 
+              onColorChange={handleColorChange} />
         </PromptModal>
       )
     }

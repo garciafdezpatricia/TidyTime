@@ -23,7 +23,7 @@ export default function Calendar() {
             <LoginGoogleCalendar />
         </article>
         {
-            menuOpened && <CalendarMenu />     
+            menuOpened && <CalendarMenu onClose={() => setMenuOpened(false)}/>     
         }
         <CalendarComponent/>
     </div>)
