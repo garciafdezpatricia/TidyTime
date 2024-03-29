@@ -10,6 +10,7 @@ const session = require('express-session');
 const getUserEmail = require('./googleAuth/googleHelpers');
 const {saveTokensToDB, emailExistsInDB, getTokensFromDB} = require('./dbconnection/db-connection');
 const mongoose = require('mongoose');
+const {google} = require('googleapis');
 
 // APPLICATION CONFIGURATIONS
 const app = express();
@@ -39,6 +40,25 @@ app.use(session({
 
 const mongoUri = process.env.MONGO_URI;
 
+const oauth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_OAUTH_CLIENT_ID,
+  process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+  process.env.GOOGLE_OAUTH_REDIRECT_URI
+);
+
+const scopes = [
+  'https://www.googleapis.com/auth/calendar',
+  'openid',
+  'https://www.googleapis.com/auth/userinfo.profile', 
+  'https://www.googleapis.com/auth/userinfo.email'
+]
+
+const authorizationUrl = oauth2Client.generateAuthUrl({
+  access_type: 'offline',
+  scope: scopes,
+  include_granted_scopes: true
+});
+
 mongoose.connect(mongoUri)
 .then(console.log("Succesfully connected to MongoDB"));
 
@@ -48,6 +68,19 @@ app.listen(PORT, () => {
 
 // ######### ROUTES #########
 // -> GOOGLE
+
+app.get('/auth/google/callback', async (req, res) => {
+  const { tokens } = await oauth2Client.getToken(req.query.code);
+  oauth2Client.setCredentials(tokens);
+  console.log('credenciales seteadas');
+  res.redirect('http://localhost:3000/calendar');
+});
+
+app.get('/auth/google/url', (req, res) => {
+  res.json({authorizationUrl});
+})
+
+
 /**
  * Handle google authentication using oauth2.0. 
  */
@@ -107,30 +140,57 @@ app.post("/api/auth/google", (req, res) => {
 /**
  * Handler for getting resources from the google calendar API.
  */
-app.get("/google/events", async function (req, res) {
-  const tokens = await getTokensFromDB(req.session.userEmail);
-  // need to pass the access_token in this way (?)
-  fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?access_token=' + tokens.access_token, {
-      method: 'GET',
-  })
-  .then(response => response.json())
-  .then(data => {
-    const events = data.items.map(item => {
-      const start = moment(item.start.dateTime).tz(item.start.timeZone);
-      const end = moment(item.end.dateTime).tz(item.end.timeZone);
+app.get("/google/events", async function (req, response) {
+  const calendar = google.calendar({version: 'v3', auth: oauth2Client});
+  calendar.events.list(
+    {
+      calendarId: 'primary',
+    },
+    (err, res) => {
+      if (err) return console.error('Error al buscar eventos:', err);
+      const retrievedEvents = res.data.items;
+      if (retrievedEvents.length) {
+        const events = retrievedEvents.map((event, i) => {
+          const start = moment(event.start.dateTime).tz(event.start.timeZone);
+          const end = moment(event.end.dateTime).tz(event.end.timeZone);
+          return {
+            start: start,
+            end: end,
+            title: event.summary,
+            desc: event.description,
+            eventId: uuidv4(),
+            color: '#3E5B41',
+            googleId: event.id,
+            googleHTML: event.htmlLink,
+          };
+        });
+        response.json(events);
+      } else {
+        console.log('No hay eventos');
+      }
+    }
+  );
+});
 
-      return {
-        start: start,
-        end: end,
-        title: item.summary,
-        desc: item.description,
-        eventId: uuidv4(),
-        color: '#3E5B41'
-      };
-    });
-    
-    console.log(events);
-    res.json(events);
+app.post('/google/event/update', async function(req, response) {
+  const calendar = google.calendar({version: 'v3', auth: oauth2Client});
+  console.log(req.body.start);
+  calendar.events.update({
+    calendarId: 'primary',
+    eventId: req.body.iCalUID,
+    requestBody: {
+      summary: req.body.title,
+      description: req.body.desc,
+      start: {dateTime: new Date(req.body.start).toISOString()},
+      end: {dateTime: new Date(req.body.end).toISOString()}
+    }
+  },
+  (err, res) => {
+    if (err) {
+      console.error('Error al actualizar el evento:', err);
+      return;
+    }
+    console.log('Evento actualizado:', res.data);
   });
 })
 

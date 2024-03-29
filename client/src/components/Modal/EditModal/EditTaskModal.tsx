@@ -4,7 +4,7 @@ import DifficultyRate from "../../DifficultyRate/DifficultyRate";
 import Toggle from "../../ToggleSwitch/ToggleSwitch";
 import CheckableComboBox from "../../ComboBox/CheckableComboBox";
 import { useEffect, useState } from "react";
-import { Label, Task } from "@/src/task/Task";
+import { Label, Task } from "@/src/task/Scheme";
 
 export interface Props {
     taskIndex: number,

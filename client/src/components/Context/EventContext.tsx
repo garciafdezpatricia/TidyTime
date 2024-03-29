@@ -1,8 +1,6 @@
 import { ReactNode, createContext, useContext, useState } from "react";
-import { Event } from "../Calendar/Calendar";
-import { events } from "@inrupt/solid-client-authn-browser";
+import { Event } from "@/src/task/Scheme";
 import { uuid } from "uuidv4";
-import { ITaskContext } from "./TaskContext";
 
 /**
  * Interface for the task context of the application.

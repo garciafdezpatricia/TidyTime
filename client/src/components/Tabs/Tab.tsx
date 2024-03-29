@@ -7,7 +7,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { BiAddToQueue } from "react-icons/bi";
 import { useTaskContext } from "../Context/TaskContext";
 import EditTaskModal from "../Modal/EditModal/EditTaskModal";
-import { TaskList } from "@/src/task/Task";
+import { TaskList } from "@/src/task/Scheme";
 import { MdEdit } from "react-icons/md";
 import { GrStar } from "react-icons/gr";
 import { IoIosTimer } from "react-icons/io";

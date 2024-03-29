@@ -3,6 +3,7 @@ import { login, handleIncomingRedirect, getDefaultSession, Session, fetch } from
 import { getPodUrlAll } from '@inrupt/solid-client';
 import GitHub from '../src/components/Auth/GitHubAuth';
 import { MenuSideBar } from '../src/components/Menu/Menu';
+import LoginGoogleCalendar from '@/src/components/Login/GoogleCalendarLogin';
 
 export default function Prueba() {
   

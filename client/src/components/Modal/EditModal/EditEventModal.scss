@@ -28,7 +28,11 @@
         width: fit-content;
         margin-left: auto;
 
-        button {
+        a {
+            display: flex;
+        }
+
+        button, a {
             border: none;
             width: fit-content;
             height: fit-content;

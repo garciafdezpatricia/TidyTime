@@ -9,12 +9,15 @@ export interface Task {
 }
 
 export interface Event {
+    start: Date,
+    end: Date,
     title: string,
-    color: string,
-    initDate?: string,
-    endDate?: string,
-    notes?: string,
-}
+    desc: string,
+    eventId: string,
+    color?: string,
+    googleId?: string,
+    googleHTML?: string,
+  }
 
 export interface Label {
     color: string,

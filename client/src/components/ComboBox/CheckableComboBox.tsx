@@ -1,4 +1,4 @@
-import { Label } from "@/src/task/Task";
+import { Label } from "@/src/task/Scheme";
 import { useContext, useState } from "react";
 import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { useTaskContext } from "../Context/TaskContext";

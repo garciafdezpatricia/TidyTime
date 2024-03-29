@@ -6,7 +6,7 @@ import { Icon } from "../Icon/Icon";
 import NewEventForm from "../Event/NewEventForm";
 import { useEventContext } from "../Context/EventContext";
 import { uuid } from "uuidv4";
-import { Event } from "../Calendar/Calendar";
+import { Event } from "@/src/task/Scheme";
 
 export interface Props {
     onClose: (arg?:any) => void | any;

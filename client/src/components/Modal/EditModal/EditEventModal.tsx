@@ -4,8 +4,9 @@ import { GrShareOption } from "react-icons/gr";
 import ComboBox from "@/src/components/ComboBox/ComboBox";
 import { IoMdClose } from "react-icons/io";
 import { MdOutlineDone } from "react-icons/md";
+import { TbEyeShare } from "react-icons/tb";
 import { useEventContext } from "@/src/components/Context/EventContext";
-import { Event } from "@/src/components/Calendar/Calendar";
+import { Event } from "@/src/task/Scheme";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -21,6 +22,9 @@ export default function EditEventModal({onClose, onShare} : Props) {
     const [newStartDate, setNewStartDate] = useState("");
     const [newEndDate, setNewEndDate] = useState("");
     const [color, setNewColor] = useState("");
+    const [isGoogleEvent, setIsGoogleEvent] = useState(false);
+    const [googleId, setGoogleId] = useState("");
+    const [googleHtml, setGoogleHtml] = useState("");
 
     useEffect(() => {
         events.map((event, index) => {
@@ -33,6 +37,11 @@ export default function EditEventModal({onClose, onShare} : Props) {
                 setNewStartDate(startDate);
                 setNewEndDate(endDate);
                 setNewColor(event.color ? event.color : "");
+                if (event.googleId){
+                    setIsGoogleEvent(true);
+                    setGoogleId(event.googleId);
+                    setGoogleHtml(event.googleHTML ?? "");
+                }
                 return;
             }
         })
@@ -50,6 +59,29 @@ export default function EditEventModal({onClose, onShare} : Props) {
             ...events.slice(selectedIndex + 1)
         ];
         setEvents(updatedEvents);
+        if (isGoogleEvent) {
+            fetch('http://localhost:8080/google/event/update', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    iCalUID: googleId,
+                    start: eventToUpdate.start,
+                    end: eventToUpdate.end,
+                    title: eventToUpdate.title,
+                    desc: eventToUpdate.desc,                     
+                }),
+                credentials: 'include',
+              })
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+        }
         onClose();
     }
 
@@ -75,6 +107,11 @@ export default function EditEventModal({onClose, onShare} : Props) {
     return (
         <article className="edit-event-article">
             <section className="edit-event-header">
+                {isGoogleEvent && 
+                    <a title="See in Google" href={googleHtml} target="_blank" rel="noopener noreferrer">
+                        <TbEyeShare color="#363535" size={"1.2rem"} />
+                    </a>
+                }
                 <button title="Save" onClick={() => onSave()}>
                     <MdOutlineDone color="#363535" size={"1.2rem"} />
                 </button>
