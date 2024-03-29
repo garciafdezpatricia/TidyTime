@@ -4,6 +4,7 @@ const cors = require("cors");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const bp = require("body-parser");
 const uuidv4 = require("uuid").v4;
+const moment = require('moment-timezone');
 const { Session } = require("@inrupt/solid-client-authn-node");
 const session = require('express-session');
 const getUserEmail = require('./googleAuth/googleHelpers');
@@ -76,7 +77,6 @@ app.post("/api/auth/google", (req, res) => {
     getUserEmail(tokens)
     .then(userEmail => {
       req.session.userEmail = userEmail; // save email in cookie
-      console.log("Sesion cookie", req.session);
       emailExistsInDB(userEmail)
       .then(exists => {
         if (!exists){
@@ -114,7 +114,24 @@ app.get("/google/events", async function (req, res) {
       method: 'GET',
   })
   .then(response => response.json())
-  .then(data => {console.log(data); res.json(data)})
+  .then(data => {
+    const events = data.items.map(item => {
+      const start = moment(item.start.dateTime).tz(item.start.timeZone);
+      const end = moment(item.end.dateTime).tz(item.end.timeZone);
+
+      return {
+        start: start,
+        end: end,
+        title: item.summary,
+        desc: item.description,
+        eventId: uuidv4(),
+        color: '#3E5B41'
+      };
+    });
+    
+    console.log(events);
+    res.json(events);
+  });
 })
 
 // -> GITHUB

@@ -36,7 +36,7 @@ export default function NewEventForm({startDate, endDate, titleRef, infoRef, fro
                 text={"Color:"}
                 colors={["#e13535", "#d37373", "#ffa500", "#3E5B41", "#3bb4ff"]}
                 checkedOption={""}   
-                 onOptionChange={handleOptionChange} 
+                onOptionChange={handleOptionChange} 
             />
         </article>
     )

@@ -6,6 +6,7 @@ import { Icon } from "../Icon/Icon";
 import NewEventForm from "../Event/NewEventForm";
 import { useEventContext } from "../Context/EventContext";
 import { uuid } from "uuidv4";
+import { Event } from "../Calendar/Calendar";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -69,9 +70,19 @@ export default function CalendarMenu({onClose} : Props) {
 
     const getEvents = () => {
         fetch('http://localhost:8080/google/events', {
-            method: 'GET',
-            credentials: 'include',
-        }).then(response => response.json());
+        method: 'GET',
+        credentials: 'include',
+        })
+        .then(response => response.json()) // Convertir la respuesta en un objeto JavaScript
+        .then(data => {
+            data.map((event:Event) => {
+                event.start = new Date(event.start); 
+                event.end = new Date(event.end);
+                console.log(event);
+            })
+            setEvents((prev) => [...prev, ...data]);
+        })
+        .catch(error => console.error('Error:', error)); // Manejar cualquier error
     }
 
     return (

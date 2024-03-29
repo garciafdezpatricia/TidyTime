@@ -115,7 +115,7 @@ export default function EditEventModal({onClose, onShare} : Props) {
             />
             <div className="edit-event-color">
                 <ComboBox
-                    onChange={handleColorChange}
+                    onOptionChange={handleColorChange}
                     text={"Color:"} 
                     colors={["#e13535", "#d37373", "#ffa500", "#3E5B41", "#3bb4ff"]}
                     checkedOption={ color !== "" ? color : "#3E5B41"} 
