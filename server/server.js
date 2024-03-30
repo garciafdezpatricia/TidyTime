@@ -151,8 +151,8 @@ app.get("/google/events", async function (req, response) {
       const retrievedEvents = res.data.items;
       if (retrievedEvents.length) {
         const events = retrievedEvents.map((event, i) => {
-          const start = moment(event.start.dateTime).tz(event.start.timeZone);
-          const end = moment(event.end.dateTime).tz(event.end.timeZone);
+          const start = moment(event.start.dateTime).tz(event.start.timeZone).utc();
+          const end = moment(event.end.dateTime).tz(event.end.timeZone).utc();
           return {
             start: start,
             end: end,

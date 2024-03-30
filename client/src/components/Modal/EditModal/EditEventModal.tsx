@@ -13,9 +13,10 @@ export interface Props {
     onShare?: (arg?:any) => void | any;
 }
 
-
 export default function EditEventModal({onClose, onShare} : Props) {
-    const {setEvents, setSelectedEventId, events, selectedEventId } = useEventContext();
+    // event context utils
+    const {setEvents, events, selectedEventId } = useEventContext();
+
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [newTitle, setNewTitle] = useState("");
     const [newDesc, setNewDesc] = useState("");
@@ -26,6 +27,9 @@ export default function EditEventModal({onClose, onShare} : Props) {
     const [googleId, setGoogleId] = useState("");
     const [googleHtml, setGoogleHtml] = useState("");
 
+    /**
+     * Set the selected event data to correspondent states.
+     */
     useEffect(() => {
         events.map((event, index) => {
             if (event.eventId === selectedEventId) {
@@ -47,62 +51,151 @@ export default function EditEventModal({onClose, onShare} : Props) {
         })
     }, []);
 
+    /**
+     * Auxiliary function to compare original values of the event with the ones present when the saving-event action is triggered. 
+     * @param eventToUpdate contains the event to be updated
+     * @returns object with the values that have changed.
+     */
+    const checkChangedValues = (eventToUpdate: Event) => {
+        // if any value is different from the original one, set the key of the changedValues
+        // object to that new value.
+        const changedValues = {title: "", desc: "", start: "", end: "", color: ""};
+        if (eventToUpdate.title !== newTitle) {
+            changedValues.title = newTitle;
+        }
+        if (eventToUpdate.desc !== newDesc) {
+            changedValues.desc = newDesc;
+        }
+        // format date to YYYY-MM-DDThh:mm:ss in correct time zone
+        const startDate = new Date(eventToUpdate.start.getTime() - (eventToUpdate.start.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        const endDate = new Date(eventToUpdate.end.getTime() - (eventToUpdate.end.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+
+        if (startDate !== newStartDate) {
+            changedValues.start = newStartDate;
+        }
+        if (endDate !== newEndDate) {
+            changedValues.end = newEndDate;
+        }
+        if (eventToUpdate.color !== color) {
+            changedValues.color = color;
+        }
+        // check if changedValues has any new value
+        const allValuesEmpty = Object.values(changedValues).every(value => value === "");
+        // return null if changedValues does not have any new value
+        return allValuesEmpty ? null : changedValues;
+    }
+
+    /**
+     * Only need to update google event if title, desc, start date or end date changed. If any of those changed, not necessary to update the google event.
+     * @param valuesToChange 
+     * @returns true if the google update is needed. False otherwise.
+     */
+    const needToUpdateGoogle = (valuesToChange:{title: string, desc: string, start: string, end: string, color: string}) => {
+        // color changes do not have an influence on google update
+        return valuesToChange.title !== "" || valuesToChange.desc !== "" || valuesToChange.start !== "" || valuesToChange.end !== "";
+
+    }
+
+    /**
+     * Updates event based on the values that changed
+     * @param event the event to be updated
+     * @param valuesToChange the values of the event that need to be updated
+     */
+    const updateEvent = (event:Event, valuesToChange:{title: string, desc: string, start: string, end: string, color: string}) => {
+        if (valuesToChange.title !== "") {
+            event.title = valuesToChange.title;
+        }
+        if (valuesToChange.desc !== "") {
+            event.desc = valuesToChange.desc;
+        }
+        if (valuesToChange.start !== "") {
+            event.start = new Date(valuesToChange.start);
+        }
+        if (valuesToChange.end !== "") {
+            event.end = new Date(valuesToChange.end);
+        }
+        if (valuesToChange.color !== "") {
+            event.color = valuesToChange.color;
+        }
+    }
+
+    /**
+     * Update event on Google Calendar through API call.
+     * @param eventToUpdate the event to be updated 
+     */
+    const updateEventOnGoogle = (eventToUpdate:Event) => {
+        // format date to google format
+        const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
+        const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
+
+        fetch('http://localhost:8080/google/event/update', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                id: googleId,
+                start: ISOStartDate,
+                end: ISOEndDate,
+                title: eventToUpdate.title,
+                desc: eventToUpdate.desc,                     
+            }),
+            credentials: 'include',
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    /**
+     * Save changes made to the event.
+     */
     const onSave = () => {
+        // get event to be saved
         let updatedEvents = [...events];
         const eventToUpdate = events[selectedIndex];
-        
-        updateEvent(eventToUpdate);
-        
-        updatedEvents = [
-            ...events.slice(0, selectedIndex),
-            eventToUpdate,
-            ...events.slice(selectedIndex + 1)
-        ];
-        setEvents(updatedEvents);
-        if (isGoogleEvent) {
-            const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
-            const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
-            fetch('http://localhost:8080/google/event/update', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    id: googleId,
-                    start: ISOStartDate,
-                    end: ISOEndDate,
-                    title: eventToUpdate.title,
-                    desc: eventToUpdate.desc,                     
-                }),
-                credentials: 'include',
-              })
-              .then(response => response.json())
-              .then(data => {
-                console.log(data);
-              })
-              .catch(error => {
-                console.error('Error:', error);
-              });
+        // check which information changed
+        const changedValues = checkChangedValues(eventToUpdate);
+        if (changedValues) {
+            // save correspondent information
+            updateEvent(eventToUpdate, changedValues);
+            updatedEvents = [
+                ...events.slice(0, selectedIndex),
+                eventToUpdate,
+                ...events.slice(selectedIndex + 1)
+            ];
+            setEvents(updatedEvents);
+            // google flow
+            if (isGoogleEvent) {
+                if (needToUpdateGoogle(changedValues)) {
+                    updateEventOnGoogle(eventToUpdate);
+                }
+            }
         }
+        // close edit modal
         onClose();
     }
 
-    const updateEvent = (event:Event) => {
-        event.color = color;
-        event.start = new Date(newStartDate);
-        event.end = new Date(newEndDate);
-        event.title = newTitle;
-        event.desc = newDesc;
-    }
-
+    /**
+     * Handler for color changes.
+     * @param newColor new color of the event.
+     */
     const handleColorChange = (newColor:string) => {
         setNewColor(newColor);
     }
 
+    /**
+     * Deletes the event from the set of events.
+     */
     const onDelete = () => {
         setEvents((prevEvents) => {
 			return prevEvents.filter((_, i) => i !== selectedIndex);
 		});
+        // close edit modal
         onClose();
     }
 

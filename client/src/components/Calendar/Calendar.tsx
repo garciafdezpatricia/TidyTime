@@ -23,7 +23,7 @@ const components = {
 const eventStyleGetter = (event:any, view:any) => {
   const style = {
     backgroundColor: event.color, 
-    borderColor: 'white', // Opcional: también puedes cambiar el color del borde si lo deseas
+    borderColor: 'white',
     color: 'white',
     cursor: 'pointer',
   };
