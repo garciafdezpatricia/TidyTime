@@ -177,12 +177,12 @@ app.post('/google/event/update', async function(req, response) {
   console.log(req.body.start);
   calendar.events.update({
     calendarId: 'primary',
-    eventId: req.body.iCalUID,
+    eventId: req.body.id,
     requestBody: {
       summary: req.body.title,
       description: req.body.desc,
-      start: {dateTime: new Date(req.body.start).toISOString()},
-      end: {dateTime: new Date(req.body.end).toISOString()}
+      start: {dateTime: req.body.start},
+      end: {dateTime: req.body.end}
     }
   },
   (err, res) => {

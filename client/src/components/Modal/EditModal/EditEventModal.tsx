@@ -60,15 +60,17 @@ export default function EditEventModal({onClose, onShare} : Props) {
         ];
         setEvents(updatedEvents);
         if (isGoogleEvent) {
+            const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
+            const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
             fetch('http://localhost:8080/google/event/update', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ 
-                    iCalUID: googleId,
-                    start: eventToUpdate.start,
-                    end: eventToUpdate.end,
+                    id: googleId,
+                    start: ISOStartDate,
+                    end: ISOEndDate,
                     title: eventToUpdate.title,
                     desc: eventToUpdate.desc,                     
                 }),
