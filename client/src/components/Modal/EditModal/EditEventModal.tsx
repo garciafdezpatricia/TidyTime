@@ -7,13 +7,13 @@ import { MdOutlineDone } from "react-icons/md";
 import { TbEyeShare } from "react-icons/tb";
 import { useEventContext } from "@/src/components/Context/EventContext";
 import { Event } from "@/src/task/Scheme";
+import { useClickAway } from "@uidotdev/usehooks";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
-    onShare?: (arg?:any) => void | any;
 }
 
-export default function EditEventModal({onClose, onShare} : Props) {
+export default function EditEventModal({onClose} : Props) {
     // event context utils
     const {setEvents, events, selectedEventId } = useEventContext();
 
@@ -26,6 +26,10 @@ export default function EditEventModal({onClose, onShare} : Props) {
     const [isGoogleEvent, setIsGoogleEvent] = useState(false);
     const [googleId, setGoogleId] = useState("");
     const [googleHtml, setGoogleHtml] = useState("");
+
+    const ref = useClickAway(() => {
+        onClose();
+    })
 
     /**
      * Set the selected event data to correspondent states.
@@ -86,7 +90,7 @@ export default function EditEventModal({onClose, onShare} : Props) {
     }
 
     /**
-     * Only need to update google event if title, desc, start date or end date changed. If any of those changed, not necessary to update the google event.
+     * Only need to update google event if title, desc, start date or end date changed.
      * @param valuesToChange 
      * @returns true if the google update is needed. False otherwise.
      */
@@ -128,7 +132,7 @@ export default function EditEventModal({onClose, onShare} : Props) {
         const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
         const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
 
-        fetch('http://localhost:8080/google/event/update', {
+        fetch('http://localhost:8080/google/events/update', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -199,8 +203,59 @@ export default function EditEventModal({onClose, onShare} : Props) {
         onClose();
     }
 
+    /**
+     * Exports event to Google Calendar.
+     */
+    const onShare = () => {
+        const eventToShare = events[selectedIndex];
+        // format date to google format
+        const ISOStartDate = new Date(new Date(eventToShare.start).getTime() - (new Date(eventToShare.start).getTimezoneOffset() * 60000)).toISOString();
+        const ISOEndDate = new Date(new Date(eventToShare.end).getTime() - (new Date(eventToShare.end).getTimezoneOffset() * 60000)).toISOString();
+        fetch('http://localhost:8080/google/events/insert', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                start: ISOStartDate,
+                end: ISOEndDate,
+                title: eventToShare.title,
+                desc: eventToShare.desc,                     
+            }),
+            credentials: 'include',
+        })
+        .then(response => response.json())
+        .then(data => {
+            addGoogleInformation(data.googleId, data.googleHTML);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    /**
+     * Auxiliary function to add google id and google html link to the event.
+     * @param googleId contains event id on google
+     * @param googleHTML contains the link to the event
+     */
+    const addGoogleInformation = (googleId:string, googleHTML:string) => {
+        // update event with google id and html
+        let updatedEvents = [...events];
+        let eventToUpdate = events[selectedIndex];
+        eventToUpdate.googleId = googleId;
+        eventToUpdate.googleHTML = googleHTML;
+        updatedEvents = [
+            ...events.slice(0, selectedIndex),
+            eventToUpdate,
+            ...events.slice(selectedIndex + 1)
+        ];
+        setEvents(updatedEvents);
+        onClose();
+    }
+
     return (
-        <article className="edit-event-article">
+        // @ts-ignore
+        <article ref={ref} className="edit-event-article">
             <section className="edit-event-header">
                 {isGoogleEvent && 
                     <a title="See in Google" href={googleHtml} target="_blank" rel="noopener noreferrer">
@@ -213,9 +268,11 @@ export default function EditEventModal({onClose, onShare} : Props) {
                 <button title="Delete" onClick={() => onDelete()}>
                     <RiDeleteBin6Line color="#363535" size={"1.1rem"} />
                 </button>
-                <button title="Share" onClick={() => onShare}>
-                    <GrShareOption color="#363535" size={"1.1rem"} />
-                </button>
+                { !isGoogleEvent &&
+                    <button title="Share" onClick={() => onShare()}>
+                        <GrShareOption color="#363535" size={"1.1rem"} />
+                    </button>
+                }
                 <button className="edit-event-close-btn" onClick={() => onClose()}>
                     <IoMdClose size={"1.2rem"} />
                 </button>

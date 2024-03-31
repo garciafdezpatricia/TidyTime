@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { MutableRefObject, useRef, useState } from "react";
 import { BsCalendarEventFill } from "react-icons/bs";
 import { FaCheck, FaRegCalendarPlus } from "react-icons/fa";
 import { SiGooglecalendar } from "react-icons/si";
@@ -7,6 +7,7 @@ import NewEventForm from "../Event/NewEventForm";
 import { useEventContext } from "../Context/EventContext";
 import { uuid } from "uuidv4";
 import { Event } from "@/src/task/Scheme";
+import { useClickAway } from "@uidotdev/usehooks";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -22,6 +23,9 @@ export default function CalendarMenu({onClose} : Props) {
     const infoRef = useRef(null);
     const fromDateRef = useRef(null);
     const toDateRef = useRef(null);
+    const ref = useClickAway(() => {
+        onClose();
+    })
 
     /**
      * Auxiliary function to check if the required fields to create the event are filled 
@@ -90,7 +94,7 @@ export default function CalendarMenu({onClose} : Props) {
      * Makes a call to the API which responds with a list of events.
      */
     const getGoogleCalendarEvents = () => {
-        fetch('http://localhost:8080/google/events', {
+        fetch('http://localhost:8080/google/events/get', {
         method: 'GET',
         credentials: 'include',
         })
@@ -109,7 +113,8 @@ export default function CalendarMenu({onClose} : Props) {
     }
 
     return (
-        <article className="calendar-menu-popup">
+        // @ts-ignore
+        <article ref={ref} className="calendar-menu-popup">
             <section className="calendar-menu-events">
                 <h3>Add event</h3>
                 <hr/>

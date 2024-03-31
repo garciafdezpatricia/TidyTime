@@ -188,6 +188,7 @@ export default function Tab() {
 									onDeleteAction={() => setConfirmationDeleteModalOpen(true)}
 									onRenameAction={renameTab}
 									onInputChange={handleInputChange}
+									onClose={() => setManagingListIndex(-1)}
 								/>
 							)}
 						</div>

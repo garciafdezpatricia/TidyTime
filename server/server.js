@@ -4,25 +4,23 @@ const cors = require("cors");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const bp = require("body-parser");
 const uuidv4 = require("uuid").v4;
-const moment = require('moment-timezone');
 const { Session } = require("@inrupt/solid-client-authn-node");
 const session = require('express-session');
-const getUserEmail = require('./googleAuth/googleHelpers');
-const {saveTokensToDB, emailExistsInDB, getTokensFromDB} = require('./dbconnection/db-connection');
 const mongoose = require('mongoose');
-const {google} = require('googleapis');
 
-// APPLICATION CONFIGURATIONS
+// ============== APPLICATION CONFIGURATIONS ==========
 const app = express();
 const PORT = 8080;
+const mongoUri = process.env.MONGO_URI;
 
+// ============== APPLICATION MODULES ================
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
 }));
-app.use(bp.json()); // allows send data to our express routes in a JSON format
 
-// session
+app.use(bp.json()); // allows to send data to our express routes in a JSON format
+
 app.use(session({
   name: 'SessionCookie',
   genid: function (req) {
@@ -37,28 +35,6 @@ app.use(session({
   }
 }))
 
-
-const mongoUri = process.env.MONGO_URI;
-
-const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_OAUTH_CLIENT_ID,
-  process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-  process.env.GOOGLE_OAUTH_REDIRECT_URI
-);
-
-const scopes = [
-  'https://www.googleapis.com/auth/calendar',
-  'openid',
-  'https://www.googleapis.com/auth/userinfo.profile', 
-  'https://www.googleapis.com/auth/userinfo.email'
-]
-
-const authorizationUrl = oauth2Client.generateAuthUrl({
-  access_type: 'offline',
-  scope: scopes,
-  include_granted_scopes: true
-});
-
 mongoose.connect(mongoUri)
 .then(console.log("Succesfully connected to MongoDB"));
 
@@ -66,133 +42,11 @@ app.listen(PORT, () => {
   console.log("Server started on port " + PORT);
 });
 
+const googleRouter = require('./routes/google');
+
 // ######### ROUTES #########
 // -> GOOGLE
-
-app.get('/auth/google/callback', async (req, res) => {
-  const { tokens } = await oauth2Client.getToken(req.query.code);
-  oauth2Client.setCredentials(tokens);
-  console.log('credenciales seteadas');
-  res.redirect('http://localhost:3000/calendar');
-});
-
-app.get('/auth/google/url', (req, res) => {
-  res.json({authorizationUrl});
-})
-
-
-/**
- * Handle google authentication using oauth2.0. 
- */
-app.post("/api/auth/google", (req, res) => {
-  const { code } = req.body;
-  const grant_type = "authorization_code";
-  const client_id = process.env.GOOGLE_OAUTH_CLIENT_ID;
-  const client_secret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
-  const redirect_uri = process.env.GOOGLE_OAUTH_REDIRECT_URI;
-  
-  fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-          code,
-          client_id,
-          client_secret,
-          redirect_uri,
-          grant_type,
-      }),
-      credentials: 'include',
-  })
-  .then((response) => response.json())
-  .then((tokens) => {
-    getUserEmail(tokens)
-    .then(userEmail => {
-      req.session.userEmail = userEmail; // save email in cookie
-      emailExistsInDB(userEmail)
-      .then(exists => {
-        if (!exists){
-          saveTokensToDB(userEmail, tokens)
-          .then(response => {
-            res.json({success: true, message: "Succesfully stored user authentication data"});
-          })
-          .catch(err => console.error("Error when saving tokens to the DB", err));
-        } else {
-          res.json({success: true, message: "Succesfully retrieved user authentication data from archives"})
-        }
-
-      })
-      .catch(err => res.json({success: false, message: "Error on checking email"}));
-
-    })
-    .catch(error => {
-      console.error("Error getting email from tokens: ", error);
-    })
-
-  })
-  .catch((error) => {
-    console.error("Token exchange error:", error);
-  });
-
-});
-
-/**
- * Handler for getting resources from the google calendar API.
- */
-app.get("/google/events", async function (req, response) {
-  const calendar = google.calendar({version: 'v3', auth: oauth2Client});
-  calendar.events.list(
-    {
-      calendarId: 'primary',
-    },
-    (err, res) => {
-      if (err) return console.error('Error al buscar eventos:', err);
-      const retrievedEvents = res.data.items;
-      if (retrievedEvents.length) {
-        const events = retrievedEvents.map((event, i) => {
-          const start = moment(event.start.dateTime).tz(event.start.timeZone).utc();
-          const end = moment(event.end.dateTime).tz(event.end.timeZone).utc();
-          return {
-            start: start,
-            end: end,
-            title: event.summary,
-            desc: event.description,
-            eventId: uuidv4(),
-            color: '#3E5B41',
-            googleId: event.id,
-            googleHTML: event.htmlLink,
-          };
-        });
-        response.json(events);
-      } else {
-        console.log('No hay eventos');
-      }
-    }
-  );
-});
-
-app.post('/google/event/update', async function(req, response) {
-  const calendar = google.calendar({version: 'v3', auth: oauth2Client});
-  console.log(req.body.start);
-  calendar.events.update({
-    calendarId: 'primary',
-    eventId: req.body.id,
-    requestBody: {
-      summary: req.body.title,
-      description: req.body.desc,
-      start: {dateTime: req.body.start},
-      end: {dateTime: req.body.end}
-    }
-  },
-  (err, res) => {
-    if (err) {
-      console.error('Error al actualizar el evento:', err);
-      return;
-    }
-    console.log('Evento actualizado:', res.data);
-  });
-})
+app.use(googleRouter);
 
 // -> GITHUB
 /**

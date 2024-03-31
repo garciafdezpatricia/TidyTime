@@ -1,4 +1,3 @@
-import { FaCheck } from "react-icons/fa";
 import ComboBox from "../ComboBox/ComboBox";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
