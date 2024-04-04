@@ -9,12 +9,16 @@ export interface Task {
 }
 
 export interface Event {
+    start: Date,
+    end: Date,
     title: string,
-    color: string,
-    initDate?: string,
-    endDate?: string,
-    notes?: string,
-}
+    desc: string,
+    eventId: string,
+    color?: string,
+    googleId?: string,
+    googleHTML?: string,
+    googleCalendar?: string,
+  }
 
 export interface Label {
     color: string,
@@ -22,3 +26,5 @@ export interface Label {
 }
 
 export type TaskList = Task[];
+
+export interface CalendarItem { id: string, name: string, color: string};

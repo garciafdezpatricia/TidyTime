@@ -6,21 +6,21 @@ const bp = require("body-parser");
 const uuidv4 = require("uuid").v4;
 const { Session } = require("@inrupt/solid-client-authn-node");
 const session = require('express-session');
-const getUserEmail = require('./googleAuth/googleHelpers');
-const {saveTokensToDB, emailExistsInDB, getTokensFromDB} = require('./dbconnection/db-connection');
 const mongoose = require('mongoose');
 
-// APPLICATION CONFIGURATIONS
+// ============== APPLICATION CONFIGURATIONS ==========
 const app = express();
 const PORT = 8080;
+const mongoUri = process.env.MONGO_URI;
 
+// ============== APPLICATION MODULES ================
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
 }));
-app.use(bp.json()); // allows send data to our express routes in a JSON format
 
-// session
+app.use(bp.json()); // allows to send data to our express routes in a JSON format
+
 app.use(session({
   name: 'SessionCookie',
   genid: function (req) {
@@ -35,9 +35,6 @@ app.use(session({
   }
 }))
 
-
-const mongoUri = process.env.MONGO_URI;
-
 mongoose.connect(mongoUri)
 .then(console.log("Succesfully connected to MongoDB"));
 
@@ -45,77 +42,11 @@ app.listen(PORT, () => {
   console.log("Server started on port " + PORT);
 });
 
+const googleRouter = require('./routes/google');
+
 // ######### ROUTES #########
 // -> GOOGLE
-/**
- * Handle google authentication using oauth2.0. 
- */
-app.post("/api/auth/google", (req, res) => {
-  const { code } = req.body;
-  const grant_type = "authorization_code";
-  const client_id = process.env.GOOGLE_OAUTH_CLIENT_ID;
-  const client_secret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
-  const redirect_uri = process.env.GOOGLE_OAUTH_REDIRECT_URI;
-  
-  fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-          code,
-          client_id,
-          client_secret,
-          redirect_uri,
-          grant_type,
-      }),
-      credentials: 'include',
-  })
-  .then((response) => response.json())
-  .then((tokens) => {
-    getUserEmail(tokens)
-    .then(userEmail => {
-      req.session.userEmail = userEmail; // save email in cookie
-      console.log("Sesion cookie", req.session);
-      emailExistsInDB(userEmail)
-      .then(exists => {
-        if (!exists){
-          saveTokensToDB(userEmail, tokens)
-          .then(response => {
-            res.json({success: true, message: "Succesfully stored user authentication data"});
-          })
-          .catch(err => console.error("Error when saving tokens to the DB", err));
-        } else {
-          res.json({success: true, message: "Succesfully retrieved user authentication data from archives"})
-        }
-
-      })
-      .catch(err => res.json({success: false, message: "Error on checking email"}));
-
-    })
-    .catch(error => {
-      console.error("Error getting email from tokens: ", error);
-    })
-
-  })
-  .catch((error) => {
-    console.error("Token exchange error:", error);
-  });
-
-});
-
-/**
- * Handler for getting resources from the google calendar API.
- */
-app.get("/google/events", async function (req, res) {
-  const tokens = await getTokensFromDB(req.session.userEmail);
-  // need to pass the access_token in this way (?)
-  fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?access_token=' + tokens.access_token, {
-      method: 'GET',
-  })
-  .then(response => response.json())
-  .then(data => {console.log(data); res.json(data)})
-})
+app.use(googleRouter);
 
 // -> GITHUB
 /**

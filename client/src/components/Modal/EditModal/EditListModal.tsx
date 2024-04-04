@@ -2,20 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { FaCheck } from "react-icons/fa";
-import PromptModal from "../PromptModal/PromptModal";
+import { useClickAway } from "@uidotdev/usehooks";
 
 export interface Props {
     onRenameAction: (arg?:any) => void | any;
     onDeleteAction: (arg?:any) => void | any;
     onInputChange: (arg?:any) => void | any;
+    onClose: (arg?:any) => void | any;
 }
 
-export default function EditListModal({onRenameAction, onDeleteAction, onInputChange} : Props) {
+export default function EditListModal({onRenameAction, onDeleteAction, onInputChange, onClose} : Props) {
 
     const [showInput, setShowInput] = useState(false);
     const [isButtonDisabled, setDisabled] = useState(false);
     const [newName, setNewName] = useState("")
     const nameInput = useRef(null);
+
+    const ref = useClickAway(() => {
+        onClose();
+    })
 
     const handleRename = () => {
         onRenameAction();
@@ -36,7 +41,8 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
     }, [newName])
 
     return (
-            <div className="edit-modal">
+        // @ts-ignore
+            <div ref={ref} className="edit-modal">
                 <section className="rename-section">
                     <button 
                         onClick={() => setShowInput(!showInput)} 

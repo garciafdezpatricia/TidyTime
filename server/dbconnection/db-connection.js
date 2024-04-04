@@ -36,7 +36,7 @@ async function getTokensFromDB(userEmail) {
   
     // check if email exists on db
     const user = await collection.findOne({email: userEmail});
-    return user.tokens;
+    return user ? user.tokens : null;
 }
 
 module.exports = {saveTokensToDB, emailExistsInDB, getTokensFromDB};

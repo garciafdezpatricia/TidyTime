@@ -7,6 +7,7 @@ import NewEventForm from "../Event/NewEventForm";
 import {v4 as uuid} from 'uuid';
 import EditEventModal from "@/src/components/Modal/EditModal/EditEventModal";
 import { useEventContext } from "../Context/EventContext";
+import { Event } from "@/src/task/Scheme";
 
 // custom event for calendar (all views)
 const components = {
@@ -22,7 +23,7 @@ const components = {
 const eventStyleGetter = (event:any, view:any) => {
   const style = {
     backgroundColor: event.color, 
-    borderColor: 'white', // Opcional: también puedes cambiar el color del borde si lo deseas
+    borderColor: 'white',
     color: 'white',
     cursor: 'pointer',
   };
@@ -30,15 +31,6 @@ const eventStyleGetter = (event:any, view:any) => {
     style: style
   };
 };
-
-export interface Event {
-  start: Date,
-  end: Date,
-  title: string,
-  desc: string,
-  eventId: string,
-  color?: string,
-}
 
 export default function CalendarComponent() {
   const localizer = dayjsLocalizer(dayjs);

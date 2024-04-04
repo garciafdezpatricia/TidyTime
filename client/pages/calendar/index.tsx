@@ -1,30 +1,82 @@
-// go to this page as /calendar
-import { BsCalendarEventFill } from "react-icons/bs";
-import { SiGooglecalendar } from "react-icons/si";
-import { FaRegCalendarPlus } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
 import CalendarComponent from "../../src/components/Calendar/Calendar"
 import LoginGoogleCalendar from "../../src/components/Login/GoogleCalendarLogin"
-import { useState } from "react";
-import { Icon } from "../../src/components/Icon/Icon";
+import { useEffect, useRef, useState } from "react";
 import CalendarMenu from "../../src/components/Menu/CalendarMenu";
+import { useGoogleContext } from "@/src/components/Context/GoogleContext";
+import toast from "react-hot-toast";
 
 
 export default function Calendar() {
 
-    const [menuOpened, setMenuOpened] = useState(false);
+    const { setLoggedIn } = useGoogleContext();
+    const [reRender, setRerender] = useState(Math.random());
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const emailParam = params.get('email');
+        const isUserLoggedIn = localStorage.getItem('userLoggedIn');
+        const checkAuthentication = async () => {
+            // if email in url
+            if (emailParam) {
+                try {
+                    const isAuthenticated = await isAuthenticatedUser(emailParam);
+                    if (isAuthenticated) {
+                        localStorage.setItem("userLoggedIn", emailParam);
+                        setLoggedIn(true);
+                    } else {
+                        setLoggedIn(false);
+                    }
+                } catch (error) {
+                    toast.error("There has been an error in the authentication. Please, try again.")
+                    setLoggedIn(false);
+                }
+            }
+            // if user in local storage
+            else if (isUserLoggedIn) {
+                try {
+                    const isAuthenticated = await isAuthenticatedUser(isUserLoggedIn);
+                    setLoggedIn(isAuthenticated);
+                } catch (error) {
+                    toast.error("There has been an error in the authentication. Please, try again.")
+                    setLoggedIn(false);
+                }
+            } else {
+                setLoggedIn(false);
+            }
+        };
+    
+        checkAuthentication();
+    }, [reRender]); // this will be executed on every renderization of the page (new tab and refresh page included)
+
+    const isAuthenticatedUser = async (emailParam:string): Promise<boolean> => {
+        return new Promise((resolve, reject) => {
+            fetch('http://localhost:8080/google/auth/email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: emailParam }),
+                credentials: 'include',
+            })
+            .then(response => response.json())
+            .then((data: boolean) => {
+                console.log(data);
+                resolve(data);
+            })
+            .catch(e => {
+                console.error(e);
+                reject(e);
+            });
+        });
+    }
 
     return (
     <div className="calendar-container">
-        <article className="calendar-menu">
-            <button className="calendar-menu-icon" onClick={() => setMenuOpened(!menuOpened)}>
-                <IoMenu size={"1.4rem"} style={{color: "#3E5B41", backgroundColor: "transparent", borderRadius: "0.4rem"}}/>
-            </button>
+        <article className="calendar-menu" >
+            <CalendarMenu />
             <LoginGoogleCalendar />
         </article>
-        {
-            menuOpened && <CalendarMenu onClose={() => setMenuOpened(false)}/>     
-        }
         <CalendarComponent/>
     </div>)
 }

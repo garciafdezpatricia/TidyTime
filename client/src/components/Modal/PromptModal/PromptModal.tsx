@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Button } from "../../Button/Button";
+import { useClickAway } from "@uidotdev/usehooks";
 
 export interface Props {
     onClose?: () => void;
@@ -24,19 +25,27 @@ export default function PromptModal({
     children, 
     variant} : Props) {
 
+    const ref = useClickAway(() => {
+        if (onSecondaryAction) {
+            onSecondaryAction()
+        }
+    })
+
     return (
         <>
             { backdrop && <div className="backdrop"></div>}
-            <article className={variant ? variant : "prompt-modal"}>
+            { 
+            // @ts-ignore
+            <article ref={ref} className={variant ? variant : "prompt-modal"}>
                 <h2>{title}</h2>
                 {children}
                 <div className="prompt-modal-button-section">
-                    <Button
+                    { onSecondaryAction && <Button
                         onClick={onSecondaryAction}
                         className="prompt-modal-secondary-btn"
                         >
                         {secondaryActionText}
-                    </Button>
+                    </Button>}
                     <Button
                         onClick={onPrimaryAction}
                     >
@@ -44,6 +53,7 @@ export default function PromptModal({
                     </Button>
                 </div>
             </article>
+            }
         </>
     )
 }
