@@ -71,6 +71,7 @@
 
     .calendar-menu-google {
         padding-top: 2rem;
+        font-size: .8rem;
 
         .calendar-menu-google-header {
             display: flex;
@@ -81,6 +82,38 @@
             display: flex;
             flex-direction: column;
             gap: .5rem;
+        }
+
+        .calendar-menu-google-calendars {
+            list-style-type: none;
+            padding-top: 1rem;
+
+            .calendar-item:not(:last-child) {
+                margin-bottom: .8rem;
+            }
+
+            .calendar-item {
+                display: flex;
+                align-items: center;
+                gap: .5rem;
+
+                p {
+                    padding-inline: .5rem;
+                    border-radius: .4rem;
+                }
+            }
+
+            .calendar-item-sync-btn {
+                height: 100%;
+                width: fit-content;
+                border: none;
+                outline: none;
+                background-color: transparent;
+                padding-inline: .2rem;
+                &:hover {
+                    outline: .1rem solid $light-blue;
+                }
+            }
         }
     }
 }

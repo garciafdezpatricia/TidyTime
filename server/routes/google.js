@@ -53,30 +53,58 @@ router.get('/google/auth/callback', async (req, res) => {
     const { tokens } = await oauth2Client.getToken(req.query.code);
     oauth2Client.setCredentials(tokens);
     console.log('Credenciales establecidas');
-    const email = await getEmail();
-    res.redirect(`http://localhost:3000/calendar?email=${email}`);
-  });
+    try {
+        const email = await getEmail();
+        res.redirect(`http://localhost:3000/calendar?email=${email}`);
+    } catch (error) {
+        res.redirect('http://localhost:3000/calendar');
+    }
+});
   
 router.get('/google/auth/url', (req, res) => {
     res.json({authorizationUrl});
 })
 
+router.get('/google/auth/logout', (req, res) => {
+    oauth2Client.setCredentials(null);
+    res.json({status: 'success'});
+})
+
+router.post('/google/auth/email', async (req, res) => {
+    const emailToCheck = req.body.email;
+    try {
+        const email = await getEmail();
+        res.json(email === emailToCheck);
+    } catch (error) {
+        return res.json(false);
+    }
+})
+
 /**
  * Handler for getting resources from the google calendar API.
  */
-router.get("/google/events/get", async function (req, response) {
+router.post("/google/events/get", async function (req, response) {
+    const { calendarId } = req.body;
+    console.log(calendarId);
     const calendar = google.calendar({version: 'v3', auth: oauth2Client});
     calendar.events.list(
         {
-            calendarId: 'primary',
+            calendarId: calendarId,
         },
         (err, res) => {
             if (err) return console.error('Error al buscar eventos:', err);
             const retrievedEvents = res.data.items;
             if (retrievedEvents.length) {
                 const events = retrievedEvents.map((event, i) => {
-                const start = moment(event.start.dateTime).tz(event.start.timeZone).utc();
-                const end = moment(event.end.dateTime).tz(event.end.timeZone).utc();
+                    let start, end;
+                    // all day events only have the property date. Otherwise, they include date time and time zone
+                    if (event.start.dateTime && event.end.dateTime) {
+                        start = moment(event.start.dateTime).tz(event.start.timeZone).utc();
+                        end = moment(event.end.dateTime).tz(event.end.timeZone).utc();
+                    } else {
+                        start = moment(event.start.date).utc().add(1, 'day').startOf('day');
+                        end = moment(event.end.date).utc().endOf('day');
+                    }
                 return {
                     start: start,
                     end: end,
@@ -86,6 +114,7 @@ router.get("/google/events/get", async function (req, response) {
                     color: '#3E5B41',
                     googleId: event.id,
                     googleHTML: event.htmlLink,
+                    googleCalendar: calendarId,
                 };
                 });
                 response.json(events);
@@ -99,7 +128,7 @@ router.get("/google/events/get", async function (req, response) {
 router.post('/google/events/update', async function(req, response) {
     const calendar = google.calendar({version: 'v3', auth: oauth2Client});
     calendar.events.update({
-        calendarId: 'primary',
+        calendarId: req.body.calendarId,
         eventId: req.body.id,
         requestBody: {
             summary: req.body.title,
@@ -110,10 +139,10 @@ router.post('/google/events/update', async function(req, response) {
     },
     (err, res) => {
         if (err) {
-            console.error('Error al actualizar el evento:', err);
+            response.json({status: 'error', value: err.response.data.error.message});
             return;
         }
-        console.log('Evento actualizado:', res.data);
+        response.json({status: 'success', value: res.data});
     });
 })
 
@@ -140,5 +169,17 @@ router.post('/google/events/insert', async function (req, response) {
         });
     });
 });
+
+router.get('/google/calendar/list', async function (req, res) {
+    const calendar = google.calendar({version: 'v3', auth: oauth2Client});
+    try {
+        const response = await calendar.calendarList.list();
+        const items = response.data.items;
+        res.json({status: 'success', value: items});
+    } catch (error) {
+        res.json({status: 'error', value: error.message});
+    }
+
+})
 
 module.exports = router;

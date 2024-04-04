@@ -1,6 +1,6 @@
 @use "../../../styles/variables" as *;
 
-.google-login-button {
+.google-login-button, .google-logout-button {
     display: flex;
     align-items: center;
     gap: .5rem;

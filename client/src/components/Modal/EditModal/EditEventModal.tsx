@@ -8,6 +8,8 @@ import { TbEyeShare } from "react-icons/tb";
 import { useEventContext } from "@/src/components/Context/EventContext";
 import { Event } from "@/src/task/Scheme";
 import { useClickAway } from "@uidotdev/usehooks";
+import toast from "react-hot-toast";
+import { PiWarningOctagonFill } from "react-icons/pi";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -54,7 +56,6 @@ export default function EditEventModal({onClose} : Props) {
             }
         })
     }, []);
-
     /**
      * Auxiliary function to compare original values of the event with the ones present when the saving-event action is triggered. 
      * @param eventToUpdate contains the event to be updated
@@ -132,7 +133,7 @@ export default function EditEventModal({onClose} : Props) {
         const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
         const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
 
-        fetch('http://localhost:8080/google/events/update', {
+        return fetch('http://localhost:8080/google/events/update', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -142,16 +143,20 @@ export default function EditEventModal({onClose} : Props) {
                 start: ISOStartDate,
                 end: ISOEndDate,
                 title: eventToUpdate.title,
-                desc: eventToUpdate.desc,                     
+                desc: eventToUpdate.desc,
+                calendarId: eventToUpdate.googleCalendar                     
             }),
             credentials: 'include',
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            if (data.status === 'error'){
+                console.log(data.value);
+                throw data.value;
+            }
         })
         .catch(error => {
-            console.error('Error:', error);
+            throw error;
         });
     }
 
@@ -173,10 +178,23 @@ export default function EditEventModal({onClose} : Props) {
                 ...events.slice(selectedIndex + 1)
             ];
             setEvents(updatedEvents);
+            toast.success('Saved event!', {
+                position: "bottom-center"
+            });
             // google flow
             if (isGoogleEvent) {
                 if (needToUpdateGoogle(changedValues)) {
-                    updateEventOnGoogle(eventToUpdate);
+                    const promise = updateEventOnGoogle(eventToUpdate);
+                    toast.promise(promise, {
+                        loading: "Updating event...",
+                        success: "Google is updated!", 
+                        error: (err) => "Google says '" + err + "'"
+                    }, {
+                        position: "bottom-center",
+                        error: {
+                            icon: <PiWarningOctagonFill />
+                        }
+                    });
                 }
             }
         }
@@ -199,6 +217,7 @@ export default function EditEventModal({onClose} : Props) {
         setEvents((prevEvents) => {
 			return prevEvents.filter((_, i) => i !== selectedIndex);
 		});
+        toast.success('Event succesfully deleted!', {position: "bottom-center"});
         // close edit modal
         onClose();
     }
@@ -227,6 +246,7 @@ export default function EditEventModal({onClose} : Props) {
         .then(response => response.json())
         .then(data => {
             addGoogleInformation(data.googleId, data.googleHTML);
+            toast.success('Event exported to Google Calendar!', {position: "bottom-center"});
         })
         .catch(error => {
             console.error('Error:', error);
