@@ -5,9 +5,10 @@ import { useTaskContext } from "../../Context/TaskContext";
 
 export default function NewTaskForm() {
 
-    const { setToDo, selectedListIndex } = useTaskContext()
     // use a reference instead of state: we don't want to rerender everytime we type in the input
     const newTask = useRef(null);
+    const {listNames, tasks, selectedListIndex, setListNames, setTasks} = useTaskContext();
+
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         // Verificar si la tecla presionada es Enter (código de tecla 13)
         if (e.key === 'Enter') {
@@ -26,11 +27,11 @@ export default function NewTaskForm() {
         }
     }
 
-    function addNewTask(e: any) {
-		setToDo((prevTodo) => {
+    const addNewTask = (e: any) => {
+		setTasks((prevTodo) => {
 			return prevTodo.map((list, index) => {
 				if (index === selectedListIndex) {
-                    return [{ title: e, done: false }, ...list];
+                    return [{ title: e, done: false, listIndex: selectedListIndex }, ...list];
                 } 
                 return list;
             });

@@ -15,8 +15,8 @@ export interface Props {
 
 export default function EditTaskModal({taskIndex, onClose, onSave} : Props) {
 
-    const {todo, selectedListIndex, setToDo, labels} = useTaskContext();
-    const taskToEdit = todo[selectedListIndex][taskIndex];
+    const {tasks, selectedListIndex, setTasks, labels} = useTaskContext();
+    const taskToEdit = tasks[selectedListIndex][taskIndex];
 
     const [newTitle, setNewTitle] = useState(taskToEdit.title);
     const [newDesc, setNewDesc] = useState(taskToEdit.desc ?? "");
@@ -34,7 +34,7 @@ export default function EditTaskModal({taskIndex, onClose, onSave} : Props) {
     }
 
     const saveAndClose = () => {
-        const updatedToDo = [...todo];
+        const updatedToDo = [...tasks];
         const updatedTask = {...taskToEdit};
 
         updateTask(updatedTask);
@@ -44,7 +44,7 @@ export default function EditTaskModal({taskIndex, onClose, onSave} : Props) {
             updatedTask,
             ...updatedToDo[selectedListIndex].slice(taskIndex + 1)
         ];
-        setToDo(updatedToDo);
+        setTasks(updatedToDo);
         onClose();
     }
 
