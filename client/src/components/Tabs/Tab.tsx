@@ -30,7 +30,7 @@ export default function Tab() {
 	const [renameListName, setRenameListName] = useState("");
 	
 	// const with the lists, tasks and reference to the current active list extracted from the context.
-    const {tabs, todo, selectedListIndex, setTabs, setToDo, setSelectedListIndex} = useTaskContext();
+    const {listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex} = useTaskContext();
 
 	/**
 	 * Sets to true the const storing the state of the modal to create a new list.
@@ -47,12 +47,12 @@ export default function Tab() {
 		// TODO: create the list structure for the pod
 		const newTodoList: TaskList = []
 		newListName === ""
-			? setTabs([...tabs, `List ${tabs.length + 1}`])
-			: setTabs([...tabs, newListName]);
-		setToDo(prevTodo => [...prevTodo, newTodoList])
+			? setListNames([...listNames, `List ${listNames.length + 1}`])
+			: setListNames([...listNames, newListName]);
+			setTasks(prevTodo => [...prevTodo, newTodoList])
 		setCreatingListModalOpen(false);
 		setNewListName("");
-		setSelectedListIndex(tabs.length);
+		setSelectedListIndex(listNames.length);
 	};
 
 	/**
@@ -77,7 +77,7 @@ export default function Tab() {
 		if (managingListIndex !== -1) {
 			setManagingListIndex(-1);
 		}
-		setToDo((prevTodo) => {
+		setTasks((prevTodo) => {
 			return prevTodo.map((list, index) => {
 				if (index === selectedListIndex) {
 					// remove item from list
@@ -106,10 +106,10 @@ export default function Tab() {
 	 */
 	const deleteTab = () => {
 		setDeletingList(true);
-		setTabs((prevTabs) => {
+		setListNames((prevTabs) => {
 			return prevTabs.filter((_, i) => i !== selectedListIndex);
 		});
-		setToDo((prevTodo) => {
+		setTasks((prevTodo) => {
 			return prevTodo.filter((_, i) => i !== selectedListIndex);
 		});
 		setConfirmationDeleteModalOpen(false);
@@ -120,7 +120,7 @@ export default function Tab() {
 	 * Clears the const storing the new tab name.
 	 */
 	const renameTab = () => {
-		setTabs((prevTabs) => {
+		setListNames((prevTabs) => {
 			const newTabs = [...prevTabs];
 			newTabs[selectedListIndex] = renameListName;
 			return newTabs;
@@ -171,7 +171,7 @@ export default function Tab() {
 		<article className='tab-container'>
 			<section className='tab-container bloc-tabs'>
 				{" "}
-				{tabs.map((tab, index) => (
+				{listNames.map((tab, index) => (
 					<section
 						className={selectedListIndex === index ? "active-tab" : "tab"}
 						key={index}
@@ -204,7 +204,7 @@ export default function Tab() {
 			</button>
 			<section className='tab-content-container'>
 				{" "}
-				{todo.map((content, index) => (
+				{tasks.map((content, index) => (
 					<ul
 						className={
 							selectedListIndex === index ? "active-content" : "content"
@@ -288,7 +288,7 @@ export default function Tab() {
 					backdrop
 				>
 					<input
-						placeholder={`List ${tabs.length + 1}`}
+						placeholder={`List ${listNames.length + 1}`}
 						type='text'
 						onChange={(e) => setNewListName(e.target.value)}
 					/>

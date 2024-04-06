@@ -1,15 +1,14 @@
 import { useRef, useState } from "react";
 import { FaPlusCircle } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
+import { useTaskContext } from "../../Context/TaskContext";
 
-export interface Props {
-    onSubmit: (arg?:any) => void | any;
-}
-
-export default function NewTaskForm(props : Props) {
+export default function NewTaskForm() {
 
     // use a reference instead of state: we don't want to rerender everytime we type in the input
     const newTask = useRef(null);
+    const {listNames, tasks, selectedListIndex, setListNames, setTasks} = useTaskContext();
+
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         // Verificar si la tecla presionada es Enter (código de tecla 13)
         if (e.key === 'Enter') {
@@ -22,11 +21,22 @@ export default function NewTaskForm(props : Props) {
         // @ts-ignore
         if (newTask.current.value !== '') {
             // @ts-ignore
-            props.onSubmit(newTask.current.value); // Llamar a la función onSubmit pasada como prop
+            addNewTask(newTask.current.value); // Llamar a la función onSubmit pasada como prop
             // @ts-ignore
             newTask.current.value = '';
         }
     }
+
+    const addNewTask = (e: any) => {
+		setTasks((prevTodo) => {
+			return prevTodo.map((list, index) => {
+				if (index === selectedListIndex) {
+                    return [{ title: e, done: false, listIndex: selectedListIndex }, ...list];
+                } 
+                return list;
+            });
+        });
+	}
 
     return (
         <form className="create-task-form" >
