@@ -1,18 +1,41 @@
-export interface Props {
-    onChange: (arg?:any) => void | any;
-}
+import { Task } from "@/src/task/Scheme";
+import { useTaskContext } from "../Context/TaskContext";
+import { useEffect, useState } from "react";
 
-export default function SearchBar({onChange} : Props) {
+
+export default function SearchBar() {
+
+    const { todo } = useTaskContext();
+
+    const [result, setResult] = useState<Task[]>([]);
+    const [search, setSearch] = useState("");
+
+    const searchTasks = (searchString: string) => {
+        return todo.flat().filter((task) => task.title.toLowerCase().includes(searchString.toLowerCase()));
+    }
+
+    useEffect(() => {
+        if (search !== "") {
+            const filteredTasks = searchTasks(search);
+            setResult(filteredTasks);
+        } else {
+            setResult([]);
+        }
+    }, [search])
 
     return (
         <div className="search-bar-container">
             <input
-                type="search"
+                type="text"
                 placeholder="Search"
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(e) => setSearch(e.target.value)}
             >
             </input>
-            <button>Filter</button>
+            {result.length > 0 && <div className="search-result">
+                {
+                    result.map((task, index) => (<p key={index} className="result-item">{task.title}</p>))
+                }
+            </div>}
         </div>
     );
 }

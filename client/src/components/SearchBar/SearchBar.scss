@@ -2,13 +2,15 @@
 
 .search-bar-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     padding-top: .2rem;
     padding-bottom: 2rem;
+    align-items: center;
+    position: relative;
     
     input {
         width: 20rem;
-        margin-right: 1rem;
         padding-left: .5rem;
         padding-top: .3rem;
         padding-bottom: .3rem;
@@ -21,12 +23,30 @@
         }
     }
 
-    button {
-        padding-inline: .5rem;
-        border: .15rem solid $primary-green;
+    .search-result {
+        font-size: .8rem;
+        display: flex;
+        flex-direction: column;
+        height: 10rem;
+        width: 20rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: absolute;
+        z-index: 999;
+        top: 3rem;
         background-color: $white;
-        &:hover {
-            background-color: $hover-green;
+
+        .result-item {
+            padding: .5rem;
+            width: 100%;
+            cursor: pointer;
+            &:hover {
+                background-color: $hover-green;
+            }
+        }
+
+        .result-item:not(:last-child){
+            border-bottom: .1rem solid $primary-grey;
         }
     }
 }
