@@ -37,11 +37,16 @@ export default function Calendar() {
                 try {
                     const isAuthenticated = await isAuthenticatedUser(isUserLoggedIn);
                     setLoggedIn(isAuthenticated);
+                    if (!isAuthenticated) {
+                        localStorage.removeItem('userLoggedIn');
+                    }    
                 } catch (error) {
                     toast.error("There has been an error in the authentication. Please, try again.")
+                    localStorage.removeItem('userLoggedIn');
                     setLoggedIn(false);
                 }
             } else {
+                
                 setLoggedIn(false);
             }
         };
