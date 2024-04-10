@@ -22,6 +22,12 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
         onClose();
     })
 
+    const handleKeyDown = (e:any) => {
+        if (e.key === 'Enter' && showInput && newName !== "") {
+            handleRename();
+        }
+    };
+
     const handleRename = () => {
         onRenameAction();
         // @ts-ignore
@@ -58,6 +64,7 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
                                     ref={nameInput}
                                     type="text" 
                                     onChange={(e) => handleInputChange(e)}
+                                    onKeyDown={handleKeyDown}
                                 />
                                 <button className="rename" onClick={handleRename} disabled={isButtonDisabled}>
                                     <FaCheck />
