@@ -9,9 +9,11 @@ export interface ITaskContext {
     tasks: TaskList[],
     labels: Label[],
     selectedListIndex: number,
+    selectedTaskIndex: number,
     setListNames: React.Dispatch<React.SetStateAction<string[]>>,
     setTasks: React.Dispatch<React.SetStateAction<TaskList[]>>,
     setSelectedListIndex: React.Dispatch<React.SetStateAction<number>>,
+    setSelectedTaskIndex: React.Dispatch<React.SetStateAction<number>>,
 }
 
 const tasks = [
@@ -21,7 +23,7 @@ const tasks = [
     { done: false, title: "This is content 4", listIndex: 0 },
     { done: false, title: "Call granny", listIndex: 0 },
     { done: false, title: "Buy vacuum", listIndex: 0 },
-    { done: false, title: "Load dishwasher", listIndex: 1 },
+    { done: false, title: "WTF", listIndex: 1 },
     { done: false, title: "Cleaning the bathroom", listIndex: 1 },
     { done: false, title: "Do laundry", listIndex: 1 },
     { done: false, title: "Mop", listIndex: 1 },
@@ -38,9 +40,11 @@ const defaultContext: ITaskContext ={
     tasks: taskToListOfTaskList(tasks),
     labels: [{color: "#ad30ad", name: "school"}, {color: "#5930ab", name: "work"}, {color: "#e6a937", name: "home"}],
     selectedListIndex: 0,
+    selectedTaskIndex: -1,
     setListNames: () => {},
     setTasks: () => {},
     setSelectedListIndex: () => {},
+    setSelectedTaskIndex: () => {},
 }
 // context with the default task context
 const TaskContext = createContext<ITaskContext>(defaultContext);
@@ -66,8 +70,9 @@ export function TaskProvider({children} : ITaskContextProvider) {
     const [listNames, setListNames] = useState(defaultContext.listNames);
     const [tasks, setTasks] = useState(defaultContext.tasks);
     const [selectedListIndex, setSelectedListIndex] = useState(defaultContext.selectedListIndex);
+    const [selectedTaskIndex, setSelectedTaskIndex] = useState(defaultContext.selectedTaskIndex);
     const labels = defaultContext.labels;
-    const value ={listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, labels};
+    const value ={listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, labels, selectedTaskIndex, setSelectedTaskIndex};
 
     return (
         <TaskContext.Provider value={value}>

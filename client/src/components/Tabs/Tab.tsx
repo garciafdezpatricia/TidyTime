@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useMemo, useState } from "react";
+import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import PromptModal from "../Modal/PromptModal/PromptModal";
 import EditListModal from "../Modal/EditModal/EditListModal";
 import { FaRegCircle, FaCheckCircle } from "react-icons/fa";
@@ -13,24 +13,34 @@ import { GrStar } from "react-icons/gr";
 import { IoIosTimer } from "react-icons/io";
 import Difficulty from "../DifficultyRate/Difficulty";
 
-export default function Tab() {
+export interface Props {
+	handleEditModal: (arg?:any) => void | any;
+}
+
+export default function Tab({handleEditModal} : Props) {
 	// const to see or unsee done tasks
 	const [seeDone, setSeeDone] = useState(false);
 	// const to open modals based on the action taking place
 	const [isCreatingListModalOpen, setCreatingListModalOpen] = useState(false);
 	const [isConfirmationDeleteModalOpen, setConfirmationDeleteModalOpen] = useState(false);
-	const [isEditingTaskModalOpen, setIsEditingTaskModalOpen] = useState(false);
 	// const to store the state of the action taking place
 	const [deletingList, setDeletingList] = useState(false);
 	// const to store a reference to the current list whose options are being shown
 	const [managingListIndex, setManagingListIndex] = useState(-1);
-	const [selectedTaskIndex, setSelectedTaskIndex] = useState(-1);
 	// const to manage creation and renaming of tabs
 	const [newListName, setNewListName] = useState("");
 	const [renameListName, setRenameListName] = useState("");
 	
 	// const with the lists, tasks and reference to the current active list extracted from the context.
-    const {listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex} = useTaskContext();
+    const {listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
+
+	// scroll to selected task
+	useEffect(() => {
+		const selectedTaskElement = document.querySelector('.selected-task');
+		if (selectedTaskElement) {
+			selectedTaskElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		}
+	}, [selectedListIndex, selectedTaskIndex]);
 
 	/**
 	 * Sets to true the const storing the state of the modal to create a new list.
@@ -62,6 +72,7 @@ export default function Tab() {
 	 */
 	const handleTabSelection = (index: SetStateAction<number>) => {
 		setSelectedListIndex(index);
+		setSelectedTaskIndex(-1);
 		if (managingListIndex !== -1) {
 			setManagingListIndex(-1);
 		}
@@ -140,15 +151,6 @@ export default function Tab() {
 	};
 
 	/**
-	 * Sets the selected task index to the index of the task being selected. Opens/closes edit modal
-	 * @param index contains the task index
-	 */
-	const handleEditModal = (index:number) => {
-		setSelectedTaskIndex(index);
-		setIsEditingTaskModalOpen(!isEditingTaskModalOpen);
-	}
-
-	/**
 	 * Hook to set the selected tab index to 0 after a tab deletion has taken place.
 	 */
 	useEffect(() => {
@@ -161,10 +163,6 @@ export default function Tab() {
 
 	const handleInputChange = (name:string) => {
 		setRenameListName(name);
-	}
-
-	const closeEditTaskModal = () => {
-		setIsEditingTaskModalOpen(false)
 	}
 
 	return (
@@ -218,7 +216,7 @@ export default function Tab() {
 							}
 							return (
 								<li
-									className={item.done ? "task-done" : "task"}
+									className={`${item.done ? "task-done" : "task"} ${selectedTaskIndex === itemIndex ? "selected-task" : ""}`}
 									key={itemIndex}
 								>
 									<div className='icon-container'>
@@ -305,15 +303,6 @@ export default function Tab() {
 					backdrop
 				></PromptModal>
 			)}
-			{
-				isEditingTaskModalOpen && (
-					<EditTaskModal 
-						isOpen={isEditingTaskModalOpen}
-						taskIndex={selectedTaskIndex} 
-						onClose={() => closeEditTaskModal()}
-					/>
-				)
-			}
 		</article>
 	);
 }

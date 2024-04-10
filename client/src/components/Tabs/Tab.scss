@@ -138,6 +138,10 @@
     gap: 2rem;
 }
 
+.selected-task {
+    background-color: var.$hover-green;
+}
+
 .task-properties {
     grid-column: 3/3;
     display: grid;

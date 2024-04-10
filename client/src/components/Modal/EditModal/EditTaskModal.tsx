@@ -7,16 +7,14 @@ import { useEffect, useState } from "react";
 import { Label, Task } from "@/src/task/Scheme";
 
 export interface Props {
-    taskIndex: number,
     onClose: (arg?:any) => void | any;
-    onSave?: (arg?:any) => void | any;
     isOpen: boolean,
 }
 
-export default function EditTaskModal({taskIndex, onClose, onSave} : Props) {
+export default function EditTaskModal({onClose, isOpen} : Props) {
 
-    const {tasks, selectedListIndex, setTasks, labels} = useTaskContext();
-    const taskToEdit = tasks[selectedListIndex][taskIndex];
+    const {tasks, selectedListIndex, setTasks, labels, selectedTaskIndex} = useTaskContext();
+    const taskToEdit = tasks[selectedListIndex][selectedTaskIndex];
 
     const [newTitle, setNewTitle] = useState(taskToEdit.title);
     const [newDesc, setNewDesc] = useState(taskToEdit.desc ?? "");
@@ -40,9 +38,9 @@ export default function EditTaskModal({taskIndex, onClose, onSave} : Props) {
         updateTask(updatedTask);
 
         updatedToDo[selectedListIndex] = [
-            ...updatedToDo[selectedListIndex].slice(0, taskIndex),
+            ...updatedToDo[selectedListIndex].slice(0, selectedTaskIndex),
             updatedTask,
-            ...updatedToDo[selectedListIndex].slice(taskIndex + 1)
+            ...updatedToDo[selectedListIndex].slice(selectedTaskIndex + 1)
         ];
         setTasks(updatedToDo);
         onClose();
@@ -62,11 +60,12 @@ export default function EditTaskModal({taskIndex, onClose, onSave} : Props) {
     }
 
     return (
+        isOpen && 
         <article className="edit-task-modal">
             <header className="edit-task-modal-header">
                 <button 
                     title="Close"
-                    onClick={saveAndClose} 
+                    onClick={onClose} 
                     className="close-button">
                         <ImCross />
                 </button>
