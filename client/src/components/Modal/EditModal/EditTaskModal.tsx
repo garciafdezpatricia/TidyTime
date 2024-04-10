@@ -5,6 +5,7 @@ import Toggle from "../../ToggleSwitch/ToggleSwitch";
 import CheckableComboBox from "../../ComboBox/CheckableComboBox";
 import { useEffect, useState } from "react";
 import { Label, Task } from "@/src/task/Scheme";
+import { IoIosArrowDropdownCircle } from "react-icons/io";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -112,7 +113,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                     <hr />
                     <section className="label-picker">
                         <label>Labels:</label>
-                        <CheckableComboBox checkedLabels={taskToEdit.labels ?? []} onChange={handleLabels}/>
+                        <CheckableComboBox checkedLabels={taskToEdit.labels ?? []} onChange={handleLabels} text={"Select options:"}/>
                     </section>
                     <section className="labels">
                     {
