@@ -35,12 +35,14 @@
         z-index: 999;
         top: 3rem;
         background-color: $white;
+        border: .1rem solid $dark-grey;
+        border-radius: .4rem;
 
         .result-item {
             padding: .5rem;
             width: 100%;
             cursor: pointer;
-            &:hover {
+            &:hover, &:focus {
                 background-color: $hover-green;
             }
         }

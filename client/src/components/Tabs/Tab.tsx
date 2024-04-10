@@ -32,15 +32,15 @@ export default function Tab({handleEditModal} : Props) {
 	const [renameListName, setRenameListName] = useState("");
 	
 	// const with the lists, tasks and reference to the current active list extracted from the context.
-    const {listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, selectedTaskIndex} = useTaskContext();
+    const {listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
 
-	const taskRefs = useRef<HTMLLIElement[]>([]);
-
+	// scroll to selected task
 	useEffect(() => {
-		if (selectedTaskIndex !== null && taskRefs.current[selectedTaskIndex]) {
-		  taskRefs.current[selectedTaskIndex].scrollIntoView({ behavior: "smooth", block: "center" });
+		const selectedTaskElement = document.querySelector('.selected-task');
+		if (selectedTaskElement) {
+			selectedTaskElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
-	  }, [selectedTaskIndex]);
+	}, [selectedListIndex, selectedTaskIndex]);
 
 	/**
 	 * Sets to true the const storing the state of the modal to create a new list.
@@ -72,6 +72,7 @@ export default function Tab({handleEditModal} : Props) {
 	 */
 	const handleTabSelection = (index: SetStateAction<number>) => {
 		setSelectedListIndex(index);
+		setSelectedTaskIndex(-1);
 		if (managingListIndex !== -1) {
 			setManagingListIndex(-1);
 		}
@@ -164,14 +165,6 @@ export default function Tab({handleEditModal} : Props) {
 		setRenameListName(name);
 	}
 
-	useEffect(() => {
-		const targetElementId = `list${selectedListIndex}?item${selectedTaskIndex}`;
-		const targetElement = document.getElementById(targetElementId);
-		if (targetElement) {
-        	targetElement.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
-		}
-	}, [selectedListIndex, selectedTaskIndex]);
-
 	return (
 		<article className='tab-container'>
 			<section className='tab-container bloc-tabs'>
@@ -225,7 +218,6 @@ export default function Tab({handleEditModal} : Props) {
 								<li
 									className={`${item.done ? "task-done" : "task"} ${selectedTaskIndex === itemIndex ? "selected-task" : ""}`}
 									key={itemIndex}
-									id={`list${selectedListIndex}?item${selectedTaskIndex}`}
 								>
 									<div className='icon-container'>
 										<FaRegCircle
