@@ -2,11 +2,12 @@
 
 .tab-container {
     display: grid;
-    align-items: end;
+    align-items: center;
     grid-template-rows: auto 1fr;
     grid-template-columns: 1fr auto;
-    padding-right: 4rem;
+    padding-right: 2rem;
     height: 75%;
+    max-height: 75%;
 }
 
 .bloc-tabs {
@@ -44,25 +45,12 @@
     position: relative;
 }
 
-.tab-content-container {
-    padding: 1rem;
-    grid-row: 2/-1;
-    grid-column: 1/-1;
-    overflow-y: scroll;
-    height: 90%;
-    max-height: 90%;
-}
-
-.content {
-    display: none;
-}
-
 .add-list {
     grid-column: 2/-1;
     grid-row: 1/2;
     padding: .3em .8em;
     align-self: center;
-    border: .15rem solid var.$primary-green;
+    border: none;
     background-color: var.$white;
     height: 100%;
     display: flex;
@@ -113,89 +101,11 @@
     justify-content: center;
 }
 
-.task, .task-done {
-    display: grid;
-    grid-template-columns: auto 1fr 1fr auto;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-    border-top: 1px solid #adaaad;
-    padding-top: .7rem;
-    padding-bottom: .7rem;
-    padding-left: 1rem;
-}
-
-.task-done {
-    text-decoration: line-through;
-    text-decoration-thickness: 2px;
-    background-color: var.$primary-grey;
-}
-
-.task-content {
-    grid-column: 2/2;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
-
-.selected-task {
-    background-color: var.$hover-green;
-}
-
-.task-properties {
-    grid-column: 3/3;
-    display: grid;
-    grid-template-columns: .2fr .4fr 1fr .2fr;
-    grid-template-rows: 1fr;
-    align-items: center;
-
-    .end-date, .difficulty, .important, .labels {
-        display: flex;
-        align-items: center;
-        grid-row: 1/1;
-    }
-    .end-date {
-        grid-column: 1/1;
-    }
-
-    .difficulty {
-        grid-column: 2/2;
-    }
-
-    .task-labels {
-        grid-column: 3/3;
-        font-size: .8rem;
-        display: flex;
-        flex-wrap: wrap;
-        gap: .5rem;
-        label {
-            border-width: .1rem;
-            border-style: solid;
-            padding-inline: .2rem;
-            border-radius: .5rem;
-        }
-    }
-
-    .important {
-        grid-column: 4/-1;
-    }
-}
-
 .edit-icon {
     grid-column: 4/-1;
     cursor: pointer;
     margin-left: auto;
     margin-right: 1rem;
-}
-
-.icon-container {
-    grid-column: 1/1;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    .circle-disappear {
-        display: none;
-    }
 }
 
 .see-done-task {

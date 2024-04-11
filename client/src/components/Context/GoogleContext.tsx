@@ -1,6 +1,5 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 import { CalendarItem, Event } from "@/src/task/Scheme";
-import { uuid } from "uuidv4";
 
 /**
  * Interface for the task context of the application.

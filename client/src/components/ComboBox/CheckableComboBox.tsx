@@ -1,18 +1,23 @@
 import { Label } from "@/src/task/Scheme";
-import { useContext, useState } from "react";
-import { IoIosArrowDropdownCircle } from "react-icons/io";
+import { ReactNode, useContext, useState } from "react";
 import { useTaskContext } from "../Context/TaskContext";
+import { useClickAway } from "@uidotdev/usehooks";
 
 export interface Props{
+    variant?: string,
+    text: ReactNode,
     checkedLabels: Label[],
     onChange: (selectedOptions: Label[]) => void;
 }
 
-export default function CheckableComboBox({checkedLabels, onChange} : Props) {
+export default function CheckableComboBox({checkedLabels, onChange, text, variant} : Props) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState<Label[]>(checkedLabels);
     const {labels} = useTaskContext();
+    const ref = useClickAway(() => {
+        setIsOpen(false);
+    })
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -32,10 +37,10 @@ export default function CheckableComboBox({checkedLabels, onChange} : Props) {
     }
 
     return (
-        <div className="combobox-select">
+        // @ts-ignore
+        <div ref={ref} className= {variant ? variant : "combobox-select"}>
             <div className="dropdown-header" onClick={toggleDropdown}>
-                Select options
-                <IoIosArrowDropdownCircle />
+                {text}
             </div>
         {isOpen && (
             <div className="dropdown-content">

@@ -151,7 +151,6 @@ export default function EditEventModal({onClose} : Props) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'error'){
-                console.log(data.value);
                 throw data.value;
             }
         })

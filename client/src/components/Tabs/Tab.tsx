@@ -1,17 +1,13 @@
 import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import PromptModal from "../Modal/PromptModal/PromptModal";
 import EditListModal from "../Modal/EditModal/EditListModal";
-import { FaRegCircle, FaCheckCircle } from "react-icons/fa";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { BiAddToQueue } from "react-icons/bi";
 import { useTaskContext } from "../Context/TaskContext";
-import EditTaskModal from "../Modal/EditModal/EditTaskModal";
 import { TaskList } from "@/src/task/Scheme";
-import { MdEdit } from "react-icons/md";
-import { GrStar } from "react-icons/gr";
-import { IoIosTimer } from "react-icons/io";
-import Difficulty from "../DifficultyRate/Difficulty";
+import TabContent from "./TabContent";
+
 
 export interface Props {
 	handleEditModal: (arg?:any) => void | any;
@@ -21,18 +17,16 @@ export default function Tab({handleEditModal} : Props) {
 	// const to see or unsee done tasks
 	const [seeDone, setSeeDone] = useState(false);
 	// const to open modals based on the action taking place
-	const [isCreatingListModalOpen, setCreatingListModalOpen] = useState(false);
 	const [isConfirmationDeleteModalOpen, setConfirmationDeleteModalOpen] = useState(false);
 	// const to store the state of the action taking place
 	const [deletingList, setDeletingList] = useState(false);
 	// const to store a reference to the current list whose options are being shown
 	const [managingListIndex, setManagingListIndex] = useState(-1);
-	// const to manage creation and renaming of tabs
-	const [newListName, setNewListName] = useState("");
+	// const to manage renaming of tabs
 	const [renameListName, setRenameListName] = useState("");
 	
 	// const with the lists, tasks and reference to the current active list extracted from the context.
-    const {listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
+    const {listNames, selectedListIndex, setListNames, setTasks, setSelectedListIndex, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
 
 	// scroll to selected task
 	useEffect(() => {
@@ -43,25 +37,14 @@ export default function Tab({handleEditModal} : Props) {
 	}, [selectedListIndex, selectedTaskIndex]);
 
 	/**
-	 * Sets to true the const storing the state of the modal to create a new list.
-	 */
-	const openCreatingListModal = () => {
-		setCreatingListModalOpen(true);
-	};
-
-	/**
 	 * Creates a new tab, having a default name for the tab if none is provided.
 	 * Closes the modal, clears the new list name constant and sets the selected list to the created one.
 	 */
 	const addNewTab = () => {
 		// TODO: create the list structure for the pod
 		const newTodoList: TaskList = []
-		newListName === ""
-			? setListNames([...listNames, `List ${listNames.length + 1}`])
-			: setListNames([...listNames, newListName]);
-			setTasks(prevTodo => [...prevTodo, newTodoList])
-		setCreatingListModalOpen(false);
-		setNewListName("");
+		setListNames([...listNames, `List ${listNames.length + 1}`])
+		setTasks(prevTodo => [...prevTodo, newTodoList])
 		setSelectedListIndex(listNames.length);
 	};
 
@@ -167,8 +150,7 @@ export default function Tab({handleEditModal} : Props) {
 
 	return (
 		<article className='tab-container'>
-			<section className='tab-container bloc-tabs'>
-				{" "}
+			<section className='tab-container bloc-tabs'>{" "}
 				{listNames.map((tab, index) => (
 					<section
 						className={selectedListIndex === index ? "active-tab" : "tab"}
@@ -195,106 +177,19 @@ export default function Tab({handleEditModal} : Props) {
 			</section>
 			<button
 				className='tab-container add-list'
-				onClick={openCreatingListModal}
+				onClick={addNewTab}
 			>
                 <BiAddToQueue />
 				Add New List
 			</button>
-			<section className='tab-content-container'>
-				{" "}
-				{tasks.map((content, index) => (
-					<ul
-						className={
-							selectedListIndex === index ? "active-content" : "content"
-						}
-						key={index}
-					>
-						{" "}
-						{content.map((item, itemIndex) => {
-							if (item.done && !seeDone) {
-								return null;
-							}
-							return (
-								<li
-									className={`${item.done ? "task-done" : "task"} ${selectedTaskIndex === itemIndex ? "selected-task" : ""}`}
-									key={itemIndex}
-								>
-									<div className='icon-container'>
-										<FaRegCircle
-											className={item.done ? "circle-disappear" : ""}
-											onClick={(e) => handleCheck(item, itemIndex)}
-										/>
-										<FaCheckCircle
-											className={item.done ? "" : "circle-disappear"}
-											onClick={(e) => handleCheck(item, itemIndex)}
-										/>
-									</div>
-									<div className='task-content'>
-										<h4>{item.title}</h4>
-									</div>
-									<div className="task-properties">
-										<p className="end-date" title={item.endDate} >
-											{
-												item.endDate && <IoIosTimer size={"1.2rem"} />
-											}
-										</p>
-										<p className="difficulty" title="difficulty">
-											<Difficulty difficulty={item.difficulty ?? 0} />
-										</p>
-										<p className="important" title="important">
-											{
-												item.important && <GrStar size={"1.2rem"} color="orange"/>
-											}
-										</p>
-										<div className="task-labels">
-											{
-												item.labels?.map((label, index) => {
-													return (
-														<label 
-															key={index} 
-															style={{borderColor: label.color}}>
-														{label.name}
-														</label>
-													)
-												})
-											}
-										</div>
-									</div>
-									<MdEdit
-										className="edit-icon"
-										onClick={() => handleEditModal(itemIndex)}
-									/>
-								</li>
-							);
-						})}
-					</ul>
-				))}
-			</section>
+			<TabContent seeDone={seeDone}  handleCheck={handleCheck} handleEditModal={handleEditModal}/>
 			<button className='see-done-task' onClick={() => setSeeDone(!seeDone)}>
                 {seeDone ? <AiFillEyeInvisible /> : <AiFillEye /> }
 				{seeDone ? "Hide" : "Show"} done tasks
 			</button>
-
-			{isCreatingListModalOpen && (
-				<PromptModal
-					variant='new-list'
-					title='Add new list'
-					onSecondaryAction={() => setCreatingListModalOpen(false)}
-					secondaryActionText='Cancel'
-					primaryActionText='Create'
-					onPrimaryAction={() => addNewTab()}
-					backdrop
-				>
-					<input
-						placeholder={`List ${listNames.length + 1}`}
-						type='text'
-						onChange={(e) => setNewListName(e.target.value)}
-					/>
-				</PromptModal>
-			)}
 			{isConfirmationDeleteModalOpen && (
 				<PromptModal
-					title='This list will be deleted'
+					title="Are you sure you want to delete this list? This action can't be undone"
 					onPrimaryAction={() => deleteTab()}
 					primaryActionText='Delete'
 					secondaryActionText='Cancel'

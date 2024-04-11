@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 import { Event } from "@/src/task/Scheme";
-import { uuid } from "uuidv4";
+import {v4 as uuid} from "uuid";
 
 /**
  * Interface for the task context of the application.

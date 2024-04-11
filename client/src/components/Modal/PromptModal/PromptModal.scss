@@ -65,20 +65,28 @@
 	left: 50%;
 	right: 50%;
 	width: 20rem;
-	height: 5rem;
+	height: fit-content;
 	padding: 1rem;
 	border: 1px solid var.$primary-grey;
 	align-items: center;
+	gap: 1rem;
+	h3 {
+		font-size: 1rem;
+		text-align: center;
+	}
 	.primary-button {
-		border: 0.13rem solid var.$remove-red;
+		border: none;
+		background-color: var.$hover-red;
+		color: var.$remove-red;
 		&:hover {
-			background-color: var.$hover-red;
+			outline: .1rem solid var.$remove-red;
 		}
 	}
 	.prompt-modal-secondary-btn {
-		border: 1px solid var.$black;
+		border: none;
+		background-color: var.$primary-grey;
 		&:hover {
-			background-color: var.$primary-grey;
+			outline: .1rem solid var.$black;
 		}
 	}
 	button {
@@ -89,6 +97,11 @@
 		&:hover {
 			outline: none;
 		}
+	}
+	.prompt-modal-button-section {
+		align-self: center;
+		justify-content: center;
+		gap: 1rem;
 	}
 }
 

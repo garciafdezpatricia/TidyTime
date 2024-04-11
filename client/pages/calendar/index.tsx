@@ -66,7 +66,6 @@ export default function Calendar() {
             })
             .then(response => response.json())
             .then((data: boolean) => {
-                console.log(data);
                 resolve(data);
             })
             .catch(e => {
