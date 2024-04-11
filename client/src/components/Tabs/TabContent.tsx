@@ -51,7 +51,7 @@ export function FilterSection({handleFilter, sortByDate, sortByDifficulty} : Fil
             <div className="task-filters">
                 <CheckableComboBox 
                     variant="filter"
-                    text={"Filter"} 
+                    text={"Filter..."} 
                     checkedLabels={[]} 
                     onChange={handleFilter}  
                 />
