@@ -194,7 +194,6 @@ function CalendarHandler({calendarId}: CalendarProps) {
      * Makes a call to the API which responds with a list of events.
      */
     const getGoogleCalendarEvents = (calendarId:string) => {
-        console.log(calendarId);
         fetch('http://localhost:8080/google/events/get', {
             method: 'POST',
             credentials: 'include',

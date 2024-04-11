@@ -7,7 +7,6 @@ import { FaRegCircle, FaCheckCircle } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { Label, Task } from "@/src/task/Scheme";
 import CheckableComboBox from "../ComboBox/CheckableComboBox";
-import { FaFilter } from "react-icons/fa6";
 
 export interface Props {
     handleCheck: (arg?:any, arg2?:any) => void | any;
@@ -17,9 +16,11 @@ export interface Props {
 
 export interface FilterSectionProps {
     handleFilter: (arg?:any) => void | any;
+    sortByDate: (arg?:any) => void | any;
+    sortByDifficulty: (arg?:any) => void | any;
 }
 
-function FilterSection({handleFilter} : FilterSectionProps) {
+export function FilterSection({handleFilter, sortByDate, sortByDifficulty} : FilterSectionProps) {
 
     const { tasks, selectedListIndex } = useTaskContext();
     const [tasksToFilter, setTasksToFilter] = useState<Task[]>([]);
@@ -50,12 +51,12 @@ function FilterSection({handleFilter} : FilterSectionProps) {
             <div className="task-filters">
                 <CheckableComboBox 
                     variant="filter"
-                    text={<FaFilter size={".9rem"} />} 
+                    text={"Filter"} 
                     checkedLabels={[]} 
                     onChange={handleFilter}  
                 />
-                <button className="sort-date">Sort by due date</button>
-                <button className="sort-difficulty">Sort by difficulty</button>
+                <button className="sort-date" onClick={sortByDate}>Sort by due date</button>
+                <button className="sort-difficulty" onClick={sortByDifficulty}>Sort by difficulty</button>
             </div>
         </section>
     )
@@ -84,9 +85,40 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
         }
     }
 
+    const sortByDate = () => {
+        const orderedTaskList = tasks[selectedListIndex]?.
+            sort((task1, task2) => {
+                if (task1.endDate && task2.endDate) {
+                    return new Date(task1.endDate).getTime() - new Date(task2.endDate).getTime();
+                } else if (task1.endDate) {
+                    return -1; // Las tareas con fecha van primero
+                } else if (task2.endDate) {
+                    return 1; // Las tareas sin fecha van después
+                } else {
+                    return 0; // Ambas tareas sin fecha se consideran iguales
+                }
+            });
+        setTasksToShow([orderedTaskList]);
+    }
+
+    const sortByDifficulty = () => {
+        const orderedTaskList = tasks[selectedListIndex]?.
+            sort((task1, task2) => {
+                if (task1.difficulty && task2.difficulty) {
+                    return task1.difficulty - task2.difficulty;
+                } else if (task1.difficulty) {
+                    return 1; // Las tareas con dificultad van después
+                } else if (task2.difficulty) {
+                    return -1; // Las tareas sin dificultad van primero
+                } else {
+                    return 0; // Ambas tareas sin dificultad se consideran iguales
+                }
+            });
+        setTasksToShow([orderedTaskList]);
+    }
+
     useEffect(() => {
         if (filterApplied){
-            console.log("cogiendo filtro", filterApplied)
             handleFilter(filterApplied);
         } else {
             setTasksToShow(tasks);
@@ -95,7 +127,7 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
 
     return (
         <section className='tab-content-container'>
-				<FilterSection handleFilter={handleFilter} />
+				<FilterSection handleFilter={handleFilter} sortByDate={sortByDate} sortByDifficulty={sortByDifficulty}/>
 				{tasksToShow.map((content, index) => (
 					<ul className={selectedListIndex === index ? "active-content" : "content"} key={index}>
 						{content.map((item, itemIndex) => {

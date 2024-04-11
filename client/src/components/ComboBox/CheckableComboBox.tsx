@@ -1,6 +1,5 @@
 import { Label } from "@/src/task/Scheme";
 import { ReactNode, useContext, useState } from "react";
-import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { useTaskContext } from "../Context/TaskContext";
 import { useClickAway } from "@uidotdev/usehooks";
 
@@ -38,6 +37,7 @@ export default function CheckableComboBox({checkedLabels, onChange, text, varian
     }
 
     return (
+        // @ts-ignore
         <div ref={ref} className= {variant ? variant : "combobox-select"}>
             <div className="dropdown-header" onClick={toggleDropdown}>
                 {text}
