@@ -111,10 +111,10 @@ export function useGoogleHandler() {
     const syncEvents = (data:Event[]) => {
         setEvents(prevEvents => {
             // filter events in data that we already have in events
-            const existingEvents = prevEvents.filter(event => event.googleId && data.some(newEvent => newEvent.googleId === event.googleId));
+            const updatedEvents = prevEvents.filter(event => event.googleId && data.some(newEvent => newEvent.googleId === event.googleId));
     
             // check if info in data events is the same as the one we have in existing events. If not, update values
-            existingEvents.forEach(existingEvent => {
+            updatedEvents.forEach(existingEvent => {
                 const newData = data.find(newEvent => newEvent.googleId === existingEvent.googleId);
                 if (newData) {
                     if (newData.desc !== existingEvent.desc)
@@ -134,9 +134,12 @@ export function useGoogleHandler() {
     
             // filter new events that we dont have in events
             const newEvents = data.filter(newEvent => !prevEvents.some(event => event.googleId === newEvent.googleId));
+
+            // filter events that are in events but not in data
+            const existingEvents = prevEvents.filter(prevEvent => !data.some(newEvent => newEvent.googleId === prevEvent.googleId));
     
             // join new events with updated events
-            return [...existingEvents, ...newEvents];
+            return [...existingEvents, ...updatedEvents, ...newEvents];
         });
     }
 

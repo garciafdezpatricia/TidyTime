@@ -1,9 +1,10 @@
-@use "../../../styles/variables" as *;
+@use "../../../../styles/variables" as *;
 
 .applications-panel {
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    width: calc(100% - 2rem);
 }
 
 .panel-content {

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Toggle from "../ToggleSwitch/ToggleSwitch";
-import { Icon } from "../Icon/Icon";
-import { useGoogleContext } from "../Context/GoogleContext";
+import Toggle from "../../ToggleSwitch/ToggleSwitch";
+import { Icon } from "../../Icon/Icon";
+import { useGoogleContext } from "../../Context/GoogleContext";
 import { useGoogleHandler } from "@/src/model/google";
 
 
