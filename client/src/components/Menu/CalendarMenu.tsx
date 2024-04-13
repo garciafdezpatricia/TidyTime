@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { BsCalendarEventFill } from "react-icons/bs";
 import { Icon } from "../Icon/Icon";
 import NewEventForm from "../Event/NewEventForm";
@@ -10,14 +10,14 @@ import { BsFillCalendarPlusFill } from "react-icons/bs";
 import { CalendarItem } from "@/src/model/Scheme";
 import { useGoogleContext } from "../Context/GoogleContext";
 import toast from "react-hot-toast";
-import { PiWarningOctagonFill } from "react-icons/pi";
 import { IoMenu } from "react-icons/io5";
 import { useGoogleHandler } from "@/src/model/google";
 
 export default function CalendarMenu() {
     // event context utils
     const { setEvents } = useEventContext()
-    const { calendars, setCalendars } = useGoogleContext();
+    const { calendars } = useGoogleContext();
+    const { getCalendars } = useGoogleHandler();
 
     const [createNewEvent, setCreateNewEvent] = useState(false);
     const [selectedColor, setSelectedColor] = useState("");
@@ -94,38 +94,10 @@ export default function CalendarMenu() {
         return false;
     }
 
-    const getGoogleCalendars = () => {
+    const getGoogleCalendars = async () => {
         setImportingCalendars(true);
-        fetch('http://localhost:8080/google/calendar/list', {
-        method: 'GET',
-        credentials: 'include',
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                const calendars: CalendarItem[] = [];
-                data.value.map((calendar:any) => {
-                    calendars.push({id: calendar.id, name: calendar.summary, color: calendar.backgroundColor})
-                });
-                setCalendars(calendars);
-                setImportingCalendars(false);
-            } else {
-                console.error(data.value);
-                setImportingCalendars(false);
-                toast.error("Couldn't import the calendars.\nPlease log in with your Google account and try again.", {
-                    position: "top-center",
-                    duration: 6000,
-                    icon: <></>,
-                    style: {
-                        textAlign: "center"
-                    }
-                })
-            }
-        })  
-        .catch(error => {
-            setImportingCalendars(false);
-            toast.error(`${error}`)
-        });
+        await getCalendars();
+        setImportingCalendars(false);
     }
 
     return (
@@ -196,7 +168,7 @@ export interface CalendarProps {
 }
 function CalendarHandler({calendarId}: CalendarProps) {
 
-    const { getCalendars } = useGoogleHandler();
+    const { getCalendarEvents } = useGoogleHandler();
 
     const [syncingCalendar, setSyncingCalendar] = useState(false);
 
@@ -207,7 +179,7 @@ function CalendarHandler({calendarId}: CalendarProps) {
      */
     const getGoogleCalendarEvents = async (calendarId:string) => {
         setSyncingCalendar(true);
-        await getCalendars(calendarId);
+        await getCalendarEvents(calendarId);
         setSyncingCalendar(false);
     }
 

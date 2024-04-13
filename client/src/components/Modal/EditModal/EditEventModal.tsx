@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { PiWarningOctagonFill } from "react-icons/pi";
 import ShareModal from "../ShareModal/ShareEventModal";
 import PromptModal from "../PromptModal/PromptModal";
+import { useGoogleHandler } from "@/src/model/google";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -20,6 +21,7 @@ export interface Props {
 export default function EditEventModal({onClose} : Props) {
     // event context utils
     const {setEvents, events, selectedEventId } = useEventContext();
+    const { updateAndSaveEvent } = useGoogleHandler();
 
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [newTitle, setNewTitle] = useState("");
@@ -133,34 +135,7 @@ export default function EditEventModal({onClose} : Props) {
      * @param eventToUpdate the event to be updated 
      */
     const updateEventOnGoogle = (eventToUpdate:Event) => {
-        // format date to google format
-        const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
-        const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
-
-        return fetch('http://localhost:8080/google/events/update', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                id: googleId,
-                start: ISOStartDate,
-                end: ISOEndDate,
-                title: eventToUpdate.title,
-                desc: eventToUpdate.desc,
-                calendarId: eventToUpdate.googleCalendar                     
-            }),
-            credentials: 'include',
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'error'){
-                throw data.value;
-            }
-        })
-        .catch(error => {
-            throw error;
-        });
+        return updateAndSaveEvent(eventToUpdate, googleId);
     }
 
     /**

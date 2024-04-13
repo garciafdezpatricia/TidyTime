@@ -1,6 +1,7 @@
 import toast from "react-hot-toast";
 import { useGoogleContext } from "../components/Context/GoogleContext";
 import { useEventContext } from "../components/Context/EventContext";
+import { CalendarItem, Event } from "./Scheme";
 
 export function useGoogleHandler() {
 
@@ -45,7 +46,42 @@ export function useGoogleHandler() {
         })
     }
 
-    const getCalendars = (calendarId:string) => {
+    const getCalendars = () => {
+        return new Promise<void>((resolve, reject) => {
+            fetch('http://localhost:8080/google/calendar/list', {
+            method: 'GET',
+            credentials: 'include',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const calendars: CalendarItem[] = [];
+                    data.value.map((calendar:any) => {
+                        calendars.push({id: calendar.id, name: calendar.summary, color: calendar.backgroundColor})
+                    });
+                    setCalendars(calendars);
+                    resolve();
+                } else {
+                    console.error(data.value);
+                    toast.error("Couldn't import the calendars.\nPlease log in with your Google account and try again.", {
+                        position: "top-center",
+                        duration: 6000,
+                        icon: "",
+                        style: {
+                            textAlign: "center"
+                        }
+                    })
+                    resolve();
+                }
+            })  
+            .catch(error => {
+                toast.error(`${error}`)
+                reject(error);
+            });
+        })
+    }
+
+    const getCalendarEvents = (calendarId:string) => {
         return new Promise<void>((resolve, reject) => {
             fetch('http://localhost:8080/google/events/get', {
                 method: 'POST',
@@ -62,7 +98,7 @@ export function useGoogleHandler() {
                     event.start = new Date(new Date(event.start).toISOString().slice(0, 16));
                     event.end = new Date(new Date(event.end).toISOString().slice(0, 16));
                 })
-                setEvents((prev) => [...prev, ...data]);
+                syncEvents(data);
                 resolve()
             })
             .catch(error => {
@@ -70,6 +106,38 @@ export function useGoogleHandler() {
                 reject(error);
             });
         })
+    }
+
+    const syncEvents = (data:Event[]) => {
+        setEvents(prevEvents => {
+            // filter events in data that we already have in events
+            const existingEvents = prevEvents.filter(event => event.googleId && data.some(newEvent => newEvent.googleId === event.googleId));
+    
+            // check if info in data events is the same as the one we have in existing events. If not, update values
+            existingEvents.forEach(existingEvent => {
+                const newData = data.find(newEvent => newEvent.googleId === existingEvent.googleId);
+                if (newData) {
+                    if (newData.desc !== existingEvent.desc)
+                        existingEvent.desc = newData.desc;
+                    if (existingEvent.title !== newData.title)
+                        existingEvent.title = newData.title;
+                    if (existingEvent.end !== newData.end)
+                        existingEvent.end = newData.end;
+                    if (existingEvent.start !== newData.start)
+                        existingEvent.start = newData.start;
+                    if (existingEvent.googleCalendar !== newData.googleCalendar)
+                        existingEvent.googleCalendar = newData.googleCalendar;
+                    if (existingEvent.googleHTML !== newData.googleHTML)
+                        existingEvent.googleHTML = newData.googleHTML;
+                }
+            });
+    
+            // filter new events that we dont have in events
+            const newEvents = data.filter(newEvent => !prevEvents.some(event => event.googleId === newEvent.googleId));
+    
+            // join new events with updated events
+            return [...existingEvents, ...newEvents];
+        });
     }
 
     const exportEvent = (selectedIndex:number) => {
@@ -95,9 +163,11 @@ export function useGoogleHandler() {
             .then(data => {
                 addGoogleInformation(data.googleId, data.googleHTML, selectedIndex);
                 toast.success('Event exported to Google Calendar!', {position: "bottom-center"});
+                resolve();
             })
             .catch(error => {
                 toast.error(`${error}`);
+                reject(error);
             });
         })
     }
@@ -121,5 +191,36 @@ export function useGoogleHandler() {
         setEvents(updatedEvents);
     }
 
-    return {handleLogin, handleLogout, getCalendars, exportEvent};
+    const updateAndSaveEvent = (eventToUpdate:Event, googleId:string) => {
+        // format date to google format
+        const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
+        const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
+
+        return fetch('http://localhost:8080/google/events/update', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                id: googleId,
+                start: ISOStartDate,
+                end: ISOEndDate,
+                title: eventToUpdate.title,
+                desc: eventToUpdate.desc,
+                calendarId: eventToUpdate.googleCalendar                     
+            }),
+            credentials: 'include',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'error'){
+                throw data.value;
+            }
+        })
+        .catch(error => {
+            throw error;
+        });
+    }
+
+    return {handleLogin, handleLogout, getCalendars, getCalendarEvents, exportEvent, updateAndSaveEvent};
 }
