@@ -1,4 +1,4 @@
-@use "./variables" as var;
+@use "./variables" as *;
 @use "../src/components/Button/Button.scss";
 @use "../src/components/Menu/Menu.scss";
 @use "../src/components/Menu/CalendarMenu.scss";
@@ -42,3 +42,17 @@
     padding: 0px;
     font-weight: 400;
 }
+
+.loader {
+    border: .1rem solid $light-grey;
+    border-top: .1rem solid $primary-blue;
+    border-radius: 50%; // for it to be a ciecle
+    width: .7rem;
+    height: .7rem;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

@@ -289,7 +289,7 @@ export default function EditEventModal({onClose} : Props) {
             </div>
             {isConfirmationDeleteModalOpen && (
 				<PromptModal
-					title="Are you sure you want to delete this list? This action can't be undone"
+					title="Are you sure you want to delete this event? This action can't be undone"
 					onPrimaryAction={() => onDelete()}
 					primaryActionText='Delete'
 					secondaryActionText='Cancel'

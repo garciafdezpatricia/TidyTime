@@ -12,6 +12,7 @@ import { useGoogleContext } from "../Context/GoogleContext";
 import toast from "react-hot-toast";
 import { PiWarningOctagonFill } from "react-icons/pi";
 import { IoMenu } from "react-icons/io5";
+import { useGoogleHandler } from "@/src/model/google";
 
 export default function CalendarMenu() {
     // event context utils
@@ -21,6 +22,7 @@ export default function CalendarMenu() {
     const [createNewEvent, setCreateNewEvent] = useState(false);
     const [selectedColor, setSelectedColor] = useState("");
     const [menuOpened, setMenuOpened] = useState(false);
+    const [importingCalendars, setImportingCalendars] = useState(false);
 
     const titleRef = useRef(null);
     const infoRef = useRef(null);
@@ -93,6 +95,7 @@ export default function CalendarMenu() {
     }
 
     const getGoogleCalendars = () => {
+        setImportingCalendars(true);
         fetch('http://localhost:8080/google/calendar/list', {
         method: 'GET',
         credentials: 'include',
@@ -105,8 +108,10 @@ export default function CalendarMenu() {
                     calendars.push({id: calendar.id, name: calendar.summary, color: calendar.backgroundColor})
                 });
                 setCalendars(calendars);
+                setImportingCalendars(false);
             } else {
                 console.error(data.value);
+                setImportingCalendars(false);
                 toast.error("Couldn't import the calendars.\nPlease log in with your Google account and try again.", {
                     position: "top-center",
                     duration: 6000,
@@ -117,7 +122,10 @@ export default function CalendarMenu() {
                 })
             }
         })  
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            setImportingCalendars(false);
+            toast.error(`${error}`)
+        });
     }
 
     return (
@@ -160,6 +168,7 @@ export default function CalendarMenu() {
                         <hr />
                         <p>Import your calendars and sync them to import their events.</p>
                         <button className="import-google-btn" onClick={getGoogleCalendars}>
+                            {importingCalendars && <div className="loader"></div>}
                             <BsFillCalendarPlusFill />
                             Import calendars
                         </button>
@@ -187,35 +196,24 @@ export interface CalendarProps {
 }
 function CalendarHandler({calendarId}: CalendarProps) {
 
-    const {events, setEvents} = useEventContext();
+    const { getCalendars } = useGoogleHandler();
+
+    const [syncingCalendar, setSyncingCalendar] = useState(false);
+
 
     /**
      * Fetch events of an specific calendar from Google Calendar. 
      * Makes a call to the API which responds with a list of events.
      */
-    const getGoogleCalendarEvents = (calendarId:string) => {
-        fetch('http://localhost:8080/google/events/get', {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({calendarId}),
-        })
-        .then(response => response.json())
-        .then(data => {
-            data.map((event:any) => {
-                // the date coming from the backend is in format YYYY-MM-DDTHH:MM:SS.000Z => need to convert it to Fri Mar 29 ...
-                // when doing just new Date(...) the timezone is applied, changing the datetime fetched from the backend.
-                // The patch with the ISOString does not change datetimes.
-                event.start = new Date(new Date(event.start).toISOString().slice(0, 16));
-                event.end = new Date(new Date(event.end).toISOString().slice(0, 16));
-            })
-            setEvents((prev) => [...prev, ...data]);
-        })
-        .catch(error => console.error('Error:', error));
+    const getGoogleCalendarEvents = async (calendarId:string) => {
+        setSyncingCalendar(true);
+        await getCalendars(calendarId);
+        setSyncingCalendar(false);
     }
 
     return (
         <button onClick={() => getGoogleCalendarEvents(calendarId)} className="calendar-item-sync-btn">
+            {syncingCalendar && <div className="loader"></div>}
             <IoMdSync size={"1rem"} /> Synchronize
         </button>
     )
