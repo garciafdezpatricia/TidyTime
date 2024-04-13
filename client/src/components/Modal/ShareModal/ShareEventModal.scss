@@ -1,0 +1,31 @@
+@use "../../../../styles/variables" as *;
+
+.button-share {
+    position: relative;
+}
+
+.share-options {
+    position: absolute;
+    top: calc(100% + .2rem);
+    left: 50%;
+    transform: translateX(-50%);
+    border: .1rem solid $light-grey;
+    border-radius: .4rem;
+    width: 9rem;
+    display: flex;
+    flex-direction: row;
+
+    .share-option-button {
+        width: 100%;
+        display: flex;
+        border: none;
+        outline: none;
+        background-color: $white;
+        justify-content: center;
+        align-items: center;
+        gap: .5rem;
+        &:hover {
+            background-color: $primary-grey;
+        }
+    }
+}

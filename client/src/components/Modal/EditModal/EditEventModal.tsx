@@ -10,6 +10,8 @@ import { Event } from "@/src/task/Scheme";
 import { useClickAway } from "@uidotdev/usehooks";
 import toast from "react-hot-toast";
 import { PiWarningOctagonFill } from "react-icons/pi";
+import ShareModal from "../ShareModal/ShareEventModal";
+import PromptModal from "../PromptModal/PromptModal";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -28,6 +30,8 @@ export default function EditEventModal({onClose} : Props) {
     const [isGoogleEvent, setIsGoogleEvent] = useState(false);
     const [googleId, setGoogleId] = useState("");
     const [googleHtml, setGoogleHtml] = useState("");
+
+    const [isConfirmationDeleteModalOpen, setConfirmationDeleteModalOpen] = useState(false);
 
     const ref = useClickAway(() => {
         onClose();
@@ -55,7 +59,7 @@ export default function EditEventModal({onClose} : Props) {
                 return;
             }
         })
-    }, []);
+    }, [events]);
     /**
      * Auxiliary function to compare original values of the event with the ones present when the saving-event action is triggered. 
      * @param eventToUpdate contains the event to be updated
@@ -225,51 +229,7 @@ export default function EditEventModal({onClose} : Props) {
      * Exports event to Google Calendar.
      */
     const onShare = () => {
-        const eventToShare = events[selectedIndex];
-        // format date to google format
-        const ISOStartDate = new Date(new Date(eventToShare.start).getTime() - (new Date(eventToShare.start).getTimezoneOffset() * 60000)).toISOString();
-        const ISOEndDate = new Date(new Date(eventToShare.end).getTime() - (new Date(eventToShare.end).getTimezoneOffset() * 60000)).toISOString();
-        fetch('http://localhost:8080/google/events/insert', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                start: ISOStartDate,
-                end: ISOEndDate,
-                title: eventToShare.title,
-                desc: eventToShare.desc,                     
-            }),
-            credentials: 'include',
-        })
-        .then(response => response.json())
-        .then(data => {
-            addGoogleInformation(data.googleId, data.googleHTML);
-            toast.success('Event exported to Google Calendar!', {position: "bottom-center"});
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-
-    /**
-     * Auxiliary function to add google id and google html link to the event.
-     * @param googleId contains event id on google
-     * @param googleHTML contains the link to the event
-     */
-    const addGoogleInformation = (googleId:string, googleHTML:string) => {
-        // update event with google id and html
-        let updatedEvents = [...events];
-        let eventToUpdate = events[selectedIndex];
-        eventToUpdate.googleId = googleId;
-        eventToUpdate.googleHTML = googleHTML;
-        updatedEvents = [
-            ...events.slice(0, selectedIndex),
-            eventToUpdate,
-            ...events.slice(selectedIndex + 1)
-        ];
-        setEvents(updatedEvents);
-        onClose();
+        
     }
 
     return (
@@ -277,20 +237,18 @@ export default function EditEventModal({onClose} : Props) {
         <article ref={ref} className="edit-event-article">
             <section className="edit-event-header">
                 {isGoogleEvent && 
-                    <a title="See in Google" href={googleHtml} target="_blank" rel="noopener noreferrer">
+                    <a className="edit-event-header-button" title="See in Google" href={googleHtml} target="_blank" rel="noopener noreferrer">
                         <TbEyeShare color="#363535" size={"1.2rem"} />
                     </a>
                 }
-                <button title="Save" onClick={() => onSave()}>
+                <button className="edit-event-header-button" title="Save" onClick={() => onSave()}>
                     <MdOutlineDone color="#363535" size={"1.2rem"} />
                 </button>
-                <button title="Delete" onClick={() => onDelete()}>
+                <button className="edit-event-header-button" title="Delete" onClick={() => setConfirmationDeleteModalOpen(true)}>
                     <RiDeleteBin6Line color="#363535" size={"1.1rem"} />
                 </button>
                 { !isGoogleEvent &&
-                    <button title="Share" onClick={() => onShare()}>
-                        <GrShareOption color="#363535" size={"1.1rem"} />
-                    </button>
+                    <ShareModal selectedIndex={selectedIndex} />
                 }
                 <button className="edit-event-close-btn" onClick={() => onClose()}>
                     <IoMdClose size={"1.2rem"} />
@@ -329,6 +287,17 @@ export default function EditEventModal({onClose} : Props) {
                     checkedOption={ color !== "" ? color : "#3E5B41"} 
                 />
             </div>
+            {isConfirmationDeleteModalOpen && (
+				<PromptModal
+					title="Are you sure you want to delete this list? This action can't be undone"
+					onPrimaryAction={() => onDelete()}
+					primaryActionText='Delete'
+					secondaryActionText='Cancel'
+					onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}
+					variant='confirmation-modal'
+					backdrop
+				></PromptModal>
+			)}
         </article>
     )
 }

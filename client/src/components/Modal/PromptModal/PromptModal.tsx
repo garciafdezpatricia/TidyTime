@@ -37,7 +37,7 @@ export default function PromptModal({
             { 
             // @ts-ignore
             <article ref={ref} className={variant ? variant : "prompt-modal"}>
-                <h3>{title}</h3>
+                <p>{title}</p>
                 {children}
                 <div className="prompt-modal-button-section">
                     { onSecondaryAction && <Button

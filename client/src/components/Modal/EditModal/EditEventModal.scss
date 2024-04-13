@@ -28,16 +28,16 @@
         width: fit-content;
         margin-left: auto;
 
-        a {
+        a.edit-event-header-button {
             display: flex;
         }
 
-        button, a {
+        button.edit-event-header-button, a.edit-event-header-button {
             border: none;
             width: fit-content;
             height: fit-content;
             padding: .3rem;
-            border-radius: 100%;
+            border-radius: .4rem;
             background-color: $white;
             &:hover {
                 background-color: $primary-grey;
@@ -45,6 +45,11 @@
         }
 
         button.edit-event-close-btn {
+            border: none;
+            width: fit-content;
+            height: fit-content;
+            padding: .3rem;
+            border-radius: .4rem;
             background-color: $primary-grey;
         }
     }
