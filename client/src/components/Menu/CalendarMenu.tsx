@@ -7,7 +7,7 @@ import { uuid } from "uuidv4";
 import { useClickAway } from "@uidotdev/usehooks";
 import { IoMdSync } from "react-icons/io";
 import { BsFillCalendarPlusFill } from "react-icons/bs";
-import { CalendarItem } from "@/src/task/Scheme";
+import { CalendarItem } from "@/src/model/Scheme";
 import { useGoogleContext } from "../Context/GoogleContext";
 import toast from "react-hot-toast";
 import { PiWarningOctagonFill } from "react-icons/pi";

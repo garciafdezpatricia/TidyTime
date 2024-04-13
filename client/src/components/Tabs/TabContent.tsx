@@ -5,7 +5,7 @@ import { IoIosTimer } from "react-icons/io";
 import Difficulty from "../DifficultyRate/Difficulty";
 import { FaRegCircle, FaCheckCircle } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { Label, Task } from "@/src/task/Scheme";
+import { Label, Task } from "@/src/model/Scheme";
 import CheckableComboBox from "../ComboBox/CheckableComboBox";
 
 export interface Props {

@@ -5,7 +5,7 @@ import { IoIosArrowDropdown } from "react-icons/io";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { BiAddToQueue } from "react-icons/bi";
 import { useTaskContext } from "../Context/TaskContext";
-import { TaskList } from "@/src/task/Scheme";
+import { TaskList } from "@/src/model/Scheme";
 import TabContent from "./TabContent";
 
 

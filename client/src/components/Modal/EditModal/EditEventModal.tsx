@@ -6,7 +6,7 @@ import { IoMdClose } from "react-icons/io";
 import { MdOutlineDone } from "react-icons/md";
 import { TbEyeShare } from "react-icons/tb";
 import { useEventContext } from "@/src/components/Context/EventContext";
-import { Event } from "@/src/task/Scheme";
+import { Event } from "@/src/model/Scheme";
 import { useClickAway } from "@uidotdev/usehooks";
 import toast from "react-hot-toast";
 import { PiWarningOctagonFill } from "react-icons/pi";

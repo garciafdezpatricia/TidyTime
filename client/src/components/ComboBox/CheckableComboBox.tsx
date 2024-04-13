@@ -1,4 +1,4 @@
-import { Label } from "@/src/task/Scheme";
+import { Label } from "@/src/model/Scheme";
 import { ReactNode, useContext, useState } from "react";
 import { useTaskContext } from "../Context/TaskContext";
 import { useClickAway } from "@uidotdev/usehooks";

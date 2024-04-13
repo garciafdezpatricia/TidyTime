@@ -11,13 +11,13 @@ export default function Toggle({isChecked, onChange} : Props) {
 
     useEffect(() => {
         setChecked(isChecked);
-      }, [isChecked]);
+    }, [isChecked]);
     
-      const handleToggleChange = () => {
-        const newValue = !checkedValue;
-        setChecked(newValue);
-        onChange(newValue);
-      };
+    const handleToggleChange = () => {
+    const newValue = !checkedValue;
+    setChecked(newValue);
+    onChange(newValue);
+    };
 
     return (
         <label className="switch">

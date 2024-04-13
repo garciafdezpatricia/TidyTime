@@ -1,4 +1,4 @@
-import { Task } from "@/src/task/Scheme";
+import { Task } from "@/src/model/Scheme";
 import { useTaskContext } from "../Context/TaskContext";
 import { useEffect, useRef, useState } from "react";
 
