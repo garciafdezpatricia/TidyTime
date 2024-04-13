@@ -10,6 +10,8 @@ export interface IEventContext {
     selectedEventId: string,
     setEvents: React.Dispatch<React.SetStateAction<Event[]>>,
     setSelectedEventId: React.Dispatch<React.SetStateAction<string>>,
+    weekStart: number,
+    setWeekStart: React.Dispatch<React.SetStateAction<number>>,
 }
 
 // TODO: replace it with solid logic
@@ -48,6 +50,8 @@ const defaultContext: IEventContext={
     selectedEventId: "",
     setSelectedEventId: () => {},
     setEvents: () => {},
+    weekStart: 1,
+    setWeekStart: () => {},
 }
 // context with the default event context
 const EventContext = createContext<IEventContext>(defaultContext);
@@ -72,7 +76,8 @@ export interface IEventContextProvider {
 export function EventProvider({children} : IEventContextProvider) {
     const [events, setEvents] = useState(defaultContext.events);
     const [selectedEventId, setSelectedEventId] = useState(defaultContext.selectedEventId);
-    const value ={events, setEvents, selectedEventId, setSelectedEventId};
+    const [weekStart, setWeekStart] = useState(defaultContext.weekStart);
+    const value ={events, setEvents, selectedEventId, setSelectedEventId, weekStart, setWeekStart};
 
     return (
         <EventContext.Provider value={value}>

@@ -1,7 +1,8 @@
 import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import enLocale from 'dayjs/locale/en';
+import { useRef, useState } from "react";
 import PromptModal from "../Modal/PromptModal/PromptModal";
 import NewEventForm from "../Event/NewEventForm";
 import {v4 as uuid} from 'uuid';
@@ -33,10 +34,16 @@ const eventStyleGetter = (event:any, view:any) => {
 };
 
 export default function CalendarComponent() {
-  const localizer = dayjsLocalizer(dayjs);
+  const { events, setEvents, setSelectedEventId, weekStart } = useEventContext();
   
+  dayjs.locale('en-custom', {
+    ...enLocale, 
+    weekStart: weekStart
+  });
+  const localizer = dayjsLocalizer(dayjs);
+
   const [newEvent, setNewEvent] = useState<Event>();
-  const { events, setEvents, selectedEventId, setSelectedEventId } = useEventContext()
+  
   const [isOpenNewEventModal, setOpenNewEventModal] = useState(false);
   const [isOpenEditEventModal, setOpenEditEventModal] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
