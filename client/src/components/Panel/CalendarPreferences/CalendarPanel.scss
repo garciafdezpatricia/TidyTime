@@ -1,0 +1,33 @@
+@use "../../../../styles/variables" as *;
+
+.calendar-settings {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 2rem);
+
+    .week-start {
+        padding-top: 1rem;
+        font-size: .9rem;
+    }
+
+    .week-days-buttons {
+        display: flex;
+        gap: .8rem;
+
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 100%;
+            border: none;
+            outline: none;
+            width: 2rem;
+            height: 2rem;
+            padding: .8rem;
+            &:hover {
+                background-color: $light-blue;
+            }
+        }
+    }
+}
