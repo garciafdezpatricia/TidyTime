@@ -1,4 +1,4 @@
-import { TaskList, Label, taskToListOfTaskList } from "@/src/task/Scheme";
+import { TaskList, Label, taskToListOfTaskList } from "@/src/model/Scheme";
 import { ReactNode, createContext, useContext, useState } from "react";
 
 /**

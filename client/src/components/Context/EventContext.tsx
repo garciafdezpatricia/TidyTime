@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useState } from "react";
-import { Event } from "@/src/task/Scheme";
+import { Event } from "@/src/model/Scheme";
 import {v4 as uuid} from "uuid";
 
 /**

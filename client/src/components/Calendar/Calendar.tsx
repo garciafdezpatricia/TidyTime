@@ -7,7 +7,7 @@ import NewEventForm from "../Event/NewEventForm";
 import {v4 as uuid} from 'uuid';
 import EditEventModal from "@/src/components/Modal/EditModal/EditEventModal";
 import { useEventContext } from "../Context/EventContext";
-import { Event } from "@/src/task/Scheme";
+import { Event } from "@/src/model/Scheme";
 
 // custom event for calendar (all views)
 const components = {

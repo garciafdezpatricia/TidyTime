@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useState } from "react";
-import { CalendarItem, Event } from "@/src/task/Scheme";
+import { CalendarItem, Event } from "@/src/model/Scheme";
 
 /**
  * Interface for the task context of the application.
@@ -11,6 +11,8 @@ export interface IGoogleContext {
     setCalendars: React.Dispatch<React.SetStateAction<CalendarItem[]>>,
     setSelectedCalendarId: React.Dispatch<React.SetStateAction<string>>,
     setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>,
+    authUrl: string, 
+    setAuthUrl: React.Dispatch<React.SetStateAction<string>>,
 }
 
 // TODO: replace it with solid logic
@@ -19,9 +21,11 @@ const defaultContext: IGoogleContext={
     loggedIn: false,
     calendars: [],
     selectedCalendarId: "",
+    authUrl: "",
     setSelectedCalendarId: () => {},
     setCalendars: () => {},
     setLoggedIn: () => {},
+    setAuthUrl: () => {},
 }
 // context with the default event context
 const GoogleContext = createContext<IGoogleContext>(defaultContext);
@@ -47,7 +51,8 @@ export function GoogleProvider({children} : IGoogleContextProvider) {
     const [calendars, setCalendars] = useState(defaultContext.calendars);
     const [selectedCalendarId, setSelectedCalendarId] = useState(defaultContext.selectedCalendarId);
     const [loggedIn, setLoggedIn] = useState(defaultContext.loggedIn);
-    const value ={calendars, setCalendars, selectedCalendarId, setSelectedCalendarId, loggedIn, setLoggedIn};
+    const [authUrl, setAuthUrl] = useState(defaultContext.authUrl);
+    const value ={calendars, setCalendars, selectedCalendarId, setSelectedCalendarId, loggedIn, setLoggedIn, authUrl, setAuthUrl};
 
     return (
         <GoogleContext.Provider value={value}>

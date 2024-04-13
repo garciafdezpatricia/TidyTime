@@ -5,7 +5,7 @@ import { IoIosTimer } from "react-icons/io";
 import Difficulty from "../DifficultyRate/Difficulty";
 import { FaRegCircle, FaCheckCircle } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { Label, Task } from "@/src/task/Scheme";
+import { Label, Task } from "@/src/model/Scheme";
 import CheckableComboBox from "../ComboBox/CheckableComboBox";
 
 export interface Props {
@@ -70,7 +70,7 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
 
     const handleFilter = (filter: Label[]) => {
         if (filter.length > 0) {
-            const filteredTaskList = tasks[selectedListIndex]?.filter((task) =>
+            const filteredTaskList = tasksToShow[selectedListIndex]?.filter((task) =>
                 task.labels?.some((label) =>
                     filter.some((filterLabel) =>
                         filterLabel.name === label.name && filterLabel.color === label.color
@@ -78,7 +78,9 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
                 )
             ) || [];
             setFilterApplied(filter);
-            setTasksToShow([filteredTaskList]);
+            const mergedTasks = [...tasks];
+            mergedTasks[selectedListIndex] = filteredTaskList;
+            setTasksToShow(mergedTasks);
         } else {
             setFilterApplied([]);
             setTasksToShow(tasks);
@@ -98,7 +100,9 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
                     return 0; // Ambas tareas sin fecha se consideran iguales
                 }
             });
-        setTasksToShow([orderedTaskList]);
+        const mergedTasks = [...tasks];
+        mergedTasks[selectedListIndex] = orderedTaskList;
+        setTasksToShow(mergedTasks);
     }
 
     const sortByDifficulty = () => {
@@ -114,7 +118,9 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
                     return 0; // Ambas tareas sin dificultad se consideran iguales
                 }
             });
-        setTasksToShow([orderedTaskList]);
+            const mergedTasks = [...tasks];
+            mergedTasks[selectedListIndex] = orderedTaskList;
+            setTasksToShow(mergedTasks);
     }
 
     useEffect(() => {
@@ -123,7 +129,7 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
         } else {
             setTasksToShow(tasks);
         }
-    }, [tasks]);
+    }, [tasks, tasksToShow]);
 
     return (
         <section className='tab-content-container'>
