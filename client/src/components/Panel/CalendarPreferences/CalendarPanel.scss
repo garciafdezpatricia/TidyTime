@@ -8,18 +8,18 @@
 
     .week-start {
         padding-top: 1rem;
-        font-size: .9rem;
+        font-size: .8rem;
     }
 
     .week-days-buttons {
         display: flex;
         gap: .8rem;
+        padding-top: .5rem;
 
-        button {
+        button, button.selected-day {
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 100%;
             border: none;
             outline: none;
             width: 2rem;
@@ -28,6 +28,10 @@
             &:hover {
                 background-color: $light-blue;
             }
+        }
+
+        button.selected-day {
+            outline: .1rem solid $primary-blue;
         }
     }
 }
