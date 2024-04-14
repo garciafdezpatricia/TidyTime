@@ -9,9 +9,10 @@ export interface Props {
     onDeleteAction: (arg?:any) => void | any;
     onInputChange: (arg?:any) => void | any;
     onClose: (arg?:any) => void | any;
+    dontShowDelete?: boolean
 }
 
-export default function EditListModal({onRenameAction, onDeleteAction, onInputChange, onClose} : Props) {
+export default function EditListModal({onRenameAction, onDeleteAction, onInputChange, onClose, dontShowDelete} : Props) {
 
     const [showInput, setShowInput] = useState(false);
     const [isButtonDisabled, setDisabled] = useState(false);
@@ -73,13 +74,16 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
                         )
                     }
                 </section>
-                <button 
+                {
+                    !dontShowDelete && 
+                    <button 
                     onClick={onDeleteAction} 
                     className="remove-button"
                 >
                     <RiDeleteBin5Fill color="#b13838"/>
                     Remove
                 </button>
+                }
             </div>
     )
 }

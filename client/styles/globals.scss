@@ -25,6 +25,7 @@
 @use "../src/components/Event/NewEventForm.scss";
 @use "../src/components/Modal/EditModal/EditEventModal.scss";
 @use "../src/components/Modal/ShareModal/ShareEventModal.scss";
+@use "../src/components/Modal/AbsoluteModal/AbsoluteModal.scss";
 @use "../src/components/Board/Board.scss";
 
 
@@ -52,9 +53,26 @@
     width: .7rem;
     height: .7rem;
     animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+::-webkit-scrollbar {
+    height: .1rem;
+    width: .1rem;
+    background: $light-grey;
+    display: none;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $white;
+    -webkit-border-radius: .4rem;
+    width: .1rem;
+}
+
+::-webkit-scrollbar-corner {
+    background: $white;
+}

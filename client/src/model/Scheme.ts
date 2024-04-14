@@ -9,6 +9,10 @@ export interface Task {
     listIndex: number,
 }
 
+export interface BoardItem extends Task {
+    status: number;
+}   
+
 export type TaskList = Task[];
 
 export function taskToListOfTaskList(tasks: Task[]) {
@@ -21,6 +25,27 @@ export function taskToListOfTaskList(tasks: Task[]) {
         }
         result[listIndex].push(task); // Agregamos la tarea a la lista correspondiente
     }
+    return result;
+}
+
+export function taskToBoardItemMatrix(tasks: Task[]) {
+    let result:BoardItem[][] = [[]];
+    // TODO: when storing this in the pod, instead of getting tasks Task[], we're going to go for the 
+    // BoardItem[]. In case there are no boardItems stored (first time using the app / didn't use the board)
+    // then all the tasks are assigned to the first column, that is status = 0.
+    // If there are boardItems stored, then we create resut[status] = item
+    // if tasks typeof Task[] then this:
+    for (const task of tasks) {
+        result[0].push({...task, status: 0})
+    }
+    // else
+    // for (item of tasks) {
+    //     const {status, ...rest} = item;
+    //     if (!result[status]) {
+    //         result[status] = [];
+    //     }
+    //     result[status].push(item);
+    // }
     return result;
 }
 

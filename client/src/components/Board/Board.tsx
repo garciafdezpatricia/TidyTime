@@ -1,49 +1,92 @@
 import { useEffect, useState } from "react";
-import { IoIosAddCircle } from "react-icons/io";
+import Column from "./Column";
+import { useTaskContext } from "../Context/TaskContext";
+import MoveModal from "../Modal/AbsoluteModal/AbsoluteModal";
+import { useClickAway } from "@uidotdev/usehooks";
 
 
 
 export default function Board() {
 
-    const [columns, setColumns] = useState(["To Do", "In progress", "Done"]);
-    const [sectionWidth, setSectionWidth] = useState(100 / columns.length);
+    const {boardItems, boardColumns, setBoardColumns, setBoardItems} = useTaskContext();
+
+    //const [columnContent, setColumnContent] = useState(boardItems) // by default all tasks to to-do list
+    const [sectionWidth, setSectionWidth] = useState(100 / boardColumns.length);
+    const [columnIndex, setColumnIndex] = useState(-1);
+    const [cardIndex, setCardIndex] = useState(-1);
+    const [isMovingTask, setIsMovingTask] = useState(false);
 
     useEffect(() => {
-        setSectionWidth(100 / columns.length);
-    }, [columns])
+        setSectionWidth(100 / boardColumns.length);
+    }, [boardColumns])
+
+    const handleMoveTask = (columnIndex:number, cardIndex:number) => {
+        setIsMovingTask(!isMovingTask);
+        setColumnIndex(columnIndex);
+        setCardIndex(cardIndex);
+    }
+
+    const moveTask = (target: number) => {
+        setBoardItems((prevBoardItems) => {
+            // Copiar el estado anterior para mantener la inmutabilidad
+            const newBoardItems = [...prevBoardItems];
+            
+            // Obtener la tarea que se va a mover
+            const taskToMove = {...newBoardItems[columnIndex][cardIndex]};
+            
+            // Actualizar el estado de la tarea
+            taskToMove.status = target;
+
+            // Eliminar la tarea de la columna de origen
+            newBoardItems[columnIndex] = newBoardItems[columnIndex].filter((_, index) => index !== cardIndex);
+
+            // Agregar la tarea a la columna de destino
+            if (!newBoardItems[target]) {
+                newBoardItems[target] = [];
+            }
+            newBoardItems[target].push(taskToMove);
+            return newBoardItems;
+        });
+        setIsMovingTask(false);
+    }
 
     return (
         <article className="board-section">
             <section className="board-button-section">
-                
+                <p>Visualize your progress</p>
+                <button 
+                    className="add-column-button"
+                    onClick={() => setBoardColumns([...boardColumns, "New column"])}
+                >Add new Column</button>
             </section>
             <section className="board-board">
                 {
-                    columns.map((column, index) => {
+                    boardColumns.length > 0 ?
+                    boardColumns.map((column, index) => {
                         return (
-                            <section className="board-column" key={index} style={{width: `${sectionWidth}%`}}>
-                                <div className="board-column-title">{column}</div>
-                                <div className="board-column-content">
-                                    <article className="board-column-content-item">
-                                        <p>Hacer las maletas</p>
-                                    </article>
-                                </div>
-                                <div className="board-column-new-item">
-                                    <form className="new-item-form">
-                                        <IoIosAddCircle 
-                                            size={"1.5rem"} 
-                                            color="#787777"
-                                            cursor={"pointer"}
-                                            className="new-item-icon"
-                                        />
-                                        <input type="text" />
-                                    </form> 
-                                </div>
-                            </section>
+                            <Column 
+                                key={index}
+                                index={index}
+                                sectionWidth={sectionWidth} 
+                                content={boardItems[index] ?? []} 
+                                name={column} 
+                                handleMoveTask={handleMoveTask}
+                            />
                         )
                     })
+                    :
+                    <p className="empty-board">Add new columns to the board!</p>
                 }
             </section>
+            { isMovingTask && 
+                <MoveModal 
+                    options={boardColumns} 
+                    columnIndex={columnIndex}
+                    cardIndex={cardIndex}
+                    onClick={moveTask} 
+                    onClose={() => setIsMovingTask(false)}
+                />
+            }
         </article>
     )
 }

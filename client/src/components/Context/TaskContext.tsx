@@ -1,4 +1,4 @@
-import { TaskList, Label, taskToListOfTaskList } from "@/src/model/Scheme";
+import { TaskList, Label, taskToListOfTaskList, BoardItem, taskToBoardItemMatrix } from "@/src/model/Scheme";
 import { ReactNode, createContext, useContext, useState } from "react";
 
 /**
@@ -14,6 +14,10 @@ export interface ITaskContext {
     setTasks: React.Dispatch<React.SetStateAction<TaskList[]>>,
     setSelectedListIndex: React.Dispatch<React.SetStateAction<number>>,
     setSelectedTaskIndex: React.Dispatch<React.SetStateAction<number>>,
+    boardItems: BoardItem[][],
+    setBoardItems: React.Dispatch<React.SetStateAction<BoardItem[][]>>,
+    boardColumns: string[],
+    setBoardColumns: React.Dispatch<React.SetStateAction<string[]>>,
 }
 
 const tasks = [
@@ -45,6 +49,10 @@ const defaultContext: ITaskContext ={
     setTasks: () => {},
     setSelectedListIndex: () => {},
     setSelectedTaskIndex: () => {},
+    boardItems: taskToBoardItemMatrix(tasks),
+    setBoardItems: () => {},
+    boardColumns: ["To do", "In progress", "Done"],
+    setBoardColumns: () => {},
 }
 // context with the default task context
 const TaskContext = createContext<ITaskContext>(defaultContext);
@@ -71,8 +79,11 @@ export function TaskProvider({children} : ITaskContextProvider) {
     const [tasks, setTasks] = useState(defaultContext.tasks);
     const [selectedListIndex, setSelectedListIndex] = useState(defaultContext.selectedListIndex);
     const [selectedTaskIndex, setSelectedTaskIndex] = useState(defaultContext.selectedTaskIndex);
+    const [boardItems, setBoardItems] = useState(defaultContext.boardItems);
+    const [boardColumns, setBoardColumns] = useState(defaultContext.boardColumns);
     const labels = defaultContext.labels;
-    const value ={listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, labels, selectedTaskIndex, setSelectedTaskIndex};
+    const value ={listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, 
+        labels, selectedTaskIndex, setSelectedTaskIndex, boardItems, setBoardItems, boardColumns, setBoardColumns};
 
     return (
         <TaskContext.Provider value={value}>

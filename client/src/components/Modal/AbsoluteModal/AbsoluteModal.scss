@@ -1,0 +1,39 @@
+@use "../../../../styles/variables" as *;
+
+.move-task {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 15rem;
+    display: flex;
+    flex-direction: column;
+    background-color: $white;
+    padding: .8rem;
+    border-radius: .4rem;
+    button {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        width: fit-content;
+        padding-inline: .5rem;
+        &:hover {
+            background-color: $primary-grey;
+        }
+    }
+}
+
+.move-button {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+}
+
+.move-icon-not-visible {
+    display: none;
+}
+
+.move-icon-visible {
+    display: flex;
+}
