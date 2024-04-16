@@ -2,7 +2,7 @@
 
 .move-task {
     position: absolute;
-    top: 20%;
+    top: 30%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
@@ -12,6 +12,7 @@
     background-color: $white;
     padding: .8rem;
     border-radius: .4rem;
+    box-shadow: 5px 9px 40px -4px rgba(0,0,0,0.75);
     button {
         background-color: transparent;
         border: none;

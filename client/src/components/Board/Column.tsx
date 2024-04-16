@@ -28,7 +28,6 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
     }
 
     const renameList = () => {
-        console.log(index);
         setBoardColumns((prevColumns) => {
 			const newColumns = [...prevColumns];
 			newColumns[index] = renameListName;
@@ -62,18 +61,23 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
                 setBoardColumns((prevColumns) => {
                     return prevColumns.filter((_, i) => i !== index);
                 })
+                const updatedBoardItems = [...boardItems];
                 // move items from the list we're deleting to the first one
                 const itemsToMove = boardItems[index];
-                itemsToMove.map((item) => item.status = 0);
-                let updatedBoardItems = [...boardItems];
-                updatedBoardItems.splice(index, 1); // delete 
-                updatedBoardItems.splice(0, 0, itemsToMove); // insert items to the first list
+                if (itemsToMove) {
+                    itemsToMove.map((item) => item.status = 0);
+                    updatedBoardItems.splice(index, 1); // delete 
+                    // check if the first column exists (could be the one that is being deleted)
+                    updatedBoardItems[0] = updatedBoardItems[0] ? [...itemsToMove, ...updatedBoardItems[0]] : [...itemsToMove];
+                } else {
+                    updatedBoardItems.splice(index, 1); // delete 
+                }                
                 setBoardItems(updatedBoardItems);    
             }
             setConfirmationDeleteModalOpen(false);
         }          
 	};
-
+    // TODO: bug in edit modal being cut by the column -> need an alternative
     return (
         <section className="board-column" key={index} style={{width: `${sectionWidth}%`}}>
             <div className="board-column-title">
@@ -90,7 +94,7 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
                             onRenameAction={renameList}
                             onInputChange={handleInputChange}
                             onClose={() => setManagingListIndex(-1)}
-                            dontShowDelete={true}
+                            
                         />
                     )}
                 </div>
@@ -115,7 +119,7 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
                 <form className="new-item-form">
                     <IoIosAddCircle 
                         size={"1.5rem"} 
-                        color="#787777"
+                        color="#3E5B41"
                         cursor={"pointer"}
                         className="new-item-icon"
                     />

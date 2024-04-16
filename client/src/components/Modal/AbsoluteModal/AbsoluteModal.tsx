@@ -33,7 +33,7 @@ export default function MoveModal({options, onClick, columnIndex, cardIndex, onC
 
     return (
         <div ref={ref} className="move-task">
-            <p>Move task to:</p>
+            {options.length > 1 ? <p>Move task to:</p> : <p>Add columns to move your tasks!</p>}
             {
                 options.map((option, index) => {
                     if (index !== columnIndex) {

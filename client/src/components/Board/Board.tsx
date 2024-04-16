@@ -53,13 +53,15 @@ export default function Board() {
     return (
         <article className="board-section">
             <section className="board-button-section">
-                <p>Visualize your progress</p>
+                <p>Organize your tasks and see your progress using the board view!
+                    <hr></hr>
+                </p>
                 <button 
                     className="add-column-button"
                     onClick={() => setBoardColumns([...boardColumns, "New column"])}
-                >Add new Column</button>
+                >Add new column</button>
             </section>
-            <section className="board-board">
+            <section className={boardColumns.length > 0 ? "board-board" : "board-board-empty"}>
                 {
                     boardColumns.length > 0 ?
                     boardColumns.map((column, index) => {
@@ -75,7 +77,7 @@ export default function Board() {
                         )
                     })
                     :
-                    <p className="empty-board">Add new columns to the board!</p>
+                    <p className="empty-board">No columns yet... add a new one</p>
                 }
             </section>
             { isMovingTask && 
