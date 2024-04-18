@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Column from "./Column";
 import { useTaskContext } from "../Context/TaskContext";
 import MoveModal from "../Modal/AbsoluteModal/AbsoluteModal";
+import { BiAddToQueue } from "react-icons/bi";
 
 
 
@@ -57,7 +58,10 @@ export default function Board() {
                 <button 
                     className="add-column-button"
                     onClick={() => setBoardColumns([...boardColumns, "New column"])}
-                >Add new column</button>
+                >
+                    <BiAddToQueue />
+                    Add new column
+                </button>
             </section>
             <section className={boardColumns.length > 0 ? "board-board" : "board-board-empty"}>
                 {
