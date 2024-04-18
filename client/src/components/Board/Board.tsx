@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Column from "./Column";
 import { useTaskContext } from "../Context/TaskContext";
 import MoveModal from "../Modal/AbsoluteModal/AbsoluteModal";
-import { useClickAway } from "@uidotdev/usehooks";
 
 
 
@@ -54,7 +53,6 @@ export default function Board() {
         <article className="board-section">
             <section className="board-button-section">
                 <p>Organize your tasks and see your progress using the board view!
-                    <hr></hr>
                 </p>
                 <button 
                     className="add-column-button"

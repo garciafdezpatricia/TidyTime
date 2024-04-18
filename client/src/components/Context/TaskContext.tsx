@@ -1,5 +1,5 @@
-import { TaskList, Label, taskToListOfTaskList, BoardItem, taskToBoardItemMatrix } from "@/src/model/Scheme";
-import { ReactNode, createContext, useContext, useState } from "react";
+import { TaskList, Label, taskToListOfTaskList, BoardItem, taskToBoardItemMatrix, listOfTaskListToTask } from "@/src/model/Scheme";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
 /**
  * Interface for the task context of the application.
@@ -84,6 +84,12 @@ export function TaskProvider({children} : ITaskContextProvider) {
     const labels = defaultContext.labels;
     const value ={listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, 
         labels, selectedTaskIndex, setSelectedTaskIndex, boardItems, setBoardItems, boardColumns, setBoardColumns};
+
+    useEffect(() => {
+        const updatedTasks = listOfTaskListToTask(tasks);
+        const newBoardItems = taskToBoardItemMatrix(updatedTasks);
+        setBoardItems(newBoardItems)
+    }, [tasks])
 
     return (
         <TaskContext.Provider value={value}>

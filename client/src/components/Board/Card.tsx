@@ -1,8 +1,5 @@
-import { useState } from "react";
 import { TbArrowMoveRight } from "react-icons/tb";
-import { uuid } from "uuidv4";
 import { useTaskContext } from "../Context/TaskContext";
-import MoveModal from "../Modal/AbsoluteModal/AbsoluteModal";
 
 export interface CardProps {
     cardIndex: number; // card index

@@ -11,7 +11,7 @@ import { CalendarItem } from "@/src/model/Scheme";
 import { useGoogleContext } from "../Context/GoogleContext";
 import toast from "react-hot-toast";
 import { IoMenu } from "react-icons/io5";
-import { useGoogleHandler } from "@/src/model/google";
+import { useGoogleHandler } from "@/pages/api/google";
 
 export default function CalendarMenu() {
     // event context utils

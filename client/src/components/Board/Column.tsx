@@ -77,12 +77,12 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
             setConfirmationDeleteModalOpen(false);
         }          
 	};
-    // TODO: bug in edit modal being cut by the column -> need an alternative
+    
     return (
         <section className="board-column" key={index} style={{width: `${sectionWidth}%`}}>
             <div className="board-column-title">
-                {name}
-                <div className='edit-dropdown'>
+                <p className="title">{name}</p>
+                <div>
                     <IoIosArrowDropdown
                         size={"1rem"}
                         color={"#3E5B41"}
@@ -90,6 +90,7 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
                     />{" "}
                     {managingListIndex === index && (
                         <EditListModal
+                            title="What do you want to do with this column?"
                             onDeleteAction={() => setConfirmationDeleteModalOpen(true)}
                             onRenameAction={renameList}
                             onInputChange={handleInputChange}
@@ -114,17 +115,6 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
                         )
                     })
                 }
-            </div>
-            <div className="board-column-new-item">
-                <form className="new-item-form">
-                    <IoIosAddCircle 
-                        size={"1.5rem"} 
-                        color="#3E5B41"
-                        cursor={"pointer"}
-                        className="new-item-icon"
-                    />
-                    <input type="text" />
-                </form> 
             </div>
             {isConfirmationDeleteModalOpen && (
 				<PromptModal

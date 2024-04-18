@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
-import { useGoogleContext } from "../components/Context/GoogleContext";
-import { useEventContext } from "../components/Context/EventContext";
-import { CalendarItem, Event } from "./Scheme";
+import { useGoogleContext } from "../../src/components/Context/GoogleContext";
+import { useEventContext } from "../../src/components/Context/EventContext";
+import { CalendarItem, Event } from "../../src/model/Scheme";
 
 export function useGoogleHandler() {
 
@@ -41,10 +41,45 @@ export function useGoogleHandler() {
         .then(data => {
             setAuthUrl(data.authorizationUrl);
         })
-        .catch(error => {
+        .catch((error:any) => {
             console.error('Error al obtener la URL de autorización', error);
         })
     }
+
+    const checkAuthentication = async (emailParam:any, isUserLoggedIn:any) => {
+        // if email in url
+        if (emailParam) {
+            try {
+                const isAuthenticated = await isAuthenticatedUser(emailParam);
+                if (isAuthenticated) {
+                    localStorage.setItem("googleLoggedIn", emailParam);
+                    setLoggedIn(true);
+                } else {
+                    setLoggedIn(false);
+                }
+            } catch (error) {
+                toast.error("There has been an error in the authentication. Please, try again.")
+                setLoggedIn(false);
+            }
+        }
+        // if user in local storage
+        else if (isUserLoggedIn) {
+            try {
+                const isAuthenticated = await isAuthenticatedUser(isUserLoggedIn);
+                setLoggedIn(isAuthenticated);
+                if (!isAuthenticated) {
+                    localStorage.removeItem('googleLoggedIn');
+                }    
+            } catch (error) {
+                toast.error("There has been an error in the authentication. Please, try again.")
+                localStorage.removeItem('googleLoggedIn');
+                setLoggedIn(false);
+            }
+        } else {
+            
+            setLoggedIn(false);
+        }
+    };
 
     const getCalendars = () => {
         return new Promise<void>((resolve, reject) => {
@@ -225,5 +260,26 @@ export function useGoogleHandler() {
         });
     }
 
-    return {handleLogin, handleLogout, getCalendars, getCalendarEvents, exportEvent, updateAndSaveEvent};
+    const isAuthenticatedUser = async (emailParam:string): Promise<boolean> => {
+        return new Promise((resolve, reject) => {
+            fetch('http://localhost:8080/google/auth/email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: emailParam }),
+                credentials: 'include',
+            })
+            .then(response => response.json())
+            .then((data: boolean) => {
+                resolve(data);
+            })
+            .catch(e => {
+                console.error(e);
+                reject(e);
+            });
+        });
+    }
+
+    return {handleLogin, handleLogout, getCalendars, getCalendarEvents, exportEvent, updateAndSaveEvent, isAuthenticatedUser, checkAuthentication};
 }

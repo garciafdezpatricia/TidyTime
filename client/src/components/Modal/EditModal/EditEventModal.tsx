@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import { PiWarningOctagonFill } from "react-icons/pi";
 import ShareModal from "../ShareModal/ShareEventModal";
 import PromptModal from "../PromptModal/PromptModal";
-import { useGoogleHandler } from "@/src/model/google";
+import { useGoogleHandler } from "@/pages/api/google";
 
 export interface Props {
     onClose: (arg?:any) => void | any;

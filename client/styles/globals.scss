@@ -27,6 +27,7 @@
 @use "../src/components/Modal/ShareModal/ShareEventModal.scss";
 @use "../src/components/Modal/AbsoluteModal/AbsoluteModal.scss";
 @use "../src/components/Board/Board.scss";
+@use "../src/components/Auth/GitHubAuth.scss";
 
 
 @font-face {
@@ -60,19 +61,19 @@
 100% { transform: rotate(360deg); }
 }
 
-::-webkit-scrollbar {
-    height: .1rem;
-    width: .1rem;
-    background: $light-grey;
-    display: none;
-}
+// ::-webkit-scrollbar {
+//     height: .1rem;
+//     width: .1rem;
+//     background: $light-grey;
+//     display: none;
+// }
 
-::-webkit-scrollbar-thumb {
-    background: $white;
-    -webkit-border-radius: .4rem;
-    width: .1rem;
-}
+// ::-webkit-scrollbar-thumb {
+//     background: $white;
+//     -webkit-border-radius: .4rem;
+//     width: .1rem;
+// }
 
-::-webkit-scrollbar-corner {
-    background: $white;
-}
+// ::-webkit-scrollbar-corner {
+//     background: $white;
+// }

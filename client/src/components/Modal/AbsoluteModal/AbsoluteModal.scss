@@ -29,6 +29,14 @@
     display: flex;
     align-items: center;
     gap: .3rem;
+    overflow-x: hidden;
+    
+    button {
+        text-overflow: ellipsis;
+        max-width: 13.2rem;
+        overflow-x: hidden;
+        white-space: nowrap;
+    }
 }
 
 .move-icon-not-visible {

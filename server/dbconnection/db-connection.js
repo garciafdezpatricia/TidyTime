@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-async function saveTokensToDB(userEmail, tokens) {
+async function saveTokensToDB(user, tokens, collection) {
     const db = mongoose.connection.useDb("TidyTimeDev");
-    const collection = db.collection("GoogleTokens");
+    const collection = db.collection(collection);
     console.log(userEmail);
     const userTokens = {
-        email: userEmail,
+        user: user,
         tokens: tokens
     };
 

@@ -2,20 +2,31 @@ import { useState } from "react";
 import Toggle from "../../ToggleSwitch/ToggleSwitch";
 import { Icon } from "../../Icon/Icon";
 import { useGoogleContext } from "../../Context/GoogleContext";
-import { useGoogleHandler } from "@/src/model/google";
+import { useGoogleHandler } from "@/pages/api/google";
+import { useGithubContext } from "../../Context/GithubContext";
+import { useGithubHandler } from "@/pages/api/github";
 
 
 export default function ApplicationPanel() {
 
-    const {loggedIn, authUrl} = useGoogleContext();
-    const {handleLogin, handleLogout} = useGoogleHandler()
+    const { loggedIn, authUrl } = useGoogleContext();
+    const { githubLoggedIn } = useGithubContext();
+    const { handleLogout } = useGoogleHandler();
+    const { logoutGithub } = useGithubHandler();
     
-    const googleHandler = (value:boolean) => {
+    const googleSwitch = (value:boolean) => {
         if (value) {
-            handleLogin();
             window.location.href = authUrl;
         } else {
             handleLogout();
+        }
+    }
+
+    const githubSwitch = async (value:boolean) => {
+        if (value) {
+
+        } else {
+            await logoutGithub();
         }
     }
 
@@ -30,14 +41,15 @@ export default function ApplicationPanel() {
                     appName={"Google Calendar"} 
                     appDesc={"Connect to Google to manage your events, calendars and tasks."}
                     checked={loggedIn}
-                    onChange={googleHandler}
+                    onChange={googleSwitch}
                 />
                 <Application 
                     appImg={"./github.svg"} 
                     appAlt={"GitHub icon"} 
                     appName={"GitHub"} 
                     appDesc={"Connect to GitHub to manage your issues."}
-                    onChange={() => {}}
+                    checked={githubLoggedIn}
+                    onChange={githubSwitch}
                 />
             </div>
         </article>

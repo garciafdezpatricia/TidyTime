@@ -55,7 +55,7 @@ router.get('/google/auth/callback', async (req, res) => {
     console.log('Credenciales establecidas');
     try {
         const email = await getEmail();
-        res.redirect(`http://localhost:3000/calendar?email=${email}`);
+        res.redirect(`http://localhost:3000/calendar?user=${email}`);
     } catch (error) {
         res.redirect('http://localhost:3000/calendar');
     }
