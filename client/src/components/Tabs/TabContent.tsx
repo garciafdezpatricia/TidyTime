@@ -133,7 +133,10 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
 
     return (
         <section className='tab-content-container'>
-				<FilterSection handleFilter={handleFilter} sortByDate={sortByDate} sortByDifficulty={sortByDifficulty}/>
+            {
+                tasks.length > 0 &&
+                <FilterSection handleFilter={handleFilter} sortByDate={sortByDate} sortByDifficulty={sortByDifficulty}/>
+            }
 				{tasksToShow.map((content, index) => (
 					<ul className={selectedListIndex === index ? "active-content" : "content"} key={index}>
 						{content.map((item, itemIndex) => {

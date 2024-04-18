@@ -1,22 +1,29 @@
-import { useState } from "react";
 import Toggle from "../../ToggleSwitch/ToggleSwitch";
 import { Icon } from "../../Icon/Icon";
 import { useGoogleContext } from "../../Context/GoogleContext";
 import { useGoogleHandler } from "@/pages/api/google";
 import { useGithubContext } from "../../Context/GithubContext";
 import { useGithubHandler } from "@/pages/api/github";
+import { useEffect, useState } from "react";
 
 
 export default function ApplicationPanel() {
 
     const { loggedIn, authUrl } = useGoogleContext();
     const { githubLoggedIn } = useGithubContext();
-    const { handleLogout } = useGoogleHandler();
-    const { logoutGithub } = useGithubHandler();
+    const { handleLogout, handleLogin } = useGoogleHandler();
+    const { logoutGithub, loginWithGithub } = useGithubHandler();
+
+    const [reRender, setRerender] = useState(Math.random());
+
+    useEffect(() => {
+        handleLogin();
+    }, [reRender])
     
     const googleSwitch = (value:boolean) => {
         if (value) {
-            window.location.href = authUrl;
+            console.log(authUrl);
+            window.location.assign(authUrl);
         } else {
             handleLogout();
         }
@@ -24,7 +31,7 @@ export default function ApplicationPanel() {
 
     const githubSwitch = async (value:boolean) => {
         if (value) {
-
+            await loginWithGithub();
         } else {
             await logoutGithub();
         }

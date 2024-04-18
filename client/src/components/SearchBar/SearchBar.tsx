@@ -67,7 +67,6 @@ export default function SearchBar() {
         setSelectedListIndex(task.listIndex);
         const taskIndex = tasks[task.listIndex].findIndex(item => item === task);
         if (taskIndex !== -1) {
-            window.location.assign(`#list${task.listIndex}?item${taskIndex}`)
             setSelectedTaskIndex(taskIndex);
         }
     }

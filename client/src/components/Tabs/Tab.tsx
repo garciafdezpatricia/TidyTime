@@ -26,7 +26,8 @@ export default function Tab({handleEditModal} : Props) {
 	const [renameListName, setRenameListName] = useState("");
 	
 	// const with the lists, tasks and reference to the current active list extracted from the context.
-    const {listNames, selectedListIndex, setListNames, setTasks, setSelectedListIndex, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
+    const {listNames, selectedListIndex, setListNames, setTasks, tasks, 
+		setSelectedListIndex, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
 
 	// scroll to selected task
 	useEffect(() => {
@@ -137,6 +138,7 @@ export default function Tab({handleEditModal} : Props) {
 	useEffect(() => {
 		if (deletingList) {
 			setSelectedListIndex(0);
+			setManagingList(false);
 			setDeletingList(false);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -182,10 +184,13 @@ export default function Tab({handleEditModal} : Props) {
 				Add New List
 			</button>
 			<TabContent seeDone={seeDone}  handleCheck={handleCheck} handleEditModal={handleEditModal}/>
-			<button className='see-done-task' onClick={() => setSeeDone(!seeDone)}>
-                {seeDone ? <AiFillEyeInvisible /> : <AiFillEye /> }
-				{seeDone ? "Hide" : "Show"} done tasks
-			</button>
+			{
+				tasks.length > 0 &&
+				<button className='see-done-task' onClick={() => setSeeDone(!seeDone)}>
+					{seeDone ? <AiFillEyeInvisible /> : <AiFillEye /> }
+					{seeDone ? "Hide" : "Show"} done tasks
+				</button>
+			}
 			{isConfirmationDeleteModalOpen && (
 				<PromptModal
 					title="Are you sure you want to delete this list? This action can't be undone"

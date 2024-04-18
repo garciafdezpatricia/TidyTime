@@ -5,7 +5,7 @@ import { CalendarItem, Event } from "../../src/model/Scheme";
 
 export function useGoogleHandler() {
 
-    const { setCalendars, setSelectedCalendarId, setLoggedIn, setAuthUrl } = useGoogleContext();
+    const { setCalendars, setSelectedCalendarId, setLoggedIn, setAuthUrl, loggedIn } = useGoogleContext();
     const { events, setEvents } = useEventContext();
 
     const handleLogout = () => {
@@ -53,7 +53,9 @@ export function useGoogleHandler() {
                 const isAuthenticated = await isAuthenticatedUser(emailParam);
                 if (isAuthenticated) {
                     localStorage.setItem("googleLoggedIn", emailParam);
-                    setLoggedIn(true);
+                    if (!loggedIn) {
+                        setLoggedIn(true);
+                    }
                 } else {
                     setLoggedIn(false);
                 }
@@ -84,8 +86,8 @@ export function useGoogleHandler() {
     const getCalendars = () => {
         return new Promise<void>((resolve, reject) => {
             fetch('http://localhost:8080/google/calendar/list', {
-            method: 'GET',
-            credentials: 'include',
+                method: 'GET',
+                credentials: 'include',
             })
             .then(response => response.json())
             .then(data => {
@@ -97,6 +99,7 @@ export function useGoogleHandler() {
                     setCalendars(calendars);
                     resolve();
                 } else {
+                    console.log("hola? 2222")
                     console.error(data.value);
                     toast.error("Couldn't import the calendars.\nPlease log in with your Google account and try again.", {
                         position: "top-center",
@@ -110,8 +113,11 @@ export function useGoogleHandler() {
                 }
             })  
             .catch(error => {
-                toast.error(`${error}`)
-                reject(error);
+                console.log("hola?");
+                if (error.message.includes("Failed to fetch")) {
+                    toast.error(`Error when connecting to the server`)
+                }
+                resolve();
             });
         })
     }

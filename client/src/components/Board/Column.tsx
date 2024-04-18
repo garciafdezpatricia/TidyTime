@@ -81,11 +81,12 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
     return (
         <section className="board-column" key={index} style={{width: `${sectionWidth}%`}}>
             <div className="board-column-title">
-                <p className="title">{name}</p>
+                <p className="title" title={name}>{name}</p>
                 <div>
                     <IoIosArrowDropdown
                         size={"1rem"}
                         color={"#3E5B41"}
+                        cursor={"pointer"}
                         onClick={() => manageEditModal(index)}
                     />{" "}
                     {managingListIndex === index && (

@@ -10,7 +10,6 @@ import { useGoogleHandler } from "../api/google";
 
 export default function Calendar() {
 
-    const { setLoggedIn } = useGoogleContext();
     const { checkAuthentication } = useGoogleHandler();
     const [reRender, setRerender] = useState(Math.random());
 

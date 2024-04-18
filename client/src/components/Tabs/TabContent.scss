@@ -43,6 +43,12 @@
     display: flex;
     align-items: center;
     gap: 2rem;
+    max-width: 15rem;
+    h4 {
+        text-overflow: ellipsis;
+        overflow-x: hidden;
+        white-space: nowrap;
+    }
 }
 
 .selected-task {

@@ -8,7 +8,16 @@ export function useGithubHandler() {
     const {setGithubLoggedIn, setUserData} = useGithubContext();
 
     const loginWithGithub = async () => {
-        window.location.assign("http://localhost:8080/github/auth");
+        try {
+            const response = await fetch("http://localhost:8080/github/health-check", {method: 'GET'});
+            if (response.ok) {
+                window.location.assign("http://localhost:8080/github/auth");
+            } else {
+                toast.error('Server appears to be down');    
+            }
+        } catch (error) {
+            toast.error('Error when connecting to the server');
+        }
     }
 
     async function logoutGithub() {
