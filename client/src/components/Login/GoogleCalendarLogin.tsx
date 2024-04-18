@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Icon } from "../Icon/Icon";
 import { useGoogleContext } from "../Context/GoogleContext";
-import { useGoogleHandler } from "@/src/model/google";
+import { useGoogleHandler } from "@/pages/api/google";
 
 export default function LoginGoogleCalendar() {
     const {loggedIn, authUrl} = useGoogleContext();

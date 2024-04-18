@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { login, handleIncomingRedirect, getDefaultSession, Session, fetch } from '@inrupt/solid-client-authn-browser';
 import { getPodUrlAll } from '@inrupt/solid-client';
-import GitHub from '../src/components/Auth/GitHubAuth';
+import GitHubAuthButton from '../src/components/Auth/GitHubAuth';
 import { MenuSideBar } from '../src/components/Menu/Menu';
 import LoginGoogleCalendar from '@/src/components/Login/GoogleCalendarLogin';
 

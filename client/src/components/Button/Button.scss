@@ -17,17 +17,6 @@ button {
     }
 }
 
-.auth-button {
-    border-color: var.$primary-green;
-    background-color: var.$white;
-    color:#000000;
-    font-size: 1em;
-    gap: .5em;
-    &:hover {
-        outline: solid var.$primary-green 1px
-    }
-}
-
 .btn-icon {
     width: 1em;
     height: auto;

@@ -4,7 +4,7 @@ import { Icon } from "../../Icon/Icon";
 import { useEventContext } from "../../Context/EventContext";
 import toast from "react-hot-toast";
 import { GrShareOption } from "react-icons/gr";
-import { useGoogleHandler } from "@/src/model/google";
+import { useGoogleHandler } from "@/pages/api/google";
 
 
 export interface Props {

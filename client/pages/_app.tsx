@@ -6,6 +6,9 @@ import { TaskProvider } from "../src/components/Context/TaskContext";
 import { EventProvider } from "@/src/components/Context/EventContext";
 import { Toaster } from "react-hot-toast";
 import { GoogleProvider } from "@/src/components/Context/GoogleContext";
+import { GithubProvider } from "@/src/components/Context/GithubContext";
+import { useEffect, useState } from "react";
+import { useGoogleHandler } from "./api/google";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
 
@@ -13,11 +16,15 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <TaskProvider>
         <EventProvider>
           <GoogleProvider>
-          <SideMenu>
-            <MenuSideBar />
-            <Component {...pageProps} />
-          </SideMenu>
-          <Toaster />
+            <GithubProvider>
+
+              <SideMenu>
+                <MenuSideBar />
+                <Component {...pageProps} />
+              </SideMenu>
+              <Toaster />
+              
+            </GithubProvider>
           </GoogleProvider>
         </EventProvider>
       </TaskProvider>

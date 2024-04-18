@@ -1,0 +1,10 @@
+@use "../../../styles/variables" as *;
+
+.auth-button {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    outline: none;
+    border: .1rem solid $black;
+    padding-inline: .4rem;
+}

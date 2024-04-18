@@ -21,7 +21,7 @@ export default function Tab({handleEditModal} : Props) {
 	// const to store the state of the action taking place
 	const [deletingList, setDeletingList] = useState(false);
 	// const to store a reference to the current list whose options are being shown
-	const [managingListIndex, setManagingListIndex] = useState(-1);
+	const [managingList, setManagingList] = useState(false);
 	// const to manage renaming of tabs
 	const [renameListName, setRenameListName] = useState("");
 	
@@ -56,8 +56,8 @@ export default function Tab({handleEditModal} : Props) {
 	const handleTabSelection = (index: SetStateAction<number>) => {
 		setSelectedListIndex(index);
 		setSelectedTaskIndex(-1);
-		if (managingListIndex !== -1) {
-			setManagingListIndex(-1);
+		if (managingList) {
+			setManagingList(false);
 		}
 	};
 
@@ -68,8 +68,8 @@ export default function Tab({handleEditModal} : Props) {
 	 * @param itemIndex corresponds with the index of the tasks inside of its list.
 	 */
 	const handleCheck = (event: any, itemIndex: any) => {
-		if (managingListIndex !== -1) {
-			setManagingListIndex(-1);
+		if (managingList) {
+			setManagingList(false);
 		}
 		setTasks((prevTodo) => {
 			return prevTodo.map((list, index) => {
@@ -120,7 +120,7 @@ export default function Tab({handleEditModal} : Props) {
 			return newTabs;
 		});
 		setRenameListName("");
-		setManagingListIndex(-1);
+		setManagingList(false);
 	};
 
 	/**
@@ -128,9 +128,7 @@ export default function Tab({handleEditModal} : Props) {
 	 * @param index corresponds to the index of the tab being clicked.
 	 */
 	const manageEditModal = (index: number) => {
-		index === managingListIndex
-			? setManagingListIndex(-1)
-			: setManagingListIndex(index);
+		setManagingList(!managingList)
 	};
 
 	/**
@@ -150,31 +148,32 @@ export default function Tab({handleEditModal} : Props) {
 
 	return (
 		<article className='tab-container'>
-			<section className='tab-container bloc-tabs'>{" "}
-				{listNames.map((tab, index) => (
-					<section
-						className={selectedListIndex === index ? "active-tab" : "tab"}
-						key={index}
-					>
-						<p onClick={() => handleTabSelection(index)}>{tab}</p>
-						<div className='edit-dropdown'>
-							<IoIosArrowDropdown
-								size={"1rem"}
-								color={"#3E5B41"}
-								onClick={() => manageEditModal(index)}
-							/>{" "}
-							{managingListIndex === index && (
-								<EditListModal
-									onDeleteAction={() => setConfirmationDeleteModalOpen(true)}
-									onRenameAction={renameTab}
-									onInputChange={handleInputChange}
-									onClose={() => setManagingListIndex(-1)}
-								/>
-							)}
-						</div>
-					</section>
-				))}
-			</section>
+				<section className='tab-container bloc-tabs'>{" "}
+					{listNames.map((tab, index) => (
+						<section
+							className={selectedListIndex === index ? "active-tab" : "tab"}
+							key={index}
+						>
+							<p onClick={() => handleTabSelection(index)}>{tab}</p>
+							<div className='edit-dropdown'>
+								<IoIosArrowDropdown
+									size={"1rem"}
+									color={"#3E5B41"}
+									onClick={() => manageEditModal(index)}
+								/>{" "}
+							</div>
+						</section>
+					))}
+				</section>
+				{managingList && (
+					<EditListModal
+						title="What do you want to do with this list?"
+						onDeleteAction={() => setConfirmationDeleteModalOpen(true)}
+						onRenameAction={renameTab}
+						onInputChange={handleInputChange}
+						onClose={() => setManagingList(false)}
+					/>
+				)}
 			<button
 				className='tab-container add-list'
 				onClick={addNewTab}
