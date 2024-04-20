@@ -84,12 +84,12 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
                     {
                         !dontShowDelete && 
                         <button 
-                        onClick={onDeleteAction} 
-                        className="remove-button"
-                    >
-                        <RiDeleteBin5Fill color="#b13838"/>
-                        Remove
-                    </button>
+                            onClick={onDeleteAction} 
+                            className="remove-button"
+                        >
+                            <RiDeleteBin5Fill color="#b13838"/>
+                            Remove
+                        </button>
                     }
                 </div>
             </div>

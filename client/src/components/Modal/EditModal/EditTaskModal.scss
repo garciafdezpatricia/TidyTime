@@ -111,10 +111,10 @@
     margin-bottom: 3rem;
     gap: 1rem;
 
-    .cancel {
-        padding: .3rem .8rem;
-        background-color: $medium-grey;
-        color: $white;
+    .delete-task {
+        padding: .3rem .5rem;
+        background-color: $hover-red;
+        gap: .3rem;
         outline: none;
         border: none;
         &:hover {
@@ -123,13 +123,26 @@
         }
     }
 
-    .save {
+    .cancel {
         padding: .3rem .8rem;
         background-color: $primary-grey;
-        border: .1rem solid $black;
+        outline: none;
+        border: none;
+        &:hover {
+            background-color: $medium-grey;
+            color: $white;
+        }
+    }
+
+    .save {
+        padding: .3rem .8rem;
+        color: $white;
+        background-color: $primary-green;
+        border: .1rem solid $primary-green;
         &:hover {
             border-color: $primary-green;
             background-color: $hover-green;
+            color: $primary-green;
         }
     }
 }

@@ -3,9 +3,10 @@ import { useTaskContext } from "../../Context/TaskContext";
 import DifficultyRate from "../../DifficultyRate/DifficultyRate";
 import Toggle from "../../ToggleSwitch/ToggleSwitch";
 import CheckableComboBox from "../../ComboBox/CheckableComboBox";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Label, Task } from "@/src/model/Scheme";
-import { IoIosArrowDropdownCircle } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
+import PromptModal from "../PromptModal/PromptModal";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -14,7 +15,7 @@ export interface Props {
 
 export default function EditTaskModal({onClose, isOpen} : Props) {
 
-    const {tasks, selectedListIndex, setTasks, labels, selectedTaskIndex} = useTaskContext();
+    const {tasks, selectedListIndex, setTasks, labels, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
     const taskToEdit = tasks[selectedListIndex][selectedTaskIndex];
 
     const [newTitle, setNewTitle] = useState(taskToEdit.title);
@@ -23,6 +24,9 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
     const [newDate, setNewDate] = useState(taskToEdit.endDate ?? "");
     const [important, setImportant] = useState(taskToEdit.important ?? false);
     const [newLabels, setLabels] = useState<Label[]>(taskToEdit.labels ?? []);
+    
+    const [isDeleting, setConfirmationDeleteModalOpen] = useState(false);
+
 
     const onCancel = () => {
         setNewTitle(taskToEdit.title);
@@ -58,6 +62,18 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
 
     const handleLabels = (labels:Label[]) => {
         setLabels(labels);
+    }
+
+    const deleteTask = () => {
+        const updatedToDo = [...tasks];
+
+        updatedToDo[selectedListIndex] = [
+            ...updatedToDo[selectedListIndex].slice(0, selectedTaskIndex),
+            ...updatedToDo[selectedListIndex].slice(selectedTaskIndex + 1)
+        ];
+        setTasks(updatedToDo);
+        setSelectedTaskIndex(-1);
+        onClose();
     }
 
     return (
@@ -127,6 +143,12 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                 </section>
             </section>
             <section className="edit-task-modal-footer">
+                <button
+                    onClick={() => setConfirmationDeleteModalOpen(true)}
+                    className="delete-task">
+                    <MdDelete />
+                    Delete
+                </button>
                 <button 
                     className="cancel"
                     onClick={onCancel}>
@@ -138,6 +160,18 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                     Save
                 </button>
             </section>
-        </article>
+            {
+                isDeleting && 
+                <PromptModal
+					title="Are you sure you want to delete this task? This action can't be undone"
+					onPrimaryAction={() => deleteTask()}
+					primaryActionText='Delete'
+					secondaryActionText='Cancel'
+					onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}
+					variant='confirmation-modal'
+					backdrop
+				></PromptModal>
+            }
+        </article>        
     )
 }
