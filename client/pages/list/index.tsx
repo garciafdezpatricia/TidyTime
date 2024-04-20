@@ -90,6 +90,7 @@ export default function List() {
 				<button 
 					title="Connect to GitHub and sync your issues" 
 					onClick={syncIssues}
+					disabled={githubLoggedIn ? false : true}
 					className="import-button">
 						{isSyncingIssues && <div className="loader"></div>}
 						Sync issues

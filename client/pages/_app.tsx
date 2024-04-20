@@ -17,7 +17,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <EventProvider>
           <GoogleProvider>
             <GithubProvider>
-
+              {/** This is a SideMenu leayout */}
               <SideMenu>
                 <MenuSideBar />
                 <Component {...pageProps} />

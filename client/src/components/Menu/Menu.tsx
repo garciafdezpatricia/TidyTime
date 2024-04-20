@@ -7,7 +7,9 @@ export function MenuSideBar() {
     const router = useRouter();
     return (
         <section className="sidebar-menu">
-            <h1 className="sidebar-menu-title">TidyTime</h1>
+            <Button className="menu-button" onClick={() => router.push('/')}>
+                    <h1 className="sidebar-menu-title">TidyTime</h1>
+                </Button>
             <section className="sidebar-menu-features">
                 <Button className="menu-button" onClick={() => router.push('/list')}>
                     <Icon src="menu/to-dolist.png" alt="TO-DO List"/>

@@ -1,7 +1,35 @@
 const express = require("express");
+const crypto = require("crypto");
 require('dotenv').config();
 
 const router = express.Router();
+
+
+// ======================= ENCRYPTION =========================
+const algorithm = process.env.CRYPTO_ALGORITHM;
+const secretKey = process.env.CRYPTO_SECRET_KEY;
+const iv = crypto.randomBytes(16);
+
+
+const encrypt = (text) => {
+  const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
+  const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+  return iv.toString('hex') + ':' + encrypted.toString('hex');
+}
+
+const decrypt = (hash) => {
+  let [iv, encrypted] = hash.split(':');
+  iv = Buffer.from(iv, 'hex');
+  encrypted = Buffer.from(encrypted, 'hex');
+  const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
+  const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+  return decrypted.toString();
+}
+
+// =============================================================
+
+
+
 
 router.get('/github/health-check', async (req, res) => {
   res.status(200).send('OK');
@@ -29,7 +57,8 @@ router.get("/github/auth/callback", async function (req, res) {
       });
       const data = await response.json();
       if (data.access_token) {
-        res.cookie('access_token', data.access_token, {
+        const encryptedToken = encrypt(data.access_token);
+        res.cookie('access_token', encryptedToken, {
           secure: false,
           httpOnly: true
         })
@@ -56,7 +85,7 @@ router.get("/github/user/data", async function (req, res) {
       res.json({status: false, data: "Cookie access not found"});
       return;
     }
-    const access_token = req.cookies.access_token;
+    const access_token = decrypt(req.cookies.access_token);
     const response = await fetch("https://api.github.com/user", {
       method: "GET",
       headers: {
@@ -78,7 +107,7 @@ router.get("/github/issues/get", async function (req, res) {
     if (!req.cookies.access_token) {
       res.json({status: false, data: "Cookie access not found"});
     }
-    const access_token = req.cookies.access_token;
+    const access_token = decrypt(req.cookies.access_token);
     const response = await fetch(
       `https://api.github.com/search/issues?q=is:open+author:${req.query.user}+assignee:${req.query.user}`,
       {

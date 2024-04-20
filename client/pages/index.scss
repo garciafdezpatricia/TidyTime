@@ -1,0 +1,8 @@
+@use "../styles/variables" as *;
+
+.index-container {
+    width: $view-width;
+    height: 100%;
+    padding: $view-padding;
+    box-sizing: border-box;
+}

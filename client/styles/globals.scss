@@ -1,4 +1,5 @@
 @use "./variables" as *;
+@use "../pages/index.scss";
 @use "../src/components/Button/Button.scss";
 @use "../src/components/Menu/Menu.scss";
 @use "../src/components/Menu/CalendarMenu.scss";
@@ -60,20 +61,3 @@
 0% { transform: rotate(0deg); }
 100% { transform: rotate(360deg); }
 }
-
-// ::-webkit-scrollbar {
-//     height: .1rem;
-//     width: .1rem;
-//     background: $light-grey;
-//     display: none;
-// }
-
-// ::-webkit-scrollbar-thumb {
-//     background: $white;
-//     -webkit-border-radius: .4rem;
-//     width: .1rem;
-// }
-
-// ::-webkit-scrollbar-corner {
-//     background: $white;
-// }

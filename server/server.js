@@ -3,7 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const bp = require("body-parser");
-const { Session } = require("@inrupt/solid-client-authn-node");
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 
@@ -31,6 +30,7 @@ app.listen(PORT, () => {
 
 const googleRouter = require('./routes/google');
 const githubRouter = require('./routes/github');
+const solidRouter = require('./routes/inrupt');
 
 // ######### ROUTES #########
 // -> GOOGLE
@@ -40,20 +40,5 @@ app.use(googleRouter);
 app.use(githubRouter);
 
 // INRUPT ->
-
-app.get("/getProfile", async function (req, res) {
-  // create session object
-  // const session = new Session();
-  // session.login({
-  //     redirectUrl: "http://localhost:3000",
-  //     oidcIssuer: "https://login.inrupt.com",
-  // }).then(() => {
-  //     if (session.info.isLoggedIn){
-  //         // send the webID to the frontend
-  //         res.send(session.info.webId)
-  //     }
-  // })
-  const webId = req.query.webId;
-  res.json(webId);
-});
+app.use(solidRouter);
 

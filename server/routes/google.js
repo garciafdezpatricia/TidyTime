@@ -5,13 +5,8 @@ const uuidv4 = require("uuid").v4;
 const { google } = require('googleapis');
 
 const router = express.Router();
+const userClients = {};
 // ======= GOOGLE OAUTH CLIENT CONFIGURATION ===========
-
-const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_OAUTH_CLIENT_ID,
-    process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-    process.env.GOOGLE_OAUTH_REDIRECT_URI
-  );
   
 const scopes = [
 'https://www.googleapis.com/auth/calendar',
@@ -20,16 +15,20 @@ const scopes = [
 'https://www.googleapis.com/auth/userinfo.email'
 ]
 
-const authorizationUrl = oauth2Client.generateAuthUrl({
-access_type: 'offline',
-scope: scopes,
-include_granted_scopes: true
-});
-
 // ==================== FUNCTIONS ===================
 
-const getEmail = async () => {
+const getUserId = (req) => {
+    if (!req.cookies.webId) {
+        return null;
+    }
+    return req.cookies.webId;
+}
+
+const getEmail = async (req) => {
     return new Promise((resolve, reject) => {
+        const userId = getUserId(req);
+        const oauth2Client = userClients[userId];
+        console.log("el oauth2client", oauth2Client);
         const people = google.people({ version: 'v1', auth: oauth2Client });
         people.people.get({
                 resourceName: 'people/me',
@@ -50,11 +49,16 @@ const getEmail = async () => {
 // ===================== ROUTES =====================
 
 router.get('/google/auth/callback', async (req, res) => {
+    const userId = req.query.state;
+    const oauth2Client = userClients[userId];
+
     const { tokens } = await oauth2Client.getToken(req.query.code);
     oauth2Client.setCredentials(tokens);
     console.log('Credenciales establecidas');
     try {
-        const email = await getEmail();
+        console.log("entrando en email");
+        const email = await getEmail(req);
+        console.log("saliendo de email", email);
         res.redirect(`http://localhost:3000/calendar?user=${email}`);
     } catch (error) {
         res.redirect('http://localhost:3000/calendar');
@@ -62,10 +66,30 @@ router.get('/google/auth/callback', async (req, res) => {
 });
   
 router.get('/google/auth/url', (req, res) => {
+    const userId = getUserId(req);
+    let oauth2Client = userClients[userId];
+    
+    if (!oauth2Client) {
+        oauth2Client = new google.auth.OAuth2(
+            process.env.GOOGLE_OAUTH_CLIENT_ID,
+            process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+            process.env.GOOGLE_OAUTH_REDIRECT_URI
+        );
+        userClients[userId] = oauth2Client;
+    }
+
+    const authorizationUrl = oauth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: scopes,
+        state: userId,
+        include_granted_scopes: true
+    });
     res.json({authorizationUrl});
 })
 
 router.get('/google/auth/logout', (req, res) => {
+    const userId = getUserId(req);
+    const oauth2Client = userClients[userId];
     oauth2Client.setCredentials(null);
     res.json({status: 'success'});
 })
@@ -73,7 +97,7 @@ router.get('/google/auth/logout', (req, res) => {
 router.post('/google/auth/email', async (req, res) => {
     const emailToCheck = req.body.email;
     try {
-        const email = await getEmail();
+        const email = await getEmail(req);
         res.json(email === emailToCheck);
     } catch (error) {
         return res.json(false);
@@ -84,8 +108,10 @@ router.post('/google/auth/email', async (req, res) => {
  * Handler for getting resources from the google calendar API.
  */
 router.post("/google/events/get", async function (req, response) {
+    const userId = getUserId(req); // Implement this function
+    const oauth2Client = userClients[userId];
+    
     const { calendarId } = req.body;
-    console.log(calendarId);
     const calendar = google.calendar({version: 'v3', auth: oauth2Client});
     calendar.events.list(
         {
@@ -126,6 +152,9 @@ router.post("/google/events/get", async function (req, response) {
 });
 
 router.post('/google/events/update', async function(req, response) {
+    const userId = getUserId(req); // Implement this function
+    const oauth2Client = userClients[userId];
+
     const calendar = google.calendar({version: 'v3', auth: oauth2Client});
     calendar.events.update({
         calendarId: req.body.calendarId,
@@ -147,6 +176,9 @@ router.post('/google/events/update', async function(req, response) {
 })
 
 router.post('/google/events/insert', async function (req, response) {
+    const userId = getUserId(req); // Implement this function
+    const oauth2Client = userClients[userId];
+
     const calendar = google.calendar({version: 'v3', auth: oauth2Client});
     calendar.events.insert({
         calendarId: 'primary',
@@ -171,6 +203,9 @@ router.post('/google/events/insert', async function (req, response) {
 });
 
 router.get('/google/calendar/list', async function (req, res) {
+    const userId = getUserId(req); // Implement this function
+    const oauth2Client = userClients[userId];
+
     const calendar = google.calendar({version: 'v3', auth: oauth2Client});
     try {
         const response = await calendar.calendarList.list();

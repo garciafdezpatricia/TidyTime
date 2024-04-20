@@ -9,7 +9,13 @@ export function useGoogleHandler() {
     const { events, setEvents } = useEventContext();
 
     const handleLogout = () => {
-        fetch('http://localhost:8080/google/auth/logout')
+        fetch('http://localhost:8080/google/auth/logout', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }, 
+            credentials: 'include'
+          })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success'){
@@ -36,9 +42,16 @@ export function useGoogleHandler() {
     }
 
     const handleLogin = () => {
-        fetch('http://localhost:8080/google/auth/url')
+        fetch('http://localhost:8080/google/auth/url', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }, 
+            credentials: 'include'
+        })
         .then(response => response.json())
         .then(data => {
+            console.log(data.authorizationUrl);
             setAuthUrl(data.authorizationUrl);
         })
         .catch((error:any) => {
@@ -78,7 +91,6 @@ export function useGoogleHandler() {
                 setLoggedIn(false);
             }
         } else {
-            
             setLoggedIn(false);
         }
     };

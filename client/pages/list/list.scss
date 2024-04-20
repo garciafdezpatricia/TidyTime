@@ -41,7 +41,14 @@
     outline: none;
     background-color: transparent;
     color: $primary-green;
-    &:hover {
+
+    &:not(:disabled):hover {
         background-color: $hover-green;
+    }
+    &:disabled {
+        border: .1rem solid $light-grey;
+        color: $light-grey;
+        background-color: $primary-grey;
+        cursor: auto;
     }
 }
