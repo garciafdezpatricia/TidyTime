@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { Button } from "../../Button/Button";
 import { useClickAway } from "@uidotdev/usehooks";
 
 export interface Props {
@@ -40,17 +39,20 @@ export default function PromptModal({
                 <p>{title}</p>
                 {children}
                 <div className="prompt-modal-button-section">
-                    { onSecondaryAction && <Button
+                    { onSecondaryAction && 
+                        <button
                         onClick={onSecondaryAction}
                         className="prompt-modal-secondary-btn"
                         >
                         {secondaryActionText}
-                    </Button>}
-                    <Button
+                        </button>
+                    }
+                    <button
+                        className="primary-button"
                         onClick={onPrimaryAction}
                     >
                         {primaryActionText}
-                    </Button>
+                    </button>
                 </div>
             </article>
             }

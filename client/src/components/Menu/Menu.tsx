@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import { Button } from "../Button/Button";
 import { Icon } from "../Icon/Icon";
 
 export function MenuSideBar() {
@@ -7,32 +6,32 @@ export function MenuSideBar() {
     const router = useRouter();
     return (
         <section className="sidebar-menu">
-            <Button className="menu-button" onClick={() => router.push('/')}>
+            <button className="menu-button" onClick={() => router.push('/')}>
                     <h1 className="sidebar-menu-title">TidyTime</h1>
-                </Button>
+                </button>
             <section className="sidebar-menu-features">
-                <Button className="menu-button" onClick={() => router.push('/list')}>
-                    <Icon src="menu/to-dolist.png" alt="TO-DO List"/>
+                <button className="menu-button" onClick={() => router.push('/list')}>
+                    <Icon src="menu/todo-list.svg" alt="TO-DO List"/>
                     List
-                </Button>
-                <Button className="menu-button" onClick={() => router.push('/board')}>
-                    <Icon src="menu/board.png" alt="Board" />
+                </button>
+                <button className="menu-button" onClick={() => router.push('/board')}>
+                    <Icon src="menu/board.svg" alt="Board" />
                     Board
-                </Button>
-                <Button className="menu-button" onClick={() => router.push('/calendar')}>
-                    <Icon src="menu/calendar.png" alt="Calendar" />
+                </button>
+                <button className="menu-button" onClick={() => router.push('/calendar')}>
+                    <Icon src="menu/calendar.svg" alt="Calendar" />
                     Calendar
-                </Button>
-                <Button className="menu-button" onClick={() => router.push('/tidier')}>
-                    <Icon src="menu/tidier.png" alt="Tidier" />
+                </button>
+                <button className="menu-button" onClick={() => router.push('/tidier')}>
+                    <Icon src="menu/tidier.svg" alt="Tidier" />
                     Tidier
-                </Button>
+                </button>
             </section>
             <section className="sidebar-menu-settings">
-                <Button className="menu-button" onClick={() => router.push('/settings')}>
-                    <Icon src="menu/settings.png" alt="Settings" />
+                <button className="menu-button" onClick={() => router.push('/settings')}>
+                    <Icon src="menu/settings.svg" alt="Settings" />
                     Preferences
-                </Button>
+                </button>
             </section>
         </section>
     )
