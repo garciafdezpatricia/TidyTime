@@ -7,6 +7,7 @@ import { BiAddToQueue } from "react-icons/bi";
 import { useTaskContext } from "../Context/TaskContext";
 import { TaskList } from "@/src/model/Scheme";
 import TabContent from "./TabContent";
+import { useGithubHandler } from "@/pages/api/github";
 
 
 export interface Props {
@@ -28,6 +29,8 @@ export default function Tab({handleEditModal} : Props) {
 	// const with the lists, tasks and reference to the current active list extracted from the context.
     const {listNames, selectedListIndex, setListNames, setTasks, tasks, 
 		setSelectedListIndex, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
+
+	const { closeIssue, openIssue } = useGithubHandler();
 
 	// scroll to selected task
 	useEffect(() => {
@@ -65,10 +68,10 @@ export default function Tab({handleEditModal} : Props) {
 	/**
 	 * Handles the check of tasks. Checked tasks get rearranged to the end of the list, unchecked tasks get rearranged
 	 * to the beginning of the list.
-	 * @param event corresponds to the tasks being checked
-	 * @param itemIndex corresponds with the index of the tasks inside of its list.
+	 * @param task corresponds to the task being checked
+	 * @param itemIndex corresponds with the index of the task inside of its list.
 	 */
-	const handleCheck = (event: any, itemIndex: any) => {
+	const handleCheck = (task: any, itemIndex: any) => {
 		if (managingList) {
 			setManagingList(false);
 		}
@@ -78,7 +81,7 @@ export default function Tab({handleEditModal} : Props) {
 					// remove item from list
 					const updatedList = list.filter((_, i) => i !== itemIndex);
 					// if event is not done, it is being marked as done
-					if (!event.done) {
+					if (!task.done) {
 						return [
 							...updatedList,
 							{ ...list[itemIndex], done: !list[itemIndex].done },
@@ -93,6 +96,14 @@ export default function Tab({handleEditModal} : Props) {
 				return list;
 			});
 		});
+		if (task.githubUrl) {
+			// it's being marked as done
+			if (!task.done ) {
+				closeIssue(task.githubUrl);
+			} else {
+				openIssue(task.githubUrl);
+			}
+		}
 	};
 
 	/**

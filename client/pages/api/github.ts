@@ -1,4 +1,5 @@
 import { useGithubContext } from "@/src/components/Context/GithubContext";
+import { Task } from "@/src/model/Scheme";
 import toast from "react-hot-toast";
 
 
@@ -104,5 +105,94 @@ export function useGithubHandler() {
         }
     }
 
-    return { getUserData, loginWithGithub, logoutGithub, getIssuesOfUser };
+    const closeIssue = async (url:string) => {
+        try {
+            const response = await serverCheck();
+            if (response) {
+                const issues = await fetch('http://localhost:8080/github/issues/close', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }, 
+                    credentials: 'include',
+                    body: 
+                        JSON.stringify({
+                            url: url
+                        })
+                });
+                const data = await issues.json();
+                if (data.data.state === "closed") {
+                    toast.success("Updated issue on GitHub!");
+                } else {
+                    toast.error("There has been a problem updating the issue on GitHub");
+                }
+            } else {
+                toast.error('Server appears to be down');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const openIssue = async (url:string) => {
+        try {
+            const response = await serverCheck();
+            if (response) {
+                const issues = await fetch('http://localhost:8080/github/issues/open', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }, 
+                    credentials: 'include',
+                    body: 
+                        JSON.stringify({
+                            url: url
+                        })
+                });
+                const data = await issues.json();
+                if (data.data.state === "open") {
+                    toast.success("Updated issue on GitHub!");
+                } else {
+                    toast.error("There has been a problem updating the issue on GitHub");
+                }
+            } else {
+                toast.error('Server appears to be down');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const updateIssue = async (url:string, title:string, body:string) => {
+        try {
+            const response = await serverCheck();
+            if (response) {
+                const issues = await fetch('http://localhost:8080/github/issues/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }, 
+                    credentials: 'include',
+                    body: 
+                        JSON.stringify({
+                            url: url,
+                            title: title,
+                            desc: body
+                        })
+                });
+                const data = await issues.json();
+                if (data.data.title === title && data.data.body === body) {
+                    toast.success("Updated issue on GitHub!");
+                } else {
+                    toast.error("There has been a problem updating the issue on GitHub");
+                }
+            } else {
+                toast.error('Server appears to be down');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    return { getUserData, loginWithGithub, logoutGithub, getIssuesOfUser, updateIssue, closeIssue, openIssue };
 }

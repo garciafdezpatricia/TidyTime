@@ -28,14 +28,13 @@ app.listen(PORT, () => {
   console.log("Server started on port " + PORT);
 });
 
+app.get('/health-check', async (req, res) => {
+  res.status(200).send('OK');
+});
+
 const googleRouter = require('./routes/google');
 const githubRouter = require('./routes/github');
 const solidRouter = require('./routes/inrupt');
-
-
-app.get('http://localhost:8080/health-check', async (req, res) => {
-  res.status(200).send('OK');
-});
 
 // ######### ROUTES #########
 // -> GOOGLE

@@ -29,7 +29,7 @@ const decrypt = (hash) => {
 // =============================================================
 router.get('/github/auth', async (req, res) => {
     res.redirect("https://github.com/login/oauth/authorize?client_id=" 
-    + process.env.GITHUB_CLIENT_ID)
+    + process.env.GITHUB_CLIENT_ID + "&scope=repo")
 });
 
 router.get("/github/auth/callback", async function (req, res) {
@@ -115,6 +115,82 @@ router.get("/github/issues/get", async function (req, res) {
     res.json({status: true, data: data});
   } catch (error) {
     res.json({status: false, data: "Error when fetching issues"});
+  }
+});
+
+router.post("/github/issues/close", async function (req, res) {
+  try {
+    if (!req.cookies.access_token) {
+      res.json({status: false, data: "Cookie access not found"});
+    }
+    const access_token = decrypt(req.cookies.access_token);
+    const response = await fetch(`${req.body.url}`,
+      {
+        method: "PATCH",
+        headers: {
+          "X-GitHub-Api-Version": "2022-11-28",
+          Authorization: `Bearer ${access_token}`,
+          Accept: "application/vnd.github+json",
+        },
+        body: JSON.stringify({state: "closed"})
+      }
+    );
+    const data = await response.json();
+    res.json({status: true, data: data});
+  } catch (error) {
+    res.json({status: false, data: "Error when updating the issue"});
+  }
+});
+
+router.post("/github/issues/open", async function (req, res) {
+  try {
+    if (!req.cookies.access_token) {
+      res.json({status: false, data: "Cookie access not found"});
+    }
+    const access_token = decrypt(req.cookies.access_token);
+    const response = await fetch(`${req.body.url}`,
+      {
+        method: "PATCH",
+        headers: {
+          "X-GitHub-Api-Version": "2022-11-28",
+          Authorization: `Bearer ${access_token}`,
+          Accept: "application/vnd.github+json",
+        },
+        body: JSON.stringify({state: "open"})
+      }
+    );
+    const data = await response.json();
+    res.json({status: true, data: data});
+  } catch (error) {
+    res.json({status: false, data: "Error when updating the issue"});
+  }
+});
+
+router.post("/github/issues/update", async function (req, res) {
+  try {
+    if (!req.cookies.access_token) {
+      res.json({status: false, data: "Cookie access not found"});
+    }
+    const access_token = decrypt(req.cookies.access_token);
+    const response = await fetch(
+      `${req.body.url}`,
+      {
+        method: "PATCH",
+        headers: {
+          "X-GitHub-Api-Version": "2022-11-28",
+          Authorization: `Bearer ${access_token}`,
+          Accept: "application/vnd.github+json",
+        },
+        body: JSON.stringify({
+          title: req.body.title,
+          body: req.body.desc
+        })
+      }
+    );
+    const data = await response.json();
+    res.json({status: true, data: data});
+  } catch (error) {
+    res.json({status: false, data: "Error when updating the issue"});
   }
 });
 

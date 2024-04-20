@@ -7,6 +7,8 @@ import { useState } from "react";
 import { Label, Task } from "@/src/model/Scheme";
 import { MdDelete } from "react-icons/md";
 import PromptModal from "../PromptModal/PromptModal";
+import { TbEyeShare } from "react-icons/tb";
+import { useGithubHandler } from "@/pages/api/github";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -27,6 +29,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
     
     const [isDeleting, setConfirmationDeleteModalOpen] = useState(false);
 
+    const {updateIssue} = useGithubHandler();
 
     const onCancel = () => {
         setNewTitle(taskToEdit.title);
@@ -36,7 +39,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
         setImportant(taskToEdit.important ?? false)
     }
 
-    const saveAndClose = () => {
+    const saveAndClose = async () => {
         const updatedToDo = [...tasks];
         const updatedTask = {...taskToEdit};
 
@@ -48,6 +51,10 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
             ...updatedToDo[selectedListIndex].slice(selectedTaskIndex + 1)
         ];
         setTasks(updatedToDo);
+
+        if (taskToEdit.githubUrl) {
+            await updateIssue(taskToEdit.githubUrl, newTitle, newDesc);
+        }
         onClose();
     }
 
@@ -80,6 +87,12 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
         isOpen && 
         <article className="edit-task-modal">
             <header className="edit-task-modal-header">
+                {
+                    taskToEdit.githubHtml &&
+                    <a className="edit-event-header-button" title="See in GitHub" href={taskToEdit.githubHtml} target="_blank" rel="noopener noreferrer">
+                        <TbEyeShare color="#363535" size={"1.2rem"} />
+                    </a>
+                }
                 <button 
                     title="Close"
                     onClick={onClose} 
