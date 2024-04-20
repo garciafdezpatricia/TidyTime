@@ -11,7 +11,6 @@
     height: 100%;
     width: 23rem;
     z-index: 10;
-    box-shadow: -.2rem -.1rem 2.1rem -.2rem rgba(195,195,195);
     overflow: auto;
 }
 
@@ -20,6 +19,16 @@
     padding: 2rem 2rem 1rem;
     align-items: flex-start;
     gap: 1rem;
+
+    .done-undone {
+        border: none;
+        outline: .1rem solid transparent;
+        padding-inline: .5rem;
+
+        &:hover {
+            outline: .1rem solid $black;
+        }
+    }
     .close-button {
         background-color: $white;
         margin-left: auto;

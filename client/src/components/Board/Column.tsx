@@ -13,11 +13,12 @@ export interface ColumnProps {
     index: number,
     name: string,
     handleMoveTask: (arg?:any, arg2?:any) => void | any;
+    handleCardClick: (arg?:any) => void | any;
 }
 
-export default function Column({sectionWidth, content, index, name, handleMoveTask} : ColumnProps) {
+export default function Column({sectionWidth, content, index, name, handleMoveTask, handleCardClick} : ColumnProps) {
 
-    const {listNames, setBoardColumns, boardColumns, setBoardItems, boardItems} = useTaskContext();
+    const {listNames, setBoardColumns, boardColumns, tasks, setTasks} = useTaskContext();
 
     const [managingListIndex, setManagingListIndex] = useState(-1);
     const [renameListName, setRenameListName] = useState("");
@@ -48,12 +49,11 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
                 // erase all columns
                 setBoardColumns([]);
                 // set the status of all items to 0
-                const updatedItems = boardItems;
+                const updatedItems = tasks;
                 updatedItems.flat().map((item) => {
                     item.status = 0;
                 })
-                // only one array -> initial position
-                setBoardItems([updatedItems.flat()])
+                setTasks(updatedItems)
 
             // we're deleting a column but not the last
             } else {
@@ -61,9 +61,9 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
                 setBoardColumns((prevColumns) => {
                     return prevColumns.filter((_, i) => i !== index);
                 })
-                const updatedBoardItems = [...boardItems];
+                const updatedBoardItems = [...tasks];
                 // move items from the list we're deleting to the first one
-                const itemsToMove = boardItems[index];
+                const itemsToMove = tasks[index];
                 if (itemsToMove) {
                     itemsToMove.map((item) => item.status = 0);
                     updatedBoardItems.splice(index, 1); // delete 
@@ -72,7 +72,7 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
                 } else {
                     updatedBoardItems.splice(index, 1); // delete 
                 }                
-                setBoardItems(updatedBoardItems);    
+                setTasks(updatedBoardItems);    
             }
             setConfirmationDeleteModalOpen(false);
         }          
@@ -103,15 +103,17 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
             </div>
             <div className="board-column-content">
                 {
-                    content.map((card, cardIindex) => {
+                    content.map((card, cardIndex) => {
                         return (
                             <Card 
-                                cardIndex={cardIindex} 
-                                list={listNames[card.listIndex]} 
+                                cardIndex={cardIndex} 
+                                list={card.listIndex} 
                                 title={card.title} 
                                 columnIndex={index} 
                                 key={uuid()}
                                 handleMoveTask={handleMoveTask}
+                                taskIndexinList={card.taskIndexInList}
+                                handleCardClick={handleCardClick}
                             />
                         )
                     })

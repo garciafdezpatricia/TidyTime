@@ -3,50 +3,60 @@ import Column from "./Column";
 import { useTaskContext } from "../Context/TaskContext";
 import MoveModal from "../Modal/AbsoluteModal/AbsoluteModal";
 import { BiAddToQueue } from "react-icons/bi";
+import { TaskList } from "@/src/model/Scheme";
 
 
+export interface Props {
+    handleCardClick: (arg?:any) => void | any;
+}
 
-export default function Board() {
+export default function Board({handleCardClick} : Props) {
 
-    const {boardItems, boardColumns, setBoardColumns, setBoardItems} = useTaskContext();
+    const {tasks, boardColumns, setBoardColumns, setTasks, selectedListIndex, selectedTaskIndex} = useTaskContext();
 
-    //const [columnContent, setColumnContent] = useState(boardItems) // by default all tasks to to-do list
     const [sectionWidth, setSectionWidth] = useState(100 / boardColumns.length);
     const [columnIndex, setColumnIndex] = useState(-1);
     const [cardIndex, setCardIndex] = useState(-1);
     const [isMovingTask, setIsMovingTask] = useState(false);
+    const [boardItems, setBoardItems] = useState<any[]>([]);
 
     useEffect(() => {
         setSectionWidth(100 / boardColumns.length);
     }, [boardColumns])
 
-    const handleMoveTask = (columnIndex:number, cardIndex:number) => {
+    useEffect(() => {
+        mapTasksToColumns();
+    }, [tasks]);
+
+
+    const mapTasksToColumns = () => {
+        let result: TaskList[] = [];
+        tasks.forEach((taskList, listIndex) => {
+            taskList.forEach((task, taskIndex) => {
+                if (!result[task.status]) {
+                    result[task.status] = [];
+                }
+                result[task.status].push({...task, taskIndexInList: taskIndex});
+            })
+        })
+        setBoardItems(result);
+    }
+
+    const handleMoveTask = (columnIndex:number) => {
         setIsMovingTask(!isMovingTask);
         setColumnIndex(columnIndex);
-        setCardIndex(cardIndex);
     }
 
     const moveTask = (target: number) => {
-        setBoardItems((prevBoardItems) => {
-            // Copiar el estado anterior para mantener la inmutabilidad
-            const newBoardItems = [...prevBoardItems];
-            
-            // Obtener la tarea que se va a mover
-            const taskToMove = {...newBoardItems[columnIndex][cardIndex]};
-            
-            // Actualizar el estado de la tarea
-            taskToMove.status = target;
-
-            // Eliminar la tarea de la columna de origen
-            newBoardItems[columnIndex] = newBoardItems[columnIndex].filter((_, index) => index !== cardIndex);
-
-            // Agregar la tarea a la columna de destino
-            if (!newBoardItems[target]) {
-                newBoardItems[target] = [];
-            }
-            newBoardItems[target].push(taskToMove);
-            return newBoardItems;
-        });
+        const newTasks = [...tasks];
+        const taskToMove = {...tasks[selectedListIndex][selectedTaskIndex]};
+        taskToMove.status = target;
+        newTasks[selectedListIndex] = [
+            ...newTasks[selectedListIndex].slice(0, selectedTaskIndex),
+            taskToMove,
+            ...newTasks[selectedListIndex].slice(selectedTaskIndex + 1)
+        ];
+        setTasks(newTasks);
         setIsMovingTask(false);
     }
 
@@ -75,6 +85,7 @@ export default function Board() {
                                 content={boardItems[index] ?? []} 
                                 name={column} 
                                 handleMoveTask={handleMoveTask}
+                                handleCardClick={handleCardClick}
                             />
                         )
                     })

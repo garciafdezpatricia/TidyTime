@@ -1,4 +1,4 @@
-import { TaskList, Label, taskToListOfTaskList, BoardItem, taskToBoardItemMatrix, listOfTaskListToTask } from "@/src/model/Scheme";
+import { TaskList, Label, taskToListOfTaskList, taskToBoardItemMatrix, listOfTaskListToTask } from "@/src/model/Scheme";
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
 /**
@@ -14,34 +14,34 @@ export interface ITaskContext {
     setTasks: React.Dispatch<React.SetStateAction<TaskList[]>>,
     setSelectedListIndex: React.Dispatch<React.SetStateAction<number>>,
     setSelectedTaskIndex: React.Dispatch<React.SetStateAction<number>>,
-    boardItems: BoardItem[][],
-    setBoardItems: React.Dispatch<React.SetStateAction<BoardItem[][]>>,
     boardColumns: string[],
     setBoardColumns: React.Dispatch<React.SetStateAction<string[]>>,
 }
 
 const tasks = [
-    { done: false, title: "Disable button if new list name is empty string", listIndex: 0 },
-    { done: false, title: "Call granny", listIndex: 0 },
-    { done: false, title: "Buy vacuum", listIndex: 0 },
-    { done: false, title: "This is content 4", listIndex: 0 },
-    { done: false, title: "Call granny", listIndex: 0 },
-    { done: false, title: "Buy vacuum", listIndex: 0 },
-    { done: false, title: "WTF", listIndex: 1 },
-    { done: false, title: "Cleaning the bathroom", listIndex: 1 },
-    { done: false, title: "Do laundry", listIndex: 1 },
-    { done: false, title: "Mop", listIndex: 1 },
-    { done: false, title: "Call Giselle", listIndex: 2 },
-    { done: false, title: "Print EDP reports", listIndex: 2 },
-    { done: false, title: "Update documentation", listIndex: 2 },
-    { done: false, title: "Clean calendar", listIndex: 2 },
+    { done: false, title: "Disable button if new list name is empty string", listIndex: 0, status: 0 },
+    { done: false, title: "Call granny", listIndex: 0, status: 0 },
+    { done: false, title: "Buy vacuum", listIndex: 0, status: 0 },
+    { done: false, title: "This is content 4", listIndex: 0, status: 0 },
+    { done: false, title: "Call granny", listIndex: 0, status: 0 },
+    { done: false, title: "Buy vacuum", listIndex: 0, status: 0 },
+    { done: false, title: "WTF", listIndex: 1, status: 0 },
+    { done: false, title: "Cleaning the bathroom", listIndex: 1, status: 0 },
+    { done: false, title: "Do laundry", listIndex: 1, status: 0 },
+    { done: false, title: "Mop", listIndex: 1, status: 0 },
+    { done: false, title: "Call Giselle", listIndex: 2, status: 0 },
+    { done: false, title: "Print EDP reports", listIndex: 2, status: 0 },
+    { done: false, title: "Update documentation", listIndex: 2, status: 0 },
+    { done: false, title: "Clean calendar", listIndex: 2, status: 0 },
 ]
+
+const listofTasklists = taskToListOfTaskList(tasks);
 
 // TODO: replace it with solid logic
 // const with default context (it's not the one from the user's pod)
 const defaultContext: ITaskContext ={
     listNames: ["TFG", "Home", "Work"],
-    tasks: taskToListOfTaskList(tasks),
+    tasks: listofTasklists,
     labels: [{color: "#ad30ad", name: "school"}, {color: "#5930ab", name: "work"}, {color: "#e6a937", name: "home"}],
     selectedListIndex: 0,
     selectedTaskIndex: -1,
@@ -49,8 +49,6 @@ const defaultContext: ITaskContext ={
     setTasks: () => {},
     setSelectedListIndex: () => {},
     setSelectedTaskIndex: () => {},
-    boardItems: taskToBoardItemMatrix(tasks),
-    setBoardItems: () => {},
     boardColumns: ["To do", "In progress", "Done"],
     setBoardColumns: () => {},
 }
@@ -79,17 +77,11 @@ export function TaskProvider({children} : ITaskContextProvider) {
     const [tasks, setTasks] = useState(defaultContext.tasks);
     const [selectedListIndex, setSelectedListIndex] = useState(defaultContext.selectedListIndex);
     const [selectedTaskIndex, setSelectedTaskIndex] = useState(defaultContext.selectedTaskIndex);
-    const [boardItems, setBoardItems] = useState(defaultContext.boardItems);
     const [boardColumns, setBoardColumns] = useState(defaultContext.boardColumns);
     const labels = defaultContext.labels;
+    
     const value ={listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, 
-        labels, selectedTaskIndex, setSelectedTaskIndex, boardItems, setBoardItems, boardColumns, setBoardColumns};
-
-    useEffect(() => {
-        const updatedTasks = listOfTaskListToTask(tasks);
-        const newBoardItems = taskToBoardItemMatrix(updatedTasks);
-        setBoardItems(newBoardItems)
-    }, [tasks])
+        labels, selectedTaskIndex, setSelectedTaskIndex, boardColumns, setBoardColumns};
 
     return (
         <TaskContext.Provider value={value}>

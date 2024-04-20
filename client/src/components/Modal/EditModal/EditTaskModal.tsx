@@ -29,7 +29,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
     
     const [isDeleting, setConfirmationDeleteModalOpen] = useState(false);
 
-    const {updateIssue} = useGithubHandler();
+    const {updateIssue, openIssue, closeIssue} = useGithubHandler();
 
     const onCancel = () => {
         setNewTitle(taskToEdit.title);
@@ -58,6 +58,29 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
         onClose();
     }
 
+    const updateStatus = async () => {
+        const updatedToDo = [...tasks];
+        let updatedTask = {...taskToEdit};
+        const isDone = updatedTask.done;
+
+        updatedTask.done = !updatedTask.done;
+        updatedToDo[selectedListIndex] = [
+            ...updatedToDo[selectedListIndex].slice(0, selectedTaskIndex),
+            updatedTask,
+            ...updatedToDo[selectedListIndex].slice(selectedTaskIndex + 1)
+        ];
+        setTasks(updatedToDo);
+        
+        if (updatedTask.githubUrl) {
+            if (isDone) {
+                await openIssue(updatedTask.githubUrl);
+            } else {
+                await closeIssue(updatedTask.githubUrl);
+            }
+            
+        }
+    }
+
     const updateTask = (task:Task) => {
         task.title = newTitle;
         task.desc = newDesc;
@@ -84,107 +107,115 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
     }
 
     return (
-        isOpen && 
-        <article className="edit-task-modal">
-            <header className="edit-task-modal-header">
-                {
-                    taskToEdit.githubHtml &&
-                    <a className="edit-event-header-button" title="See in GitHub" href={taskToEdit.githubHtml} target="_blank" rel="noopener noreferrer">
-                        <TbEyeShare color="#363535" size={"1.2rem"} />
-                    </a>
-                }
-                <button 
-                    title="Close"
-                    onClick={onClose} 
-                    className="close-button">
-                        <ImCross />
-                </button>
-            </header>
-            <section className="edit-task-modal-body">
-                <section className="important">
-                    <label>Urgent: </label>
-                    <Toggle isChecked={important} onChange={(e) => setImportant(e)}/>
-                </section>
-                <section className="main-info">
-                    <input 
-                        className="task-title" 
-                        value={newTitle}
-                        onChange={(e) => setNewTitle(e.target.value)}
-                        contentEditable
-                        suppressContentEditableWarning={true}
-                    />
-                    <textarea 
-                        placeholder="Add a description..." 
-                        value={newDesc}
-                        onChange={(e) => setNewDesc(e.target.value)}
-                        contentEditable
-                        suppressContentEditableWarning={true}
-                    />
-                </section>
-                <section className="additional-info">
-                    <section className="difficulty">
-                        <label>Difficulty:</label>
-                        <DifficultyRate 
-                            key={newDifficulty}
-                            onChange={(e) => setNewDifficulty(e)} 
-                            taskRating={newDifficulty !== -1 ? newDifficulty : taskToEdit.difficulty} 
-                            newDifficulty={newDifficulty}/>
+        <>
+        <div className="backdrop"></div>
+        {isOpen && 
+            <article className="edit-task-modal">
+                <header className="edit-task-modal-header">
+                    {
+                        taskToEdit.githubHtml &&
+                        <a className="edit-event-header-button" title="See in GitHub" href={taskToEdit.githubHtml} target="_blank" rel="noopener noreferrer">
+                            <TbEyeShare color="#363535" size={"1.2rem"} />
+                        </a>
+                    }
+                    <button 
+                        onClick={updateStatus}
+                        className="done-undone">
+                        Mark as {taskToEdit.done ? "to do" : "done"}
+                    </button>
+                    <button 
+                        title="Close"
+                        onClick={onClose} 
+                        className="close-button">
+                            <ImCross />
+                    </button>
+                </header>
+                <section className="edit-task-modal-body">
+                    <section className="important">
+                        <label>Urgent: </label>
+                        <Toggle isChecked={important} onChange={(e) => setImportant(e)}/>
                     </section>
-                    <hr />
-                    <section className="date-picker">
-                        <label>End-date:</label>
+                    <section className="main-info">
                         <input 
-                            type="date" 
-                            value={newDate}
-                            onChange={(e) => setNewDate(e.target.value)}
+                            className="task-title" 
+                            value={newTitle}
+                            onChange={(e) => setNewTitle(e.target.value)}
+                            contentEditable
+                            suppressContentEditableWarning={true}
+                        />
+                        <textarea 
+                            placeholder="Add a description..." 
+                            value={newDesc}
+                            onChange={(e) => setNewDesc(e.target.value)}
+                            contentEditable
+                            suppressContentEditableWarning={true}
                         />
                     </section>
-                    <hr />
-                    <section className="label-picker">
-                        <label>Labels:</label>
-                        <CheckableComboBox checkedLabels={taskToEdit.labels ?? []} onChange={handleLabels} text={"Select options:"}/>
-                    </section>
-                    <section className="labels">
-                    {
-                        newLabels.map((label, index) => {
-                            return (
-                                <label style={{borderColor: label.color}} key={index}>{label.name}</label>
-                            )
-                        })
-                    }
+                    <section className="additional-info">
+                        <section className="difficulty">
+                            <label>Difficulty:</label>
+                            <DifficultyRate 
+                                key={newDifficulty}
+                                onChange={(e) => setNewDifficulty(e)} 
+                                taskRating={newDifficulty !== -1 ? newDifficulty : taskToEdit.difficulty} 
+                                newDifficulty={newDifficulty}/>
+                        </section>
+                        <hr />
+                        <section className="date-picker">
+                            <label>End-date:</label>
+                            <input 
+                                type="date" 
+                                value={newDate}
+                                onChange={(e) => setNewDate(e.target.value)}
+                            />
+                        </section>
+                        <hr />
+                        <section className="label-picker">
+                            <label>Labels:</label>
+                            <CheckableComboBox checkedLabels={taskToEdit.labels ?? []} onChange={handleLabels} text={"Select options:"}/>
+                        </section>
+                        <section className="labels">
+                        {
+                            newLabels.map((label, index) => {
+                                return (
+                                    <label style={{borderColor: label.color}} key={index}>{label.name}</label>
+                                )
+                            })
+                        }
+                        </section>
                     </section>
                 </section>
-            </section>
-            <section className="edit-task-modal-footer">
-                <button
-                    onClick={() => setConfirmationDeleteModalOpen(true)}
-                    className="delete-task">
-                    <MdDelete />
-                    Delete
-                </button>
-                <button 
-                    className="cancel"
-                    onClick={onCancel}>
-                    Reset
-                </button>
-                <button
-                    className="save"
-                    onClick={saveAndClose}>
-                    Save
-                </button>
-            </section>
-            {
-                isDeleting && 
-                <PromptModal
-					title="Are you sure you want to delete this task? This action can't be undone"
-					onPrimaryAction={() => deleteTask()}
-					primaryActionText='Delete'
-					secondaryActionText='Cancel'
-					onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}
-					variant='confirmation-modal'
-					backdrop
-				></PromptModal>
-            }
-        </article>        
+                <section className="edit-task-modal-footer">
+                    <button
+                        onClick={() => setConfirmationDeleteModalOpen(true)}
+                        className="delete-task">
+                        <MdDelete />
+                        Delete
+                    </button>
+                    <button 
+                        className="cancel"
+                        onClick={onCancel}>
+                        Reset
+                    </button>
+                    <button
+                        className="save"
+                        onClick={saveAndClose}>
+                        Save
+                    </button>
+                </section>
+                {
+                    isDeleting && 
+                    <PromptModal
+                        title="Are you sure you want to delete this task? This action can't be undone"
+                        onPrimaryAction={() => deleteTask()}
+                        primaryActionText='Delete'
+                        secondaryActionText='Cancel'
+                        onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}
+                        variant='confirmation-modal'
+                        backdrop
+                    ></PromptModal>
+                }
+            </article>}     
+        </>   
     )
 }
