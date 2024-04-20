@@ -32,6 +32,11 @@ const googleRouter = require('./routes/google');
 const githubRouter = require('./routes/github');
 const solidRouter = require('./routes/inrupt');
 
+
+app.get('http://localhost:8080/health-check', async (req, res) => {
+  res.status(200).send('OK');
+});
+
 // ######### ROUTES #########
 // -> GOOGLE
 app.use(googleRouter);

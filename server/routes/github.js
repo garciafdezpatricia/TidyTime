@@ -27,14 +27,6 @@ const decrypt = (hash) => {
 }
 
 // =============================================================
-
-
-
-
-router.get('/github/health-check', async (req, res) => {
-  res.status(200).send('OK');
-});
-
 router.get('/github/auth', async (req, res) => {
     res.redirect("https://github.com/login/oauth/authorize?client_id=" 
     + process.env.GITHUB_CLIENT_ID)
