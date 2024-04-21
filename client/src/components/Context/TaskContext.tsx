@@ -8,6 +8,7 @@ export interface ITaskContext {
     listNames: string[],
     tasks: TaskList[],
     labels: Label[],
+    setLabels: React.Dispatch<React.SetStateAction<Label[]>>,
     selectedListIndex: number,
     selectedTaskIndex: number,
     setListNames: React.Dispatch<React.SetStateAction<string[]>>,
@@ -16,6 +17,8 @@ export interface ITaskContext {
     setSelectedTaskIndex: React.Dispatch<React.SetStateAction<number>>,
     boardColumns: string[],
     setBoardColumns: React.Dispatch<React.SetStateAction<string[]>>,
+    showTasksInCalendar: boolean,
+    setshowTasksInCalendar: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 const tasks = [
@@ -43,6 +46,7 @@ const defaultContext: ITaskContext ={
     listNames: ["TFG", "Home", "Work"],
     tasks: listofTasklists,
     labels: [{color: "#ad30ad", name: "school"}, {color: "#5930ab", name: "work"}, {color: "#e6a937", name: "home"}],
+    setLabels: () => {},
     selectedListIndex: 0,
     selectedTaskIndex: -1,
     setListNames: () => {},
@@ -51,6 +55,8 @@ const defaultContext: ITaskContext ={
     setSelectedTaskIndex: () => {},
     boardColumns: ["To do", "In progress", "Done"],
     setBoardColumns: () => {},
+    showTasksInCalendar: true,
+    setshowTasksInCalendar: () => {},
 }
 // context with the default task context
 const TaskContext = createContext<ITaskContext>(defaultContext);
@@ -78,10 +84,11 @@ export function TaskProvider({children} : ITaskContextProvider) {
     const [selectedListIndex, setSelectedListIndex] = useState(defaultContext.selectedListIndex);
     const [selectedTaskIndex, setSelectedTaskIndex] = useState(defaultContext.selectedTaskIndex);
     const [boardColumns, setBoardColumns] = useState(defaultContext.boardColumns);
-    const labels = defaultContext.labels;
+    const [labels, setLabels] = useState(defaultContext.labels);
+    const [showTasksInCalendar, setshowTasksInCalendar] = useState(defaultContext.showTasksInCalendar);
     
     const value ={listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, 
-        labels, selectedTaskIndex, setSelectedTaskIndex, boardColumns, setBoardColumns};
+        labels, setLabels, selectedTaskIndex, setSelectedTaskIndex, boardColumns, setBoardColumns, showTasksInCalendar, setshowTasksInCalendar};
 
     return (
         <TaskContext.Provider value={value}>

@@ -5,11 +5,15 @@
     display: flex;
     flex-direction: column;
     width: calc(100% - 2rem);
+    p {
+        font-size: .9rem;
+    }
 }
 
 .default-columns {
     font-size: .9rem;
     padding-top: .8rem;
+    margin-left: 1.5rem;
     display: flex;
     flex-direction: column;
 }

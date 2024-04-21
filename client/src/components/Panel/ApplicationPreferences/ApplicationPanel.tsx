@@ -41,6 +41,7 @@ export default function ApplicationPanel() {
         <article className="applications-panel">
             <h3>Connect to applications</h3>
             <hr></hr>
+            <p>TidyTime is interoperable with the following applications, allowing you to log in and access the information you need from them.</p>
             <div className="panel-content">
                 <Application 
                     appImg={"./google.svg"} 

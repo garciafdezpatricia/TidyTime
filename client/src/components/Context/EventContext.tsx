@@ -84,35 +84,40 @@ export function EventProvider({children} : IEventContextProvider) {
     const [weekStart, setWeekStart] = useState(defaultContext.weekStart);
     const [eventView, setEventView] = useState(defaultContext.eventView);
 
-    const { tasks } = useTaskContext();
+    const { tasks, showTasksInCalendar } = useTaskContext();
 
 
     useEffect(() => {
-      // Filtrar las tareas que tienen fecha definida
-      const tasksWithEndDate = tasks.flat().filter(task => task.endDate);
-    
-      // Convertir las tareas en eventos
-      const taskEvents = tasksWithEndDate.map(task => task ={
-        // @ts-ignore
-        start: new Date(task.endDate),
-        // @ts-ignore sabemos que tienen fecha porque estan filtradas
-        end: new Date(task.endDate),
-        title: task.title,
-        desc: task.desc ?? "",
-        eventId: uuid(),
-        isTask: true,
-        color: "#3bb4ff"
-      });
-    
-      // Filtrar los eventos originales que no son tareas
-      const nonTaskEvents = events.filter(event => !event.isTask);
-    
-      // Unir los eventos originales con los nuevos eventos de tareas
-      const updatedEvents = [...nonTaskEvents, ...taskEvents];
-    
-      // Actualizar el estado de los eventos
-      setEvents(updatedEvents);
-    }, [tasks]); // Dependencias de useEffect
+      if (showTasksInCalendar) {
+        // Filtrar las tareas que tienen fecha definida
+        const tasksWithEndDate = tasks.flat().filter(task => task.endDate);
+      
+        // Convertir las tareas en eventos
+        const taskEvents = tasksWithEndDate.map(task => task ={
+          // @ts-ignore
+          start: new Date(task.endDate),
+          // @ts-ignore sabemos que tienen fecha porque estan filtradas
+          end: new Date(task.endDate),
+          title: task.title,
+          desc: task.desc ?? "",
+          eventId: uuid(),
+          isTask: true,
+          color: "#3bb4ff"
+        });
+      
+        // Filtrar los eventos originales que no son tareas
+        const nonTaskEvents = events.filter(event => !event.isTask);
+      
+        // Unir los eventos originales con los nuevos eventos de tareas
+        const updatedEvents = [...nonTaskEvents, ...taskEvents];
+      
+        // Actualizar el estado de los eventos
+        setEvents(updatedEvents);
+      } else {
+        const nonTasksEvents = events.filter(event => !event.isTask);
+        setEvents(nonTasksEvents);
+      }
+    }, [tasks, showTasksInCalendar]); // Dependencias de useEffect
 
     const value ={events, setEvents, selectedEventId, setSelectedEventId, weekStart, setWeekStart, eventView, setEventView};
 

@@ -3,11 +3,7 @@ import { useTaskContext } from "../../Context/TaskContext"
 import { LuListPlus } from "react-icons/lu";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 
-export interface Props {
-
-}
-
-export default function BoardPanel({} : Props) {
+export default function BoardPanel() {
 
     const [columns, setColumns] = useState<string[]>([]);
     const { boardColumns, setBoardColumns } = useTaskContext();
@@ -45,8 +41,8 @@ export default function BoardPanel({} : Props) {
         <article className="board-preferences">
             <h3>Board preferences</h3>
             <hr></hr>
+            <p>These columns represent the current layout of the board, intended to align with the status of your tasks or any other specific criteria you wish to visually represent. You may modify, delete, or adapt them to better suit your needs.</p>
             <section className="default-columns">
-                <p>Board columns by defect:</p>
                 <div className={columns.length > 0 ? "columns-input" : ""}>
                     {
                         columns.map((column, index) => {

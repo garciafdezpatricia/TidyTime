@@ -6,13 +6,14 @@
     flex-direction: column;
     width: calc(100% - 2rem);
 
-    .week-start, .event-view {
-        padding-top: 1rem;
+    p {
         font-size: .9rem;
     }
 
-    .event-view {
-        margin-top: 1.2rem;
+    .week-start, .event-view {
+        padding-top: 1rem;
+        font-size: .9rem;
+        margin-left: 1.5rem;
     }
 
     .week-days-buttons {

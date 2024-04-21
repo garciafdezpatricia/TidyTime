@@ -6,6 +6,7 @@ import { useGithubHandler } from "../api/github";
 import toast from "react-hot-toast";
 import { useGithubContext } from "@/src/components/Context/GithubContext";
 import BoardPanel from "@/src/components/Panel/BoardPreferences/BoardPanel";
+import ListPanel from "@/src/components/Panel/ListPreferences/ListPanel";
 
 // go to this page as /settings
 export default function Settings() {
@@ -38,6 +39,7 @@ export default function Settings() {
 
     return (
     <div className="settings-container">
+        <ListPanel />
         <BoardPanel />
         <CalendarPanel />
         <ApplicationPanel />

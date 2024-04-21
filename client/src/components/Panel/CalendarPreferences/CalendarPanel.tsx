@@ -16,8 +16,9 @@ export default function CalendarPanel() {
         <article className="calendar-settings">
             <h3>Calendar preferences</h3>
             <hr></hr>
+            <p>You can customize your calendar by adjusting the starting day of the week, choosing from Monday through Sunday, and setting the calendar view to your liking, whether you prefer a monthly overview, agenda format, weekly snapshot, or daily breakdown.</p>
             <section className="week-start">
-                <p>Starting day of week (Monday by default):</p>
+                <p style={{fontWeight: "bold"}}>Starting day of week:</p>
                 <div className="week-days-buttons">
                     {
                         weekDays.map((day, index) => {
@@ -36,7 +37,7 @@ export default function CalendarPanel() {
                 </div>
             </section>
             <section className="event-view">
-                <p>Default calendar view (Month by default):</p>
+                <p style={{fontWeight: "bold"}}>Default calendar view:</p>
                 <div className="event-view-buttons">
                     {
                         views.map((view, index) => {
