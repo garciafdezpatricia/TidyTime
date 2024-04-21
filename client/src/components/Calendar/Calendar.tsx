@@ -1,4 +1,4 @@
-import { Calendar, dayjsLocalizer } from "react-big-calendar";
+import { Calendar, View, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import dayjs from "dayjs";
 import enLocale from 'dayjs/locale/en';
@@ -35,7 +35,7 @@ const eventStyleGetter = (event:any, view:any) => {
 };
 
 export default function CalendarComponent() {
-  const { events, setEvents, setSelectedEventId, weekStart } = useEventContext();
+  const { events, setEvents, setSelectedEventId, weekStart, eventView } = useEventContext();
   
   dayjs.locale('en-custom', {
     ...enLocale, 
@@ -149,6 +149,7 @@ export default function CalendarComponent() {
         onSelectSlot={(data) => handleSelectSlot(data)}
         onSelectEvent={(data) => handleSelectEvent(data)}
         selectable
+        defaultView={eventView as View}
       ></Calendar>
     {
       isOpenNewEventModal && (

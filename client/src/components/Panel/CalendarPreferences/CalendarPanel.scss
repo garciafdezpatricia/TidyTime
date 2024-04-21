@@ -6,9 +6,13 @@
     flex-direction: column;
     width: calc(100% - 2rem);
 
-    .week-start {
+    .week-start, .event-view {
         padding-top: 1rem;
-        font-size: .8rem;
+        font-size: .9rem;
+    }
+
+    .event-view {
+        margin-top: 1.2rem;
     }
 
     .week-days-buttons {
@@ -34,4 +38,31 @@
             outline: .1rem solid $primary-blue;
         }
     }
+
+    .event-view-buttons {
+        display: flex;
+        gap: .8rem;
+        padding-top: .5rem;
+
+        button, button.selected-view {
+            background-color: $background-button;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            outline: none;
+            width: fit-content;
+            height: 2rem;
+            padding: .8rem;
+            &:hover {
+                background-color: $light-blue;
+            }
+        }
+
+        button.selected-view {
+            outline: .1rem solid $primary-blue;
+        }
+
+    }
+
 }

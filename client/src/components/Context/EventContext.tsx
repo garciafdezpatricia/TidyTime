@@ -13,6 +13,8 @@ export interface IEventContext {
     setSelectedEventId: React.Dispatch<React.SetStateAction<string>>,
     weekStart: number,
     setWeekStart: React.Dispatch<React.SetStateAction<number>>,
+    eventView: string,
+    setEventView: React.Dispatch<React.SetStateAction<string>>,
 }
 
 // TODO: replace it with solid logic
@@ -53,6 +55,8 @@ const defaultContext: IEventContext={
     setEvents: () => {},
     weekStart: 1,
     setWeekStart: () => {},
+    eventView: "month",
+    setEventView: () => {},
 }
 // context with the default event context
 const EventContext = createContext<IEventContext>(defaultContext);
@@ -78,6 +82,7 @@ export function EventProvider({children} : IEventContextProvider) {
     const [events, setEvents] = useState(defaultContext.events);
     const [selectedEventId, setSelectedEventId] = useState(defaultContext.selectedEventId);
     const [weekStart, setWeekStart] = useState(defaultContext.weekStart);
+    const [eventView, setEventView] = useState(defaultContext.eventView);
 
     const { tasks } = useTaskContext();
 
@@ -109,7 +114,7 @@ export function EventProvider({children} : IEventContextProvider) {
       setEvents(updatedEvents);
     }, [tasks]); // Dependencias de useEffect
 
-    const value ={events, setEvents, selectedEventId, setSelectedEventId, weekStart, setWeekStart};
+    const value ={events, setEvents, selectedEventId, setSelectedEventId, weekStart, setWeekStart, eventView, setEventView};
 
     return (
         <EventContext.Provider value={value}>

@@ -5,6 +5,7 @@ import { useGoogleHandler } from "@/pages/api/google";
 import { useGithubHandler } from "../api/github";
 import toast from "react-hot-toast";
 import { useGithubContext } from "@/src/components/Context/GithubContext";
+import BoardPanel from "@/src/components/Panel/BoardPreferences/BoardPanel";
 
 // go to this page as /settings
 export default function Settings() {
@@ -37,6 +38,7 @@ export default function Settings() {
 
     return (
     <div className="settings-container">
+        <BoardPanel />
         <CalendarPanel />
         <ApplicationPanel />
     </div>)

@@ -5,10 +5,12 @@ import toast from "react-hot-toast";
 
 
 export default function CalendarPanel() {
-    const {weekStart, setWeekStart} = useEventContext();
+    const {weekStart, setWeekStart, eventView, setEventView} = useEventContext();
 
-    const [weekDays, setWeekDays] = useState([{dim: "M", day: "Monday"}, {dim: "Tue", day: "Tuesday"}, {dim: "W", day: "Wednesday"}, 
-        {dim: "Th", day: "Thursday"}, {dim: "F", day: "Friday"}, {dim: "Sat", day: "Saturday"}, {dim: "Sun", day: "Sunday"}]);
+    const weekDays= [{dim: "M", day: "Monday"}, {dim: "Tue", day: "Tuesday"}, {dim: "W", day: "Wednesday"}, 
+        {dim: "Th", day: "Thursday"}, {dim: "F", day: "Friday"}, {dim: "Sat", day: "Saturday"}, {dim: "Sun", day: "Sunday"}];
+    
+    const views = [{view:"Month" , value: "month"}, {view:"Week" , value: "week"}, {view:"Day" , value: "day"}, {view:"Agenda" , value: "agenda"}];
 
     return (
         <article className="calendar-settings">
@@ -27,6 +29,25 @@ export default function CalendarPanel() {
                                     title={`Set to ${day.day}`}
                                 >
                                     {day.dim}
+                                </button>
+                            )
+                        })
+                    }
+                </div>
+            </section>
+            <section className="event-view">
+                <p>Default calendar view (Month by default):</p>
+                <div className="event-view-buttons">
+                    {
+                        views.map((view, index) => {
+                            return (
+                                <button 
+                                    key={index}
+                                    className={eventView === (view.value) ? "selected-view" : ""}
+                                    onClick={() => setEventView(view.value)}
+                                    title={`Set to ${view.view}`}
+                                >
+                                    {view.view}
                                 </button>
                             )
                         })
