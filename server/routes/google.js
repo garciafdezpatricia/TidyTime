@@ -28,7 +28,6 @@ const getEmail = async (req) => {
     return new Promise((resolve, reject) => {
         const userId = getUserId(req);
         const oauth2Client = userClients[userId];
-        console.log("el oauth2client", oauth2Client);
         const people = google.people({ version: 'v1', auth: oauth2Client });
         people.people.get({
                 resourceName: 'people/me',
@@ -54,11 +53,8 @@ router.get('/google/auth/callback', async (req, res) => {
 
     const { tokens } = await oauth2Client.getToken(req.query.code);
     oauth2Client.setCredentials(tokens);
-    console.log('Credenciales establecidas');
     try {
-        console.log("entrando en email");
         const email = await getEmail(req);
-        console.log("saliendo de email", email);
         res.redirect(`http://localhost:3000/calendar?user=${email}`);
     } catch (error) {
         res.redirect('http://localhost:3000/calendar');
