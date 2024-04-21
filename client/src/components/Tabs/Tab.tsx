@@ -71,39 +71,30 @@ export default function Tab({handleEditModal} : Props) {
 	 * @param task corresponds to the task being checked
 	 * @param itemIndex corresponds with the index of the task inside of its list.
 	 */
-	const handleCheck = (task: any, itemIndex: any) => {
+	const handleCheck = async (task: any, itemIndex: any) => {
 		if (managingList) {
 			setManagingList(false);
 		}
-		setTasks((prevTodo) => {
-			return prevTodo.map((list, index) => {
-				if (index === selectedListIndex) {
-					// remove item from list
-					const updatedList = list.filter((_, i) => i !== itemIndex);
-					// if event is not done, it is being marked as done
-					if (!task.done) {
-						return [
-							...updatedList,
-							{ ...list[itemIndex], done: !list[itemIndex].done },
-						];
-					} else {
-						return [
-							{ ...list[itemIndex], done: !list[itemIndex].done },
-							...updatedList,
-						];
-					}
-				}
-				return list;
-			});
-		});
-		if (task.githubUrl) {
-			// it's being marked as done
-			if (!task.done ) {
-				closeIssue(task.githubUrl);
-			} else {
-				openIssue(task.githubUrl);
-			}
-		}
+		const updatedToDo = [...tasks];
+        let updatedTask = tasks[selectedListIndex][itemIndex];
+        const isDone = updatedTask.done;
+
+        updatedTask.done = !updatedTask.done;
+        updatedToDo[selectedListIndex] = [
+            ...updatedToDo[selectedListIndex].slice(0, itemIndex),
+            updatedTask,
+            ...updatedToDo[selectedListIndex].slice(itemIndex + 1)
+        ];
+        setTasks(updatedToDo);
+        
+        if (updatedTask.githubUrl) {
+            if (isDone) {
+                await openIssue(updatedTask.githubUrl);
+            } else {
+                await closeIssue(updatedTask.githubUrl);
+            }
+            
+        }
 	};
 
 	/**

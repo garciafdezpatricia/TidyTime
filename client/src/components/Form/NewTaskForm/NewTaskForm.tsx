@@ -31,7 +31,7 @@ export default function NewTaskForm() {
 		setTasks((prevTodo) => {
 			return prevTodo.map((list, index) => {
 				if (index === selectedListIndex) {
-                    return [{ title: e, done: false, listIndex: selectedListIndex }, ...list];
+                    return [{ title: e, done: false, listIndex: selectedListIndex, status: 0 }, ...list];
                 } 
                 return list;
             });

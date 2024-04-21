@@ -38,7 +38,9 @@
     .board-board-empty {
         background-image: url("./../../../public/board.svg");
         background-repeat: no-repeat;
+        background-size: contain;
         background-position: center;
+        justify-content: center;
     }
 
     .board-board {

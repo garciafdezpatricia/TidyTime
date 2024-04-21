@@ -8,6 +8,21 @@
     padding-left: 1rem;
 }
 
+.tab-content-empty {
+    grid-row: 2/-1;
+    grid-column: 1/-1;
+    height: 90%;
+    max-height: 90%;
+    padding-left: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url("./../../../public/add-task-list.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .content {
     display: none;
 }

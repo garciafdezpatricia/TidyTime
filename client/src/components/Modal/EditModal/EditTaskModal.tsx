@@ -9,6 +9,7 @@ import { MdDelete } from "react-icons/md";
 import PromptModal from "../PromptModal/PromptModal";
 import { TbEyeShare } from "react-icons/tb";
 import { useGithubHandler } from "@/pages/api/github";
+import { FaCheckCircle, FaRegCircle } from "react-icons/fa";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -39,6 +40,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
         setImportant(taskToEdit.important ?? false)
     }
 
+    // TODO: hacer que el open/close se actualice solo al guardar
     const saveAndClose = async () => {
         const updatedToDo = [...tasks];
         const updatedTask = {...taskToEdit};
@@ -55,6 +57,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
         if (taskToEdit.githubUrl) {
             await updateIssue(taskToEdit.githubUrl, newTitle, newDesc);
         }
+        setSelectedTaskIndex(-1);
         onClose();
     }
 
@@ -106,6 +109,11 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
         onClose();
     }
 
+    const handleCloseTab = () => {
+        setSelectedTaskIndex(-1);
+        onClose();
+    }
+
     return (
         <>
         <div className="backdrop"></div>
@@ -121,11 +129,11 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                     <button 
                         onClick={updateStatus}
                         className="done-undone">
-                        Mark as {taskToEdit.done ? "to do" : "done"}
+                        {!taskToEdit.done ? (<><FaRegCircle />To do</>) : (<><FaCheckCircle />Done</>)}
                     </button>
                     <button 
                         title="Close"
-                        onClick={onClose} 
+                        onClick={handleCloseTab} 
                         className="close-button">
                             <ImCross />
                     </button>

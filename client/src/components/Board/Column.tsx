@@ -44,36 +44,29 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
 
     const deleteColumn = () => {
         if (boardColumns.length > 0) {
-            // we're deleting last column
+            let updatedTasks = [...tasks];
             if (boardColumns.length === 1) {
                 // erase all columns
                 setBoardColumns([]);
-                // set the status of all items to 0
-                const updatedItems = tasks;
-                updatedItems.flat().map((item) => {
-                    item.status = 0;
+                updatedTasks.forEach((tasklist) => {
+                    tasklist.forEach((task) => {
+                        task.status = 0;
+                    })
                 })
-                setTasks(updatedItems)
-
-            // we're deleting a column but not the last
             } else {
                 // erase that column
                 setBoardColumns((prevColumns) => {
                     return prevColumns.filter((_, i) => i !== index);
                 })
-                const updatedBoardItems = [...tasks];
-                // move items from the list we're deleting to the first one
-                const itemsToMove = tasks[index];
-                if (itemsToMove) {
-                    itemsToMove.map((item) => item.status = 0);
-                    updatedBoardItems.splice(index, 1); // delete 
-                    // check if the first column exists (could be the one that is being deleted)
-                    updatedBoardItems[0] = updatedBoardItems[0] ? [...itemsToMove, ...updatedBoardItems[0]] : [...itemsToMove];
-                } else {
-                    updatedBoardItems.splice(index, 1); // delete 
-                }                
-                setTasks(updatedBoardItems);    
+                updatedTasks.forEach((tasklist) => {
+                    tasklist.forEach((task) => {
+                        if (task.status === index) {
+                            task.status = 0;
+                        }
+                    })
+                })                
             }
+            setTasks(updatedTasks)
             setConfirmationDeleteModalOpen(false);
         }          
 	};

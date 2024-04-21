@@ -68,7 +68,8 @@ export default function List() {
 						done: false,
 						githubHtml: issue.html_url,
 						githubUrl: issue.url,
-						listIndex: listIndex
+						listIndex: listIndex,
+						status: 0,
 					};
 					tasklists[listIndex].push(task); 
 				});
@@ -95,7 +96,7 @@ export default function List() {
 						{isSyncingIssues && <div className="loader"></div>}
 						Sync issues
 				</button>
-				<NewTaskForm />
+				{tasks.length > 0 && <NewTaskForm />}
 			</div>
 			{
 				isEditingTaskModalOpen && (

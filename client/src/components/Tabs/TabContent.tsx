@@ -132,10 +132,11 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
     }, [tasks, tasksToShow]);
 
     return (
-        <section className='tab-content-container'>
+        <section className={tasks.length > 0 ? 'tab-content-container': 'tab-content-empty'}>
             {
-                tasks.length > 0 &&
-                <FilterSection handleFilter={handleFilter} sortByDate={sortByDate} sortByDifficulty={sortByDifficulty}/>
+                tasks.length > 0 
+                ? <FilterSection handleFilter={handleFilter} sortByDate={sortByDate} sortByDifficulty={sortByDifficulty}/>
+                : <p className="empty-tab-title">Add task lists!</p>
             }
 				{tasksToShow.map((content, index) => (
 					<ul className={selectedListIndex === index ? "active-content" : "content"} key={index}>
