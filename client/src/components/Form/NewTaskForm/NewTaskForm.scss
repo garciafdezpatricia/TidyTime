@@ -1,0 +1,20 @@
+@use "../../../../styles/variables" as *;
+
+.create-task-form {
+    display: flex;
+    gap: .8rem;
+    align-items: center;
+    input {
+        padding-top: .2rem;
+        padding-bottom: .2rem;
+        padding-left: .2rem;
+        width: 90%;
+        outline: none;
+        border: 2px solid #7c7c7c;
+        border-radius: 4px;
+        &:active, &:focus {
+            outline: none;
+            border: 2px solid $primary-green;
+        }
+    }
+}

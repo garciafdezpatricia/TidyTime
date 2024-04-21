@@ -1,0 +1,12 @@
+@use "../../styles/variables" as var;
+
+.settings-container {
+    width: var.$view-width;
+    height: 100%;
+    padding: var.$view-padding;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: auto;
+}

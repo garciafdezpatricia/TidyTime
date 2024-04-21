@@ -1,0 +1,57 @@
+@use "../../../../styles/variables" as *;
+
+.applications-panel {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 2rem);
+
+    p {
+        font-size: .9rem;
+    }
+}
+
+.panel-content {
+    padding-top: 1.5rem;
+    margin-left: 1.5rem;
+    display: flex;
+    gap: 2rem;
+    .content-box {
+        border: .1rem solid $light-grey;
+        border-radius: .4rem;
+        display: grid;
+        grid-template-rows: .5fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        width: 18rem;
+
+        .content-header {
+            padding: .5rem 1rem;
+            border-top-left-radius: .4rem;
+            border-top-right-radius: .4rem;
+            grid-row: 1/1;
+            grid-column: 1/-1;
+            border-bottom: .1rem solid $light-grey;
+            display: flex;
+            align-items: center;
+            background-color: $primary-grey;
+            justify-content: space-between;
+
+            .header-app {
+                display: flex;
+                gap: .6rem;
+            }
+
+            .app-icon {
+                width: 2rem;
+                height: auto;
+            }
+        }
+
+        .content-body {
+            font-size: .8rem;
+            padding: .5rem;
+            grid-row: 2/2;
+            grid-column: 1/-1;
+        }
+    }
+}

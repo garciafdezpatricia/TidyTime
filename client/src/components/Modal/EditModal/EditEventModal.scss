@@ -1,0 +1,111 @@
+@use "../../../../styles/variables" as *;
+
+.edit-event-article {
+    position: absolute;
+	transform: translate(-50%, -50%);
+	background-color: $white;
+	border-radius: .4rem;
+	box-sizing: border-box;
+    z-index: 10;
+    top: 50%;
+	left: 30%;
+	bottom: 50%;
+	padding: 1rem 2rem;
+	width: 35rem;
+	height: 18rem;
+    box-shadow: -.1rem .2rem 1.5rem 0 rgba(0,0,0,0.75);
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto repeat(3, 1fr);
+    font-size: .8rem;
+
+    .edit-event-header {
+        grid-row: 1/1;
+        grid-column: 1/-1;
+        display: flex;
+        gap: 1rem;
+        width: fit-content;
+        margin-left: auto;
+
+        a.edit-event-header-button {
+            display: flex;
+        }
+
+        button.edit-event-header-button, a.edit-event-header-button {
+            border: none;
+            width: fit-content;
+            height: fit-content;
+            padding: .3rem;
+            border-radius: .4rem;
+            background-color: $white;
+            &:hover {
+                background-color: $primary-grey;
+            }
+        }
+
+        button.edit-event-close-btn {
+            border: none;
+            width: fit-content;
+            height: fit-content;
+            padding: .3rem;
+            border-radius: .4rem;
+            background-color: $primary-grey;
+        }
+    }
+
+    .edit-event-title {
+        grid-row: 2/2;
+        grid-column: 1/1;
+        font-size: 1.2rem;
+        border: none;
+        height: fit-content;
+        justify-self: self-start;
+        width: 100%;
+        &:active, &:focus {
+            border: none;
+            outline: none;
+            text-decoration: underline;
+            text-decoration-color: $primary-green;
+        }
+    }
+
+    .edit-event-info {
+        grid-row: 2/-1;
+        grid-column: 2/2;
+        resize: none;
+        padding-left: .2rem;
+        margin: .5rem;
+        border-radius: .4rem;
+        border: none;
+        background-color: #e6e6e66a;
+        color: $black;
+        &:active, &:focus {
+            border: none;
+            outline: none;
+        }
+    }
+
+    .edit-event-start-date {
+        grid-row: 3/3;
+        grid-column: 1/1;
+        align-self: center;
+    }
+
+    .edit-event-end-date {
+        grid-row: 4/4;
+        grid-column: 1/1;
+    }
+
+    .edit-event-start-date, .edit-event-end-date {
+        height: fit-content;
+        padding-inline: .4rem;
+        justify-self: self-start;
+        width: 60%;
+    }
+
+    .edit-event-color {
+        grid-row: 5/-1;
+        grid-column: 1/1;
+    }
+}

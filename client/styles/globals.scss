@@ -1,0 +1,65 @@
+@use "./variables" as *;
+@use "../pages/index.scss";
+@use "../src/components/Button/Button.scss";
+@use "../src/components/Menu/Menu.scss";
+@use "../src/components/Menu/CalendarMenu.scss";
+@use "../src/components/Panel/ApplicationPreferences/ApplicationPanel.scss";
+@use "../src/components/Panel/CalendarPreferences/CalendarPanel.scss";
+@use "../src/components/Tabs/Tab.scss";
+@use "../src/components/Tabs/TabContent.scss";
+@use "../src/components/ToggleSwitch/ToggleSwitch.scss";
+@use "../src/components/Layout/Layout.scss";
+@use "../src/components/Modal/PromptModal/PromptModal.scss";
+@use "../src/components/Modal/EditModal/EditListModal.scss";
+@use "../src/components/Modal/EditModal/EditTaskModal.scss";
+@use "../pages/calendar/calendar.scss";
+@use "../pages/board/board.scss";
+@use "../pages/list/list.scss";
+@use "../pages/tidier/tidier.scss";
+@use "../pages/settings/settings.scss";
+@use "../src/components/SearchBar/SearchBar.scss";
+@use "../src/components/ComboBox/CheckableComboBox.scss";
+@use "../src/components/ComboBox/ComboBox.scss";
+@use "../src/components/Form/NewTaskForm/NewTaskForm.scss";
+@use "../src/components/DifficultyRate/DifficultyRate.scss";
+@use "../src/components/Login/GoogleCalendarLogin.scss";
+@use "../src/components/Event/NewEventForm.scss";
+@use "../src/components/Modal/EditModal/EditEventModal.scss";
+@use "../src/components/Modal/ShareModal/ShareEventModal.scss";
+@use "../src/components/Modal/AbsoluteModal/AbsoluteModal.scss";
+@use "../src/components/Board/Board.scss";
+@use "../src/components/Auth/GitHubAuth.scss";
+@use "../src/components/Modal/EditModal/SeeTaskModal.scss";
+@use "../src/components/Panel/BoardPreferences/BoardPanel.scss";
+@use "../src/components/Panel/ListPreferences/ListPanel.scss";
+
+@font-face {
+    font-family: 'Primaria';
+    src: url('../assets/fonts/Kadwa/Kadwa-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Secundaria';
+    src: url('../assets/fonts/Libre_Franklin/static/LibreFranklin-Regular.ttf');
+}
+
+* {
+    font-family: 'Primaria';
+    margin: 0px;
+    padding: 0px;
+    font-weight: 400;
+}
+
+.loader {
+    border: .1rem solid $light-grey;
+    border-top: .1rem solid $primary-blue;
+    border-radius: 50%; // for it to be a ciecle
+    width: .7rem;
+    height: .7rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}

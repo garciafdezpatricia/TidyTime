@@ -1,0 +1,23 @@
+@use "../../../styles/variables" as var;
+
+button {
+    border-radius: 0.5em;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.primary-button {
+    border: 1px solid var.$primary-green;
+    background-color: var.$hover-green;
+    color: var.$black;
+    &:hover {
+        outline: 1px solid var.$primary-green;
+    }
+}
+
+.btn-icon {
+    width: 1em;
+    height: auto;
+}

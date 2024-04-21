@@ -1,0 +1,53 @@
+@use "../../../styles/variables" as *;
+
+.search-bar-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: .2rem;
+    align-items: center;
+    position: relative;
+    
+    input {
+        width: 20rem;
+        padding-left: .5rem;
+        padding-top: .3rem;
+        padding-bottom: .3rem;
+        border-radius: .4rem;
+        outline: none;
+        border: 2px solid #7c7c7c;
+        &:active, &:focus {
+            outline: none;
+            border: 2px solid $primary-green;
+        }
+    }
+
+    .search-result {
+        font-size: .8rem;
+        display: flex;
+        flex-direction: column;
+        height: 10rem;
+        width: 20rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: absolute;
+        z-index: 999;
+        top: 3rem;
+        background-color: $white;
+        border: .1rem solid $dark-grey;
+        border-radius: .4rem;
+
+        .result-item {
+            padding: .5rem;
+            width: 100%;
+            cursor: pointer;
+            &:hover, &:focus {
+                background-color: $hover-green;
+            }
+        }
+
+        .result-item:not(:last-child){
+            border-bottom: .1rem solid $primary-grey;
+        }
+    }
+}

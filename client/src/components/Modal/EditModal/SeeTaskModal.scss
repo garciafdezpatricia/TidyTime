@@ -1,0 +1,84 @@
+@use "../../../../styles/variables" as *;
+
+.see-task-article {
+    position: absolute;
+	transform: translate(-50%, -50%);
+	background-color: $white;
+	border-radius: .4rem;
+	box-sizing: border-box;
+    z-index: 10;
+    top: 50%;
+	left: 30%;
+	bottom: 50%;
+	padding: 1rem 2rem;
+	width: 35rem;
+	height: 18rem;
+    box-shadow: -.1rem .2rem 1.5rem 0 rgba(0,0,0,0.75);
+
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+    font-size: .8rem;
+
+    .see-task-header {
+        display: flex;
+        gap: 1rem;
+        width: 100%;
+        justify-content: space-between;
+
+        .see-task-header-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            font-size: 1rem;
+            background-color: $primary-blue;
+            color: $white;
+            padding-inline: .8rem;
+            border-radius: .4rem;
+        }
+
+        .see-task-close-btn {
+            border: none;
+            width: fit-content;
+            height: fit-content;
+            padding: .3rem;
+            border-radius: .4rem;
+            background-color: $primary-grey;
+        }
+    }
+
+    .see-task-title {
+        font-size: 1rem;
+        border: none;
+        height: fit-content;
+        justify-self: self-start;
+        width: 100%;
+        &:active, &:focus {
+            border: none;
+            outline: none;
+            text-decoration: underline;
+            text-decoration-color: $primary-green;
+        }
+    }
+
+    .see-task-info {
+        resize: none;
+        padding-left: .2rem;
+        border-radius: .4rem;
+        border: none;
+        background-color: #e6e6e66a;
+        color: $black;
+        &:active, &:focus {
+            border: none;
+            outline: none;
+        }
+    }
+
+    .see-task-date {
+        height: fit-content;
+        padding-inline: .4rem;
+        justify-self: self-start;
+        width: fit-content;
+    }
+}

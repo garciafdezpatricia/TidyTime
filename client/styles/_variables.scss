@@ -1,0 +1,54 @@
+// ## BREAKPOINTS
+
+
+
+// ## MEASURES
+$view-padding: 1em;
+$view-width: 100%;
+
+// ## FONT PROPERTIES
+@font-face {
+    font-family: 'Franklin';
+    src: url('../assets/fonts/Libre_Franklin/static/LibreFranklin-Regular.ttf');
+}
+
+$bold: 800;
+$semi-bold: 800;
+$normal: 800;
+$light: 800;
+
+$secondary: 'Franklin';
+
+
+// ## COLORS
+
+// GREEN
+$primary-green: #3E5B41;
+$hover-green: #D5E2D6;
+$medium-green: #879C89;
+$toggle-green: #1e8f29cb;
+
+// WHITE
+$white: #FFFFFF;
+
+// BLACK
+$black: #000000;
+$dark-grey: #363535;
+$medium-grey: #454444;
+$light-grey: #787777;
+$primary-grey: #d8d8d8;
+$background-button: #f0f0f0;
+
+// RED
+$glowing-red: #e13535;
+$remove-red: #b13838;
+$light-red: #d37373;
+$hover-red: #e7d9d9;
+
+// YELLOW
+$important-yellow: #ffa500;
+$light-yellow: #ffdc50;
+
+//BLUE
+$primary-blue: #3bb4ff;
+$light-blue: #c4dafd;
