@@ -51,6 +51,7 @@ export interface Event {
     googleId?: string,
     googleHTML?: string,
     googleCalendar?: string,
+    isTask?: boolean,
   }
 
 export interface Label {

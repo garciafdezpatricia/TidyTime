@@ -302,43 +302,52 @@ export function useGoogleHandler() {
         setEvents(updatedEvents);
     }
 
-    const updateAndSaveEvent = (eventToUpdate:Event, googleId:string) => {
-
-        serverCheck()
-        .then(response => {
-            if (response) {
-                // format date to google format
-                const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
-                const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
-
-                return fetch('http://localhost:8080/google/events/update', {
-                    method: 'POST',
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        id: googleId,
-                        start: ISOStartDate,
-                        end: ISOEndDate,
-                        title: eventToUpdate.title,
-                        desc: eventToUpdate.desc,
-                        calendarId: eventToUpdate.googleCalendar                     
-                    }),
-                    credentials: 'include',
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'error'){
-                        throw data.value;
+    const updateAndSaveEvent = (eventToUpdate:any, googleId:any) => {
+        // returning a promise for the toast only
+        return new Promise((resolve, reject) => {
+            serverCheck()
+                .then(response => {
+                    if (response) {
+                        // format date to google format
+                        const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
+                        const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
+                        fetch('http://localhost:8080/google/events/update', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ 
+                                id: googleId,
+                                start: ISOStartDate,
+                                end: ISOEndDate,
+                                title: eventToUpdate.title,
+                                desc: eventToUpdate.desc,
+                                calendarId: eventToUpdate.googleCalendar                     
+                            }),
+                            credentials: 'include',
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.status === 'error') {
+                                reject(new Error(data.value));
+                            } else {
+                                resolve(data); // Resolve with the received data
+                            }
+                        })
+                        .catch(error => {
+                            reject(error); // Reject with any error occurred
+                        });
+                    } else {
+                        toast.error("Server appears to be down");
+                        reject(new Error("Server appears to be down"));
                     }
                 })
-                .catch(error => {
-                    throw error;
-                });
-            } else {
-                toast.error("Server appears to be down");
-            }
-        })
+        });
     }
 
     const isAuthenticatedUser = async (emailParam:string):Promise<boolean> => {

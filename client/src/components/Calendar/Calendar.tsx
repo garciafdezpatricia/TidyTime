@@ -9,6 +9,7 @@ import {v4 as uuid} from 'uuid';
 import EditEventModal from "@/src/components/Modal/EditModal/EditEventModal";
 import { useEventContext } from "../Context/EventContext";
 import { Event } from "@/src/model/Scheme";
+import SeeTaskModal from "../Modal/EditModal/SeeTaskModal";
 
 // custom event for calendar (all views)
 const components = {
@@ -46,7 +47,9 @@ export default function CalendarComponent() {
   
   const [isOpenNewEventModal, setOpenNewEventModal] = useState(false);
   const [isOpenEditEventModal, setOpenEditEventModal] = useState(false);
+  const [isOpenSeeTaskModal, setOpenSeeTaskModal] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
+
   const titleRef = useRef(null);
   const infoRef = useRef(null);
   const fromDateRef = useRef(null);
@@ -61,7 +64,20 @@ export default function CalendarComponent() {
   }
 
   const handleSelectEvent = ({eventId} : {eventId:string}) => {
-    setOpenEditEventModal(true);
+    let isTask = false;
+    events.map((event) => {
+      if (event.eventId === eventId) {
+        if (event.isTask) {
+          isTask = true;
+        }
+        return;
+      }
+    })
+    if (isTask) {
+      setOpenSeeTaskModal(true);
+    } else {
+      setOpenEditEventModal(true);
+    }
     setSelectedEventId(eventId);
   }
 
@@ -159,6 +175,13 @@ export default function CalendarComponent() {
       isOpenEditEventModal && (
         <EditEventModal 
           onClose={() => setOpenEditEventModal(false)} 
+        />
+      )
+    }
+    {
+      isOpenSeeTaskModal && (
+        <SeeTaskModal 
+          onClose={() => setOpenSeeTaskModal(false)} 
         />
       )
     }

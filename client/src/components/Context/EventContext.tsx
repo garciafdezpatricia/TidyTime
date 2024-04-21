@@ -1,6 +1,7 @@
-import { ReactNode, createContext, useContext, useState } from "react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { Event } from "@/src/model/Scheme";
 import {v4 as uuid} from "uuid";
+import { useTaskContext } from "./TaskContext";
 
 /**
  * Interface for the task context of the application.
@@ -77,6 +78,32 @@ export function EventProvider({children} : IEventContextProvider) {
     const [events, setEvents] = useState(defaultContext.events);
     const [selectedEventId, setSelectedEventId] = useState(defaultContext.selectedEventId);
     const [weekStart, setWeekStart] = useState(defaultContext.weekStart);
+
+    const { tasks } = useTaskContext();
+
+
+    useEffect(() => {
+      let result: Event[] = [];
+      tasks.forEach((tasklist) => {
+        tasklist.forEach((task) => {
+          if (task.endDate) {
+            const event:Event = {
+              start: new Date(task.endDate),
+              end: new Date(task.endDate),
+              title: task.title,
+              desc: task.desc ?? "",
+              eventId: uuid(),
+              isTask: true,
+              color: "#3bb4ff"
+            };
+            result.push(event); 
+          }
+        })
+      });
+      const updatedEvents = [...events, ...result];
+      setEvents(updatedEvents);
+    }, [tasks]);
+
     const value ={events, setEvents, selectedEventId, setSelectedEventId, weekStart, setWeekStart};
 
     return (
