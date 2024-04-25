@@ -8,7 +8,9 @@ import GitHubAuthButton from "@/src/components/Auth/GitHubAuth";
 import { useGithubHandler } from "../api/github";
 import toast from "react-hot-toast";
 import { useGithubContext } from "@/src/components/Context/GithubContext";
-import { Task, TaskList } from "@/src/model/Scheme";
+import { Task } from "@/src/model/Scheme";
+import { useSessionContext } from "@/src/components/Context/SolidContext";
+import { useRouter } from "next/router";
 
 export default function List() {
 	const [reRender, setRerender] = useState(Math.random());
@@ -18,16 +20,23 @@ export default function List() {
 	const {setSelectedTaskIndex, listNames, setListNames, tasks, setTasks} = useTaskContext();
 	const { getUserData, getIssuesOfUser } = useGithubHandler();
 	const { githubLoggedIn, userData } = useGithubContext();
+	const { solidSession } = useSessionContext();
+	const router = useRouter();
 
 	useEffect(() => {
-		try {
-			getUserData();
-		} catch (error:any) {
-			if (error.message === "Failed to fetch") {
-				toast.error("Error when connecting to the server");
-			} else {
-				if (error.message.includes('access not found') && githubLoggedIn) {
-					toast.error("Please reconnect to GitHub");
+		if (!solidSession?.info.isLoggedIn) {
+			router.push("/");
+			return;
+		} else {
+			try {
+				getUserData();
+			} catch (error:any) {
+				if (error.message === "Failed to fetch") {
+					toast.error("Error when connecting to the server");
+				} else {
+					if (error.message.includes('access not found') && githubLoggedIn) {
+						toast.error("Please reconnect to GitHub");
+					}
 				}
 			}
 		}
@@ -81,6 +90,7 @@ export default function List() {
 	}
 
 	return (
+		solidSession?.info.isLoggedIn &&
 		<div className='list-container'>
 			<div className="list-header-section">
 				<SearchBar />

@@ -38,6 +38,13 @@ router.get("/solid/login/callback", async function (req, res) {
     }
 })
 
+router.get("/solid/user/session", async function (req, res) {
+    const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+    if (session) {
+        res.send({session: session});
+    }
+});
+
 router.get("/solid/logout", async function (req, res) {
     const session = await getSessionFromStorage(req.cookies.inruptSessionId);
     session.logout();

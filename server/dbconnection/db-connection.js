@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 
-async function saveTokensToDB(user, tokens, collection) {
+async function saveToDB(user, data, collection) {
     const db = mongoose.connection.useDb("TidyTimeDev");
     const collection = db.collection(collection);
-    console.log(userEmail);
     const userTokens = {
         user: user,
-        tokens: tokens
+        data: data
     };
 
     return new Promise((resolve, reject) => {
@@ -14,29 +13,28 @@ async function saveTokensToDB(user, tokens, collection) {
             if (err) {
                 throw err;
             } else {
-                console.log("Tokens guardados en la base de datos");
+                console.log("Saved in DB");
                 resolve(res);
             }
         })
     })
 }
 
-async function emailExistsInDB(userEmail) {
+async function userInDB(user, collection) {
     const db = mongoose.connection.useDb("TidyTimeDev");
-    const collection = db.collection("GoogleTokens");
+    const collection = db.collection(collection);
   
-    // check if email exists on db
-    const userTokens = await collection.findOne({email: userEmail});
-    return userTokens != null;
+    const userTokens = await collection.findOne({user: user});
+    return userTokens;
 }
 
-async function getTokensFromDB(userEmail) {
+async function getUserDataFromDB(user, collection) {
     const db = mongoose.connection.useDb("TidyTimeDev");
-    const collection = db.collection("GoogleTokens");
+    const collection = db.collection(collection);
   
     // check if email exists on db
-    const user = await collection.findOne({email: userEmail});
-    return user ? user.tokens : null;
+    const user = await collection.findOne({user: user});
+    return user ? user.data : null;
 }
 
-module.exports = {saveTokensToDB, emailExistsInDB, getTokensFromDB};
+module.exports = {saveToDB, userInDB, getUserDataFromDB};

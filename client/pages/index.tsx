@@ -1,14 +1,32 @@
-import React from 'react'
+import { useSessionContext } from "@/src/components/Context/SolidContext";
+import { Icon } from "@/src/components/Icon/Icon";
+import { useState, useEffect } from "react";
+import { useInruptHandler } from "./api/inrupt";
+import Inrupt from "@/src/components/Login/InruptLogin";
 
-export default function Prueba() {
+export default function MainPage() {
 
-  async function loginInrupt() {
-    window.location.assign("http://localhost:8080/solid/login");
-  }
+  const { getSession, logoutInrupt } = useInruptHandler();
+  const { solidSession } = useSessionContext();
+  const [reRender, setRerender] = useState(Math.random());
+
+  useEffect(() => {
+      getSession();
+  }, [reRender])
 
   return (
-  <section className='index-container'>
-    <button onClick={loginInrupt}>LOGIN INRUPT</button>
-  </section>
+    solidSession?.info.isLoggedIn 
+    ?
+    <section className='index-container'>
+      <article className="inrupt-info">
+          <p>Welcome back {solidSession.info.webId} !</p>
+          <button className="logout-inrupt-button" onClick={logoutInrupt}>
+              <Icon src={"./solid.svg"} alt={"Inrupt logo"} />
+              Logout of Solid
+          </button>
+      </article>
+    </section>
+    :
+    <Inrupt />
   )
 }

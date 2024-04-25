@@ -7,26 +7,28 @@ import { EventProvider } from "@/src/components/Context/EventContext";
 import { Toaster } from "react-hot-toast";
 import { GoogleProvider } from "@/src/components/Context/GoogleContext";
 import { GithubProvider } from "@/src/components/Context/GithubContext";
-import { useEffect, useState } from "react";
-import { useGoogleHandler } from "./api/google";
+import { SessionProvider } from "@/src/components/Context/SolidContext";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
 
   return (
+    <SessionProvider>
       <TaskProvider>
         <EventProvider>
           <GoogleProvider>
             <GithubProvider>
-              {/** This is a SideMenu leayout */}
-              <SideMenu>
-                <MenuSideBar />
-                <Component {...pageProps} />
-              </SideMenu>
+                <SideMenu>
+                  <MenuSideBar />
+                  {/** This is a SideMenu layout */
+                    <Component {...pageProps} />
+                  }
+                </SideMenu>
               <Toaster />
               
             </GithubProvider>
           </GoogleProvider>
         </EventProvider>
       </TaskProvider>
+    </SessionProvider>
   );
 }
