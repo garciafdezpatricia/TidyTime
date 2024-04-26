@@ -1,26 +1,5 @@
 @use "../../../styles/variables" as *;
 
-.inrupt-info {
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem 2rem;
-}
-
-.logout-inrupt-button {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    outline: none;
-    border: .1rem solid $black;
-    padding-inline: .4rem;
-    background-color: $background-button;
-
-    img {
-        width: 1.5rem;
-        height: auto;
-    }
-}
-
 .inrupt-container {
     width: $view-width;
     height: 100%;

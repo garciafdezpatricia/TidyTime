@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 
 export function useInruptHandler() {
 
-    const { setSolidSession, solidSession } = useSessionContext();
+    const { setSolidSession, solidSession, setUserName } = useSessionContext();
 
     const serverCheck = () => {
         return fetch("http://localhost:8080/health-check", { method: 'GET' })
@@ -75,5 +75,32 @@ export function useInruptHandler() {
         })
     }
 
-    return { loginInrupt, getSession, logoutInrupt };
+    const getProfile = () => {
+        serverCheck()
+        .then(response => {
+            if (response) {
+                fetch("http://localhost:8080/solid/user/profile", {
+                    method: 'GET', 
+                    credentials: 'include',
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if (data.status) {
+                        if (data.data) {
+                            setUserName(data.data);
+                        } else {
+                            setUserName("No user name");
+                        }
+                    } else {
+                        console.error(data.data);
+                    }
+                })
+            } else {
+                toast.error('Server appears to be down');
+            }
+        })
+    }
+
+    return { loginInrupt, getSession, logoutInrupt, getProfile };
 }

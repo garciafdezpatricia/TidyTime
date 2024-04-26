@@ -33,6 +33,7 @@
 @use "../src/components/Modal/EditModal/SeeTaskModal.scss";
 @use "../src/components/Panel/BoardPreferences/BoardPanel.scss";
 @use "../src/components/Panel/ListPreferences/ListPanel.scss";
+@use "../src/components/Panel/StatisticsPanel/StatisticsPanel.scss";
 
 @font-face {
     font-family: 'Primaria';
@@ -63,4 +64,12 @@
 @keyframes spin {
 0% { transform: rotate(0deg); }
 100% { transform: rotate(360deg); }
+}
+
+.progress-donut {
+    border: .1rem solid $light-grey;
+    border-top: .1rem solid $primary-blue;
+    border-radius: 50%; // for it to be a ciecle
+    width: 10rem;
+    height: 10rem;
 }

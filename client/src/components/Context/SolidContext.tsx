@@ -7,13 +7,17 @@ import { Session } from "@inrupt/solid-client-authn-browser"
  */
 export interface ISessionContext {
     solidSession: Session | undefined,
-    setSolidSession: React.Dispatch<React.SetStateAction<Session | undefined>>
+    setSolidSession: React.Dispatch<React.SetStateAction<Session | undefined>>,
+    userName: string,
+    setUserName: React.Dispatch<React.SetStateAction<string>>,
 }
 
 // const with default context (it's not the one from the user's pod)
 const defaultContext: ISessionContext ={
     solidSession: undefined,
     setSolidSession: () => {},
+    userName: '',
+    setUserName: () => {},
 }
 // context with the default task context
 const SessionContext = createContext<ISessionContext>(defaultContext);
@@ -37,8 +41,9 @@ export interface ISolidContextProvider {
  */
 export function SessionProvider({children} : ISolidContextProvider) {
     const [solidSession, setSolidSession] = useState(defaultContext.solidSession);
+    const [userName, setUserName] = useState('');
     
-    const value = {solidSession, setSolidSession};
+    const value = {solidSession, setSolidSession, userName, setUserName};
 
     return (
         <SessionContext.Provider value={value}>
