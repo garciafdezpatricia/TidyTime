@@ -12,7 +12,14 @@ export default function StatisticsPanel() {
     const [eventsToShow, setEventsToShow] = useState<Event[]>([])
 
     useEffect(() => {
-      setEventsToShow(events.filter((event) => event.start.getDate() >= new Date().getDate()));
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const upcomingEvents = events.filter((event) => {
+        const eventDate = event.start;
+        eventDate.setHours(0, 0, 0, 0);
+        return eventDate >= today && daysLeft(eventDate) <= 20
+      });
+      setEventsToShow(upcomingEvents);
     }, [events])
 
     const daysLeft = (fechaDada:Date) => {

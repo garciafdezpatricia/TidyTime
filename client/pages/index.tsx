@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useInruptHandler } from "./api/inrupt";
 import Inrupt from "@/src/components/Login/InruptLogin";
 import StatisticsPanel from "@/src/components/Panel/StatisticsPanel/StatisticsPanel";
+import Loader from "@/src/components/Loading/Loading";
 
 export default function MainPage() {
 
@@ -11,18 +12,26 @@ export default function MainPage() {
   const { solidSession, userName } = useSessionContext();
 
   const [reRender, setRerender] = useState(Math.random());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getSession();
   }, [reRender]);
 
   useEffect(() => {
-    if (solidSession?.info.isLoggedIn && !userName){
-      getProfile();
+    if (solidSession) {
+      if (solidSession.info.isLoggedIn && !userName){
+        setLoading(true);
+        getProfile();
+      }
+      setLoading(false);
     }
   }, [solidSession])
 
   return (
+    loading ?
+    <Loader />
+    :
     solidSession?.info.isLoggedIn 
     ?
     <section className='index-container'>

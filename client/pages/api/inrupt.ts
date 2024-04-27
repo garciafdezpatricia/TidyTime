@@ -1,9 +1,11 @@
 import { useSessionContext } from "@/src/components/Context/SolidContext";
+import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 
 
 export function useInruptHandler() {
 
+    const router = useRouter();
     const { setSolidSession, solidSession, setUserName } = useSessionContext();
 
     const serverCheck = () => {
@@ -41,13 +43,18 @@ export function useInruptHandler() {
                 })
                 .then((response) => response.json())
                 .then((data) => {
-                    setSolidSession(data.session);
+                    if (data.status) {
+                        setSolidSession(data.session);
+                    } else {
+                        router.push("/");
+                    }
                 })
                 .catch(error => {
                     console.error(error);
                     toast.error('There has been a problem fetching your session!');
                 })
             } else {
+                router.push("/");
                 toast.error('Server appears to be down');
             }
         })

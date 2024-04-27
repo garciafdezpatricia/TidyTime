@@ -57,7 +57,9 @@ router.get("/solid/user/session", async function (req, res) {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId);
         if (session) {
             console.log(new Date(new Date().getTime() + session.info.expirationDate).toLocaleString())
-            res.send({session: session});
+            res.send({status: true, session: session});
+        } else {
+            res.send({status: false});
         }
     } catch (error) {
         console.log(error);
@@ -65,8 +67,8 @@ router.get("/solid/user/session", async function (req, res) {
 });
 
 router.get("/solid/user/profile", async function (req, res) {
-    const session = await getSessionFromStorage(req.cookies.inruptSessionId);
     try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
         if (session) {
             const webId = session.info.webId;
             const dataset = await getSolidDataset(webId, {fetch: fetch});

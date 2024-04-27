@@ -3,7 +3,7 @@ import { useTaskContext } from "../../Context/TaskContext";
 import DifficultyRate from "../../DifficultyRate/DifficultyRate";
 import Toggle from "../../ToggleSwitch/ToggleSwitch";
 import CheckableComboBox from "../../ComboBox/CheckableComboBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Label, Task } from "@/src/model/Scheme";
 import { MdDelete } from "react-icons/md";
 import PromptModal from "../PromptModal/PromptModal";
@@ -21,16 +21,26 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
     const {tasks, selectedListIndex, setTasks, labels, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
     const taskToEdit = tasks[selectedListIndex][selectedTaskIndex];
 
-    const [newTitle, setNewTitle] = useState(taskToEdit.title);
-    const [newDesc, setNewDesc] = useState(taskToEdit.desc ?? "");
+    const [newTitle, setNewTitle] = useState("");
+    const [newDesc, setNewDesc] = useState("");
     const [newDifficulty, setNewDifficulty] = useState(-1);
-    const [newDate, setNewDate] = useState(taskToEdit.endDate ?? "");
-    const [important, setImportant] = useState(taskToEdit.important ?? false);
-    const [newLabels, setLabels] = useState<Label[]>(taskToEdit.labels ?? []);
+    const [newDate, setNewDate] = useState("");
+    const [important, setImportant] = useState(false);
+    const [newLabels, setLabels] = useState<Label[]>([]);
     
     const [isDeleting, setConfirmationDeleteModalOpen] = useState(false);
 
     const {updateIssue, openIssue, closeIssue} = useGithubHandler();
+
+    useEffect(() => {
+        if (taskToEdit) {
+            setNewTitle(taskToEdit.title);
+            setNewDesc(taskToEdit.desc ?? "");
+            setNewDate(taskToEdit.endDate ?? "");
+            setImportant(taskToEdit.important ?? false);
+            setLabels(taskToEdit.labels ?? []);
+        }
+    }, [taskToEdit])
 
     const onCancel = () => {
         setNewTitle(taskToEdit.title);

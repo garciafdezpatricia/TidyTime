@@ -124,10 +124,10 @@ export function useGoogleHandler() {
     };
 
     const getCalendars = () => {
-        serverCheck()
+        return serverCheck()
         .then(response => {
             if (response) {
-                return new Promise<void>((resolve, reject) => {
+                return new Promise<boolean>((resolve, reject) => {
                     fetch('http://localhost:8080/google/calendar/list', {
                             method: 'GET',
                             credentials: 'include',
@@ -140,7 +140,7 @@ export function useGoogleHandler() {
                                     calendars.push({id: calendar.id, name: calendar.summary, color: calendar.backgroundColor})
                                 });
                                 setCalendars(calendars);
-                                resolve();
+                                resolve(true);
                             } else {
                                 toast.error("Couldn't import the calendars.\nPlease log in with your Google account and try again.", {
                                     position: "top-center",
@@ -150,27 +150,27 @@ export function useGoogleHandler() {
                                         textAlign: "center"
                                     }
                                 })
-                                resolve();
+                                resolve(true);
                             }
                         })  
                         .catch(error => {
                             toast.error(`Error when fetching the calendars`);
-                            resolve();
+                            resolve(false);
                         });
                     })
             }
             else {
                 toast.error("Server appears to be down");
+                return Promise.resolve(false);
             }
         });
-        return Promise.resolve(false);
     }
 
     const getCalendarEvents = (calendarId:string) => {
-        serverCheck()
+        return serverCheck()
         .then(response => {
             if (response) {
-                return new Promise<void>((resolve, reject) => {
+                return new Promise<boolean>((resolve, reject) => {
                     fetch('http://localhost:8080/google/events/get', {
                             method: 'POST',
                             credentials: 'include',
@@ -187,18 +187,18 @@ export function useGoogleHandler() {
                                 event.end = new Date(new Date(event.end).toISOString().slice(0, 16));
                             })
                             syncEvents(data);
-                            resolve()
+                            resolve(true)
                         })
                         .catch(error => {
                             toast.error(`${error}`)
-                            reject(error);
+                            resolve(false)
                         });
                 });
             } else {
                 toast.error("Server appears to be down");
+                return Promise.resolve(false);
             }
         });
-        return Promise.resolve(false);
     }
 
     const syncEvents = (data:Event[]) => {

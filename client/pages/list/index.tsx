@@ -11,36 +11,49 @@ import { useGithubContext } from "@/src/components/Context/GithubContext";
 import { Task } from "@/src/model/Scheme";
 import { useSessionContext } from "@/src/components/Context/SolidContext";
 import { useRouter } from "next/router";
+import { useInruptHandler } from "../api/inrupt";
+import Loader from "@/src/components/Loading/Loading";
 
 export default function List() {
 	const [reRender, setRerender] = useState(Math.random());
 	const [isEditingTaskModalOpen, setIsEditingTaskModalOpen] = useState(false);
 	const [isSyncingIssues, setIsSyncingIssues] = useState(false);
+	const [loading, setLoading] = useState(true);
 
 	const {setSelectedTaskIndex, listNames, setListNames, tasks, setTasks} = useTaskContext();
 	const { getUserData, getIssuesOfUser } = useGithubHandler();
 	const { githubLoggedIn, userData } = useGithubContext();
 	const { solidSession } = useSessionContext();
+	const { getSession } = useInruptHandler();
 	const router = useRouter();
 
 	useEffect(() => {
-		if (!solidSession?.info.isLoggedIn) {
-			router.push("/");
-			return;
+		getSession();
+	}, [reRender])
+
+	useEffect(() => {
+		if (!solidSession) {
+			setLoading(true);
 		} else {
-			try {
-				getUserData();
-			} catch (error:any) {
-				if (error.message === "Failed to fetch") {
-					toast.error("Error when connecting to the server");
-				} else {
-					if (error.message.includes('access not found') && githubLoggedIn) {
-						toast.error("Please reconnect to GitHub");
+			if (solidSession.info.isLoggedIn) {
+				try {
+					getUserData();
+				} catch (error:any) {
+					if (error.message === "Failed to fetch") {
+						toast.error("Error when connecting to the server");
+					} else {
+						if (error.message.includes('access not found') && githubLoggedIn) {
+							toast.error("Please reconnect to GitHub");
+						}
 					}
 				}
+			} else {
+				router.push("/");
 			}
+			setLoading(false);
 		}
-	}, [reRender])
+
+	}, [solidSession])
 	
 	/**
 	 * Sets the selected task index to the index of the task being selected. Opens/closes edit modal
@@ -90,32 +103,35 @@ export default function List() {
 	}
 
 	return (
-		solidSession?.info.isLoggedIn &&
-		<div className='list-container'>
-			<div className="list-header-section">
-				<SearchBar />
-				<GitHubAuthButton />
-			</div>
-			<Tab handleEditModal={handleEditModal}></Tab>
-			<div className="list-footer-section">
-				<button 
-					title="Connect to GitHub and sync your issues" 
-					onClick={syncIssues}
-					disabled={githubLoggedIn ? false : true}
-					className="import-button">
-						{isSyncingIssues && <div className="loader"></div>}
-						Sync issues
-				</button>
-				{tasks.length > 0 && <NewTaskForm />}
-			</div>
-			{
-				isEditingTaskModalOpen && (
+		loading ?
+		<Loader />
+		:
+		(
+			solidSession?.info.isLoggedIn &&
+			<div className='list-container'>
+				<div className="list-header-section">
+					<SearchBar />
+					<GitHubAuthButton />
+				</div>
+				<Tab handleEditModal={handleEditModal}></Tab>
+				<div className="list-footer-section">
+					<button 
+						title="Connect to GitHub and sync your issues" 
+						onClick={syncIssues}
+						disabled={githubLoggedIn ? false : true}
+						className="import-button">
+							{isSyncingIssues && <div className="loader"></div>}
+							Sync issues
+					</button>
+					{tasks.length > 0 && <NewTaskForm />}
+				</div>
+				{isEditingTaskModalOpen && 
 					<EditTaskModal 
 						isOpen={isEditingTaskModalOpen} 
 						onClose={() => setIsEditingTaskModalOpen(false)}
 					/>
-				)
-			}
-		</div>
+				}
+			</div>
+		)
 	);
 }

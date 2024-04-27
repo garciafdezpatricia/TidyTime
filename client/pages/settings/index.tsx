@@ -9,6 +9,8 @@ import BoardPanel from "@/src/components/Panel/BoardPreferences/BoardPanel";
 import ListPanel from "@/src/components/Panel/ListPreferences/ListPanel";
 import { useRouter } from "next/router";
 import { useSessionContext } from "@/src/components/Context/SolidContext";
+import { useInruptHandler } from "../api/inrupt";
+import Loader from "@/src/components/Loading/Loading";
 
 export default function Settings() {
 
@@ -16,14 +18,20 @@ export default function Settings() {
     const { getUserData } = useGithubHandler();
     const { githubLoggedIn } = useGithubContext();
     const { solidSession } = useSessionContext();
+    const { getSession } = useInruptHandler();
     const router = useRouter();
     const [reRender, setRerender] = useState(Math.random());
+    const [loading, setLoading] = useState(false);
     
     useEffect(() => {
-        if (!solidSession?.info.isLoggedIn) {
-            router.push("/");
-            return;
-        } else {
+        getSession();
+  }, [reRender]); 
+
+  useEffect(() => {
+    if (!solidSession) {
+        setLoading(true);
+    } else {
+        if (solidSession.info.isLoggedIn) {
             // ---> GOOGLE LOGIN
             const params = new URLSearchParams(location.search);
             const emailParam = params.get('user');
@@ -41,10 +49,17 @@ export default function Settings() {
                     }
                 }
             }
+        } else {
+            router.push("/");
         }
-  }, [reRender]); // this will be executed on every renderization of the page (new tab and refresh page included)
+        setLoading(false);
+    }
+  }, [solidSession])
 
     return (
+        loading ?
+        <Loader />
+        :
         solidSession?.info.isLoggedIn &&
         <div className="settings-container">
             <ListPanel />

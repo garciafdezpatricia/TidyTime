@@ -52,6 +52,7 @@ router.get('/google/auth/callback', async (req, res) => {
     const oauth2Client = userClients[userId];
 
     const { tokens } = await oauth2Client.getToken(req.query.code);
+    console.log(tokens);
     oauth2Client.setCredentials(tokens);
     try {
         const email = await getEmail(req);

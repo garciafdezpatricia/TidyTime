@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsCalendarEventFill } from "react-icons/bs";
 import { Icon } from "../Icon/Icon";
 import NewEventForm from "../Event/NewEventForm";
@@ -92,10 +92,17 @@ export default function CalendarMenu() {
         return false;
     }
 
-    const getGoogleCalendars = async () => {
+    // workaround for setter being async
+    useEffect(() => {
+        if (importingCalendars) {
+            getCalendars().then((response) => {
+                setImportingCalendars(false);
+            })
+        }
+    }, [getCalendars, importingCalendars])
+
+    const getGoogleCalendars = () => {
         setImportingCalendars(true);
-        await getCalendars();
-        setImportingCalendars(false);
     }
 
     return (
@@ -170,19 +177,26 @@ function CalendarHandler({calendarId}: CalendarProps) {
 
     const [syncingCalendar, setSyncingCalendar] = useState(false);
 
+    // workaround for setter being async
+    useEffect(() => {
+        if (syncingCalendar) {
+            getCalendarEvents(calendarId).then((response) => {
+                setSyncingCalendar(false);
+            })
+        }
+    }, [syncingCalendar, calendarId, getCalendarEvents])
+
 
     /**
      * Fetch events of an specific calendar from Google Calendar. 
      * Makes a call to the API which responds with a list of events.
      */
-    const getGoogleCalendarEvents = async (calendarId:string) => {
+    const getGoogleCalendarEvents = () => {
         setSyncingCalendar(true);
-        await getCalendarEvents(calendarId);
-        setSyncingCalendar(false);
     }
 
     return (
-        <button onClick={() => getGoogleCalendarEvents(calendarId)} className="calendar-item-sync-btn">
+        <button onClick={() => getGoogleCalendarEvents()} className="calendar-item-sync-btn">
             {syncingCalendar && <div className="loader"></div>}
             <IoMdSync size={"1rem"} /> Synchronize
         </button>
