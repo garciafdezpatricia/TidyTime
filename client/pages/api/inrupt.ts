@@ -46,7 +46,7 @@ export function useInruptHandler() {
                     if (data.status) {
                         setSolidSession(data.session);
                     } else {
-                        router.push("/");
+                        setSolidSession(null);
                     }
                 })
                 .catch(error => {
@@ -71,12 +71,12 @@ export function useInruptHandler() {
                 .then(response => response.json())
                 .then((data) => {
                     if (data.status) {
-                        setSolidSession(undefined);
+                        setSolidSession(null);
                         toast.success(data.data);
                     }
                 })
             } else {
-                setSolidSession(undefined)
+                setSolidSession(null)
                 toast.error('Server appears to be down');
             }
         })

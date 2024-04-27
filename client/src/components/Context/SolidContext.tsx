@@ -6,8 +6,8 @@ import { Session } from "@inrupt/solid-client-authn-browser"
  * Interface for the task context of the application.
  */
 export interface ISessionContext {
-    solidSession: Session | undefined,
-    setSolidSession: React.Dispatch<React.SetStateAction<Session | undefined>>,
+    solidSession?: Session | null,
+    setSolidSession: React.Dispatch<React.SetStateAction<Session | null | undefined>>,
     userName: string,
     setUserName: React.Dispatch<React.SetStateAction<string>>,
 }
@@ -40,7 +40,7 @@ export interface ISolidContextProvider {
  * @returns context provider
  */
 export function SessionProvider({children} : ISolidContextProvider) {
-    const [solidSession, setSolidSession] = useState(defaultContext.solidSession);
+    const [solidSession, setSolidSession] = useState<Session | undefined | null>(undefined);
     const [userName, setUserName] = useState('');
     
     const value = {solidSession, setSolidSession, userName, setUserName};

@@ -32,10 +32,10 @@ export default function List() {
 	}, [reRender])
 
 	useEffect(() => {
-		if (!solidSession) {
+		if (solidSession === undefined) {
 			setLoading(true);
 		} else {
-			if (solidSession.info.isLoggedIn) {
+			if (solidSession?.info.isLoggedIn) {
 				try {
 					getUserData();
 				} catch (error:any) {

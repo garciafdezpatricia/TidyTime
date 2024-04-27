@@ -18,10 +18,10 @@ export default function Tidier() {
       }, [reRender]);
     
       useEffect(() => {
-        if (!solidSession) {
+        if (solidSession === undefined) {
             setLoading(true);
         } else {
-            if (!solidSession.info.isLoggedIn) {
+            if (!solidSession?.info.isLoggedIn) {
                 router.push("/");
             }
             setLoading(false);

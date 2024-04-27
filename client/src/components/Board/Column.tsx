@@ -1,5 +1,4 @@
-import { BoardItem } from "@/src/model/Scheme";
-import { IoIosAddCircle, IoIosArrowDropdown } from "react-icons/io";
+import { IoIosArrowDropdown } from "react-icons/io";
 import { useTaskContext } from "../Context/TaskContext";
 import EditListModal from "../Modal/EditModal/EditListModal";
 import { useState } from "react";
@@ -9,7 +8,7 @@ import Card from "./Card";
 
 export interface ColumnProps {
     sectionWidth: number,
-    content: BoardItem[],
+    content: any[],
     index: number,
     name: string,
     handleMoveTask: (arg?:any, arg2?:any) => void | any;

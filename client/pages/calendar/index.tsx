@@ -26,10 +26,10 @@ export default function Calendar() {
     }, [reRender]); // this will be executed on every renderization of the page (new tab and refresh page included)
 
     useEffect(() => {
-        if (!solidSession) {
+        if (solidSession === undefined) {
             setLoading(true);
         } else {
-            if (solidSession.info.isLoggedIn) {
+            if (solidSession?.info.isLoggedIn) {
                 const params = new URLSearchParams(location.search);
                 const emailParam = params.get('user');
                 const isUserLoggedIn = localStorage.getItem('googleLoggedIn');    

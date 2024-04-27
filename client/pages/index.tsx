@@ -15,11 +15,13 @@ export default function MainPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("rerender");
     getSession();
   }, [reRender]);
 
   useEffect(() => {
-    if (solidSession) {
+    console.log("useEffect");
+    if (solidSession !== undefined && solidSession !== null) {
       if (solidSession.info.isLoggedIn){
         if (!userName) {
           getProfile();
@@ -29,6 +31,8 @@ export default function MainPage() {
       } else {
         setLoading(false);
       }
+    } else if (solidSession === null) {
+      setLoading(false);
     }
   }, [solidSession, userName])
 
