@@ -12,7 +12,7 @@ export default function MainPage() {
   const { solidSession, userName } = useSessionContext();
 
   const [reRender, setRerender] = useState(Math.random());
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getSession();
@@ -20,18 +20,21 @@ export default function MainPage() {
 
   useEffect(() => {
     if (solidSession) {
-      if (solidSession.info.isLoggedIn && !userName){
-        setLoading(true);
-        getProfile();
+      if (solidSession.info.isLoggedIn){
+        if (!userName) {
+          getProfile();
+        } else {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     }
-  }, [solidSession])
+  }, [solidSession, userName])
 
   return (
     loading ?
-    <Loader />
-    :
+    <Loader /> :
     solidSession?.info.isLoggedIn 
     ?
     <section className='index-container'>
