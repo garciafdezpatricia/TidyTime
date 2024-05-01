@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'client/**'
 
 permissions:
   contents: read
@@ -22,6 +24,9 @@ jobs:
 
       - name: Setup Node.js ⚙️ - Cache dependencies ⚡ - Install dependencies 🔧
         uses: ./.github/workflows/setup-node
+
+      - name: Change to client directory
+        run: cd client
 
       - name: Setup Pages ⚙️
         uses: actions/configure-pages@v4
