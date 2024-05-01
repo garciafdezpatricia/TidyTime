@@ -32,6 +32,7 @@ export default function MoveModal({options, onClick, columnIndex, cardIndex, onC
     }
 
     return (
+        // @ts-ignore
         <div ref={ref} className="move-task">
             {options.length > 1 ? <p>Move task to:</p> : <p>Add columns to move your tasks!</p>}
             {

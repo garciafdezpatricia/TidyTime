@@ -52,6 +52,7 @@ router.get('/google/auth/callback', async (req, res) => {
     const oauth2Client = userClients[userId];
 
     const { tokens } = await oauth2Client.getToken(req.query.code);
+    console.log(tokens);
     oauth2Client.setCredentials(tokens);
     try {
         const email = await getEmail(req);
@@ -63,6 +64,7 @@ router.get('/google/auth/callback', async (req, res) => {
   
 router.get('/google/auth/url', (req, res) => {
     const userId = getUserId(req);
+    console.log("getUserId no es");
     let oauth2Client = userClients[userId];
     
     if (!oauth2Client) {

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+    <style>
+        @font-face {
+            font-family: 'Kadwa';
+            src: url('../assets/fonts/Kadwa/Kadwa-Regular.ttf') format('truetype');
+        }
+        text {
+            font-family: 'Kadwa';
+            font-size: 2rem;
+        }
+    </style>
+    <text x="10" y="50">TidyTime</text>
+</svg>

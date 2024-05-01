@@ -1,7 +1,39 @@
-// go to this page as /tidier
+import { useSessionContext } from "@/src/components/Context/SolidContext";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+import {} from "react"
+import { useInruptHandler } from "../api/inrupt";
+import Loader from "@/src/components/Loading/Loading";
+
 export default function Tidier() {
+
+    const { solidSession } = useSessionContext();
+    const { getSession } = useInruptHandler();
+    const [reRender, setRerender] = useState(Math.random());
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+        getSession();
+      }, [reRender]);
+    
+      useEffect(() => {
+        if (solidSession === undefined) {
+            setLoading(true);
+        } else {
+            if (!solidSession?.info.isLoggedIn) {
+                router.push("/");
+            }
+            setLoading(false);
+        }   
+      }, [solidSession])
+
     return (
-    <div className="tidier-container">
-        <h1>Hello Tidier!</h1>
-    </div>)
+        loading ? 
+        <Loader />
+        :
+        <div className="tidier-container">
+            <h1>Hello Tidier!</h1>
+        </div>
+    )
 }

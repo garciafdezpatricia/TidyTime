@@ -1,0 +1,82 @@
+@use "../../../../styles/variables" as *;
+
+.statistics {
+    height: 80%;
+    width: 100%;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto 1fr;
+    column-gap: 1rem;
+
+    .task-progress {
+        box-shadow: 0px 4px 20px 0px rgba(0,0,0,0.4);
+        width: 100%;
+        height: 100%;
+        padding: 2rem 4rem;
+        box-sizing: border-box;
+        background-color: $white;
+        border-radius: .4rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .5rem;
+        grid-column: 2/2;
+        grid-row: 1/1;
+        svg {
+            width: 35%;
+            height: auto;
+        }
+    }
+
+    .upcoming-events {
+        box-shadow: 0px 4px 20px 0px rgba(0,0,0,0.4);
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+        border-radius: .4rem;
+        background-color: $white;
+        height: 100%;
+        width: 100%;
+        grid-column: 1/1;
+        grid-row: 1/-1;
+        padding: 2rem 4rem;
+        box-sizing: border-box;
+        text-align: center;
+
+        .event-list {
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: .3rem;
+        }
+
+        .event {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: $hover-green;
+            padding: .3rem;
+            border-radius: .4rem;
+            line-height: 1.7rem;
+
+            .event-title {
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+.empty-events {
+    color: $medium-grey;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

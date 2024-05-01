@@ -23,6 +23,7 @@
 @use "../src/components/Form/NewTaskForm/NewTaskForm.scss";
 @use "../src/components/DifficultyRate/DifficultyRate.scss";
 @use "../src/components/Login/GoogleCalendarLogin.scss";
+@use "../src/components/Login/InruptLogin.scss";
 @use "../src/components/Event/NewEventForm.scss";
 @use "../src/components/Modal/EditModal/EditEventModal.scss";
 @use "../src/components/Modal/ShareModal/ShareEventModal.scss";
@@ -32,6 +33,7 @@
 @use "../src/components/Modal/EditModal/SeeTaskModal.scss";
 @use "../src/components/Panel/BoardPreferences/BoardPanel.scss";
 @use "../src/components/Panel/ListPreferences/ListPanel.scss";
+@use "../src/components/Panel/StatisticsPanel/StatisticsPanel.scss";
 
 @font-face {
     font-family: 'Primaria';
@@ -53,7 +55,7 @@
 .loader {
     border: .1rem solid $light-grey;
     border-top: .1rem solid $primary-blue;
-    border-radius: 50%; // for it to be a ciecle
+    border-radius: 50%; // for it to be a circle
     width: .7rem;
     height: .7rem;
     animation: spin 1s linear infinite;
@@ -62,4 +64,51 @@
 @keyframes spin {
 0% { transform: rotate(0deg); }
 100% { transform: rotate(360deg); }
+}
+
+.progress-donut {
+    border: .1rem solid $light-grey;
+    border-top: .1rem solid $primary-blue;
+    border-radius: 50%; // for it to be a ciecle
+    width: 10rem;
+    height: 10rem;
+}
+
+@keyframes loading {
+    0% {color: $hover-green;}
+    33% {color: $medium-green;}
+    66% {color: $primary-green;}
+    100% {color: $hover-green;}
+}
+
+@keyframes loading-bar {
+    0% {transform: translateX(-100%);}
+    100% {transform: translateX(100%);}
+}
+
+.loading-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+
+    .loading-bar-container {
+        width: 10rem;
+        height: .8rem;
+        background-color: #f3f3f3;
+        overflow: hidden;
+    }
+      
+    .loading-bar {
+        width: 50%;
+        height: 100%;
+        background-color: $medium-green;
+        animation: loading-bar 1.5s linear infinite;
+    }
+
+    h2 {
+        animation: loading 4s infinite;
+    }
 }
