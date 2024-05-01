@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 
 // ============== APPLICATION CONFIGURATIONS ==========
 const app = express();
-const PORT = 80;
+const PORT = 443;
 const mongoUri = process.env.MONGO_URI;
 
 // ============== APPLICATION MODULES ================
