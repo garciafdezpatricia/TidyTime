@@ -1,8 +1,7 @@
 name: publish-to-github-pages
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
     paths:
       - 'client/**'
 
