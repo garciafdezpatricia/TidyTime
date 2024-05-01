@@ -11,7 +11,6 @@ export default function LoginGoogleCalendar() {
 
     useEffect(() => {
         if (authUrl !== "" && !loggedIn && logginInGoogle) {
-            console.log("ejecutando");
             window.location.assign(authUrl);
         }
     }, [authUrl, loggedIn]);

@@ -21,8 +21,8 @@ app.use(bp.json()); // allows to send data to our express routes in a JSON forma
 
 app.use(cookieParser());
 
-mongoose.connect(mongoUri)
-.then(console.log("Succesfully connected to MongoDB"));
+// mongoose.connect(mongoUri)
+// .then(console.log("Succesfully connected to MongoDB"));
 
 app.listen(PORT, () => {
   console.log("Server started on port " + PORT);
