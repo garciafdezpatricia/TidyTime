@@ -9,7 +9,7 @@ export function useGithubHandler() {
 
     const serverCheck = async () => {
         try {
-            const response = await fetch("https://13.51.241.98/health-check", {method: 'GET'});
+            const response = await fetch("http://13.51.241.98:4000/health-check", {method: 'GET'});
             if (response.ok) {
                 return true;
             } else {
@@ -24,7 +24,7 @@ export function useGithubHandler() {
         try {
             const response = await serverCheck();
             if (response) {
-                window.location.assign("https://13.51.241.98/github/auth");
+                window.location.assign("http://13.51.241.98:4000/github/auth");
             } else {
                 toast.error('Server appears to be down');    
             }
@@ -37,7 +37,7 @@ export function useGithubHandler() {
         try {
             const response = await serverCheck();
             if (response) {
-                const userResponse = await fetch('https://13.51.241.98/github/logout', {
+                const userResponse = await fetch('http://13.51.241.98:4000/github/logout', {
                     method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ export function useGithubHandler() {
         try {
             const response = await serverCheck();
             if (response) {
-                const userResponse = await fetch('https://13.51.241.98/github/user/data', {
+                const userResponse = await fetch('http://13.51.241.98:4000/github/user/data', {
                     method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export function useGithubHandler() {
         try {
             const response = await serverCheck();
             if (response) {
-                const issues = await fetch('https://13.51.241.98/github/issues/get?user=' + user, {
+                const issues = await fetch('http://13.51.241.98:4000/github/issues/get?user=' + user, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ export function useGithubHandler() {
         try {
             const response = await serverCheck();
             if (response) {
-                const issues = await fetch('https://13.51.241.98/github/issues/close', {
+                const issues = await fetch('http://13.51.241.98:4000/github/issues/close', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ export function useGithubHandler() {
         try {
             const response = await serverCheck();
             if (response) {
-                const issues = await fetch('https://13.51.241.98/github/issues/open', {
+                const issues = await fetch('http://13.51.241.98:4000/github/issues/open', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -166,7 +166,7 @@ export function useGithubHandler() {
         try {
             const response = await serverCheck();
             if (response) {
-                const issues = await fetch('https://13.51.241.98/github/issues/update', {
+                const issues = await fetch('http://13.51.241.98:4000/github/issues/update', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
