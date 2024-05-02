@@ -5,10 +5,13 @@ const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fet
 const bp = require("body-parser");
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const https = require("https");
+const path = require("path");
+const fs = require("fs");
 
 // ============== APPLICATION CONFIGURATIONS ==========
 const app = express();
-const PORT = 80;
+const PORT = 4000;
 const mongoUri = process.env.MONGO_URI;
 
 // ============== APPLICATION MODULES ================
@@ -20,13 +23,6 @@ app.use(cors({
 app.use(bp.json()); // allows to send data to our express routes in a JSON format
 
 app.use(cookieParser());
-
-// mongoose.connect(mongoUri)
-// .then(console.log("Succesfully connected to MongoDB"));
-
-app.listen(PORT, () => {
-  console.log("Server started on port " + PORT);
-});
 
 app.get('/health-check', async (req, res) => {
   res.status(200).send('OK');
@@ -46,3 +42,10 @@ app.use(githubRouter);
 // INRUPT ->
 app.use(solidRouter);
 
+
+const sslServer = https.createServer({
+  key: '',
+  cert: ''
+}, app);
+
+sslServer.listen(4000, () => console.log("Secure server started on port " + PORT));
