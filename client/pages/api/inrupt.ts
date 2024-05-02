@@ -54,8 +54,8 @@ export function useInruptHandler() {
                     toast.error('There has been a problem fetching your session!');
                 })
             } else {
-                router.push("/");
-                toast.error('Server appears to be down');
+                //router.push("/");
+                toast.error('Server appears to be down in getSession');
             }
         })
     }
@@ -94,6 +94,7 @@ export function useInruptHandler() {
                 .then((data) => {
                     console.log(data);
                     if (data.status) {
+                        console.log(data.status);
                         if (data.data) {
                             setUserName(data.data);
                         } else {
