@@ -48,7 +48,7 @@ router.get("/solid/login/callback", async function (req, res) {
             secure: false,
             httpOnly: true
         });
-        res.redirect(`https://garciafdezpatricia.github.io/TidyTime?user=${session.info.webId}`)
+        res.redirect(`http://16.170.157.60:3000?user=${session.info.webId}`)
     }
 })
 

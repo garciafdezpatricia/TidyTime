@@ -54,12 +54,12 @@ router.get("/github/auth/callback", async function (req, res) {
           secure: false,
           httpOnly: true
         })
-        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=success`);
+        res.redirect(`http://16.170.157.60:3000/list?status=success`);
       } else {
-        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=failure`)
+        res.redirect(`http://16.170.157.60:3000/list?status=failure`)
       }
     } catch(error) {
-        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=failure`)
+        res.redirect(`http://16.170.157.60:3000/list?status=failure`)
     };
 });
 
