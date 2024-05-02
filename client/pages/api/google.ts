@@ -9,7 +9,7 @@ export function useGoogleHandler() {
     const { events, setEvents } = useEventContext();
 
     const serverCheck = () => {
-        return fetch("http://13.51.241.98:4000/health-check", { method: 'GET' })
+        return fetch("http://13.51.241.63/health-check", { method: 'GET' })
         .then(response => {
             if (response.ok) {
                 return true;
@@ -26,7 +26,7 @@ export function useGoogleHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch('http://13.51.241.98:4000/google/auth/logout', {
+                fetch('http://13.51.241.63/google/auth/logout', {
                     method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ export function useGoogleHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch('http://13.51.241.98:4000/google/auth/url', {
+                fetch('http://13.51.241.63/google/auth/url', {
                     method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export function useGoogleHandler() {
         .then(response => {
             if (response) {
                 return new Promise<boolean>((resolve, reject) => {
-                    fetch('http://13.51.241.98:4000/google/calendar/list', {
+                    fetch('http://13.51.241.63/google/calendar/list', {
                             method: 'GET',
                             credentials: 'include',
                         })
@@ -171,7 +171,7 @@ export function useGoogleHandler() {
         .then(response => {
             if (response) {
                 return new Promise<boolean>((resolve, reject) => {
-                    fetch('http://13.51.241.98:4000/google/events/get', {
+                    fetch('http://13.51.241.63/google/events/get', {
                             method: 'POST',
                             credentials: 'include',
                             headers: { 'Content-Type': 'application/json'},
@@ -252,7 +252,7 @@ export function useGoogleHandler() {
                     // format date to google format
                     const ISOStartDate = new Date(new Date(eventToShare.start).getTime() - (new Date(eventToShare.start).getTimezoneOffset() * 60000)).toISOString();
                     const ISOEndDate = new Date(new Date(eventToShare.end).getTime() - (new Date(eventToShare.end).getTimezoneOffset() * 60000)).toISOString();
-                    fetch('http://13.51.241.98:4000/google/events/insert', {
+                    fetch('http://13.51.241.63/google/events/insert', {
                         method: 'POST',
                         headers: {
                         'Content-Type': 'application/json',
@@ -311,7 +311,7 @@ export function useGoogleHandler() {
                         // format date to google format
                         const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
                         const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
-                        fetch('http://13.51.241.98:4000/google/events/update', {
+                        fetch('http://13.51.241.63/google/events/update', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -352,7 +352,7 @@ export function useGoogleHandler() {
 
     const isAuthenticatedUser = async (emailParam:string):Promise<boolean> => {
         return new Promise((resolve, reject) => {
-            fetch('http://13.51.241.98:4000/google/auth/email', {
+            fetch('http://13.51.241.63/google/auth/email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

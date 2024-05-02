@@ -9,7 +9,7 @@ export function useInruptHandler() {
     const { setSolidSession, solidSession, setUserName } = useSessionContext();
 
     const serverCheck = () => {
-        return fetch("http://13.51.241.98:4000/health-check", { method: 'GET' })
+        return fetch("http://13.51.241.63/health-check", { method: 'GET' })
         .then(response => {
             if (response.ok) {
                 return true;
@@ -26,7 +26,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                window.location.assign("http://13.51.241.98:4000/solid/login");
+                window.location.assign("http://13.51.241.63/solid/login");
             } else {
                 toast.error('Server appears to be down');
             }
@@ -37,7 +37,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("http://13.51.241.98:4000/solid/user/session", {
+                fetch("http://13.51.241.63/solid/user/session", {
                     method: 'GET',
                     credentials: 'include'
                 })
@@ -67,7 +67,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("http://13.51.241.98:4000/solid/logout", {
+                fetch("http://13.51.241.63/solid/logout", {
                     method: 'GET',
                     credentials: 'include',
                 })
@@ -89,7 +89,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("http://13.51.241.98:4000/solid/user/profile", {
+                fetch("http://13.51.241.63/solid/user/profile", {
                     method: 'GET', 
                     credentials: 'include',
                 })
