@@ -54,7 +54,9 @@ export function useInruptHandler() {
                     toast.error('There has been a problem fetching your session!');
                 })
             } else {
-                //router.push("/");
+                if (window.location.pathname !== "/") {
+                    router.push("/");
+                }
                 toast.error('Server appears to be down in getSession');
             }
         })

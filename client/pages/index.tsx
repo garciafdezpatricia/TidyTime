@@ -21,6 +21,7 @@ export default function MainPage() {
 
   useEffect(() => {
     console.log("useEffect");
+    console.log(solidSession);
     if (solidSession !== undefined && solidSession !== null) {
       if (solidSession.info.isLoggedIn){
         if (!userName) {
