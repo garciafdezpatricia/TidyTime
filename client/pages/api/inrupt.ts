@@ -43,6 +43,7 @@ export function useInruptHandler() {
                 })
                 .then((response) => response.json())
                 .then((data) => {
+                    console.log("I'm getting a session", data);
                     if (data.status) {
                         setSolidSession(data.session);
                     } else {
