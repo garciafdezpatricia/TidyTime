@@ -51,8 +51,9 @@ router.get("/github/auth/callback", async function (req, res) {
       if (data.access_token) {
         const encryptedToken = encrypt(data.access_token);
         res.cookie('access_token', encryptedToken, {
-          secure: false,
-          httpOnly: true
+          secure: true,
+          httpOnly: true,
+          sameSite: "none"
         })
         res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=success`);
       } else {

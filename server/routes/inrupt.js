@@ -23,8 +23,9 @@ async function getNameFromWebId(webId, dataset) {
 router.get("/solid/login", async function (req, res) {
     const session = new Session();
     res.cookie("inruptSessionId", session.info.sessionId, {
-        secure: false,
-        httpOnly: true
+        secure: true,
+        httpOnly: true,
+        sameSite: "none"
     });
 
     const redirectToIDP = (url) => {
@@ -45,8 +46,9 @@ router.get("/solid/login/callback", async function (req, res) {
 
     if (session.info.isLoggedIn) {
         res.cookie("webId", session.info.webId, {
-            secure: false,
-            httpOnly: true
+            secure: true,
+            httpOnly: true,
+            sameSite: "none"
         });
         res.redirect(`https://garciafdezpatricia.github.io/TidyTime?user=${session.info.webId}`)
     }
