@@ -8,8 +8,7 @@ export default function LogoutInrupt() {
 
     return (
         <button className="logout-inrupt-button" onClick={logoutInrupt}>
-            <Icon src={"./solid.svg"} alt={"Inrupt logo"} />
-            Logout of Solid
+            Logout
         </button>
     )
 }
