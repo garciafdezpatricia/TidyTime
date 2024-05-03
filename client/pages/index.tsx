@@ -5,6 +5,7 @@ import { useInruptHandler } from "./api/inrupt";
 import Inrupt from "@/src/components/Login/InruptLogin";
 import StatisticsPanel from "@/src/components/Panel/StatisticsPanel/StatisticsPanel";
 import Loader from "@/src/components/Loading/Loading";
+import LogoutInrupt from "@/src/components/Login/LogoutInruptBtn";
 
 export default function MainPage() {
 
@@ -46,10 +47,7 @@ export default function MainPage() {
       <h2 className="welcome">{userName && userName !== 'No user name' ? `Welcome back, ${userName}!` : 'Welcome back!' }</h2>
       <article className="inrupt-info">
           <p>Currenlty logged in as {solidSession.info.webId}</p>
-          <button className="logout-inrupt-button" onClick={logoutInrupt}>
-              <Icon src={"./solid.svg"} alt={"Inrupt logo"} />
-              Logout of Solid
-          </button>
+          <LogoutInrupt />
       </article>
       <StatisticsPanel />
     </section>
