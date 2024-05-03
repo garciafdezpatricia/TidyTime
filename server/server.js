@@ -11,7 +11,7 @@ const fs = require("fs");
 
 // ============== APPLICATION CONFIGURATIONS ==========
 const app = express();
-const PORT = 4000;
+const PORT = 443;
 const mongoUri = process.env.MONGO_URI;
 
 // ============== APPLICATION MODULES ================
@@ -48,4 +48,4 @@ const sslServer = https.createServer({
   cert: ''
 }, app);
 
-sslServer.listen(4000, () => console.log("Secure server started on port " + PORT));
+sslServer.listen(443, () => console.log("Secure server started on port " + PORT));
