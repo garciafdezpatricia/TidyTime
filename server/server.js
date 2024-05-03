@@ -5,9 +5,6 @@ const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fet
 const bp = require("body-parser");
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const https = require("https");
-const path = require("path");
-const fs = require("fs");
 
 // ============== APPLICATION CONFIGURATIONS ==========
 const app = express();
@@ -42,10 +39,4 @@ app.use(githubRouter);
 // INRUPT ->
 app.use(solidRouter);
 
-
-const sslServer = https.createServer({
-  key: '',
-  cert: ''
-}, app);
-
-sslServer.listen(443, () => console.log("Secure server started on port " + PORT));
+app.listen(443, () => console.log("Secure server started on port " + PORT));

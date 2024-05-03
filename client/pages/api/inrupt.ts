@@ -9,7 +9,7 @@ export function useInruptHandler() {
     const { setSolidSession, solidSession, setUserName } = useSessionContext();
 
     const serverCheck = () => {
-        return fetch("https://13.51.241.63:4000/health-check", { method: 'GET' })
+        return fetch("https://tidytime.onrender.com/health-check", { method: 'GET' })
         .then(response => {
             if (response.ok) {
                 return true;
@@ -26,7 +26,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                window.location.assign("https://13.51.241.63:4000/solid/login");
+                window.location.assign("https://tidytime.onrender.com/solid/login");
             } else {
                 toast.error('Server appears to be down');
             }
@@ -37,7 +37,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("https://13.51.241.63:4000/solid/user/session", {
+                fetch("https://tidytime.onrender.com/solid/user/session", {
                     method: 'GET',
                     credentials: 'include'
                 })
@@ -67,7 +67,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("https://13.51.241.63:4000/solid/logout", {
+                fetch("https://tidytime.onrender.com/solid/logout", {
                     method: 'GET',
                     credentials: 'include',
                 })
@@ -89,7 +89,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("https://13.51.241.63:4000/solid/user/profile", {
+                fetch("https://tidytime.onrender.com/solid/user/profile", {
                     method: 'GET', 
                     credentials: 'include',
                 })
