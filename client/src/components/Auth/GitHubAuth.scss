@@ -7,4 +7,16 @@
     outline: none;
     border: .1rem solid $black;
     padding-inline: .4rem;
+
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        font-size: .7rem;
+        gap: .2rem;
+        padding: 0rem .4rem;
+        margin-top: .2rem;
+        height: 90%;
+    }
+
+    @media screen and (min-width: 769px) and (max-width: 1200px) {
+        font-size: .7rem;
+    }
 }

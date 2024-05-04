@@ -6,6 +6,13 @@
     height: 90%;
     max-height: 90%;
     padding-left: 1rem;
+
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        grid-row: 3/-1;
+        padding-left: 0rem;
+        height: 95%;
+        max-height: 95%;
+    }
 }
 
 .tab-content-empty {
@@ -33,6 +40,11 @@
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 25rem;
+
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        font-size: .7rem;
+        height: 55%;
+    }
 }
 
 .task, .task-done {
@@ -46,6 +58,10 @@
     padding-bottom: .7rem;
     padding-left: 1rem;
     font-size: .9rem;
+
+    @media screen and (min-width: 320px) and (max-width: 1200px) {
+        font-size: .7rem;
+    }
 }
 
 .task-done {
@@ -64,6 +80,10 @@
         text-overflow: ellipsis;
         overflow-x: hidden;
         white-space: nowrap;
+    }
+
+    @media screen and (min-width: 320px) and (max-width: 1200px) {
+        width: 7rem;
     }
 }
 
@@ -85,10 +105,20 @@
     }
     .end-date {
         grid-column: 1/1;
+        @media screen and (min-width: 320px) and (max-width: 500px) {
+            grid-column: 2/2;
+        }
     }
 
     .difficulty {
         grid-column: 2/2;
+        @media screen and (min-width: 320px) and (max-width: 500px) {
+            display: none;
+        }
+        @media screen and (min-width: 501px) and (max-width: 1200px) {
+            grid-column: 2/4;
+            justify-content: center;
+        }
     }
 
     .task-labels {
@@ -102,6 +132,10 @@
             border-style: solid;
             padding-inline: .2rem;
             border-radius: .5rem;
+        }
+
+        @media screen and (min-width: 320px) and (max-width: 1200px) {
+            display: none;
         }
     }
 
@@ -131,6 +165,13 @@
     border-radius: .4rem;
     margin-bottom: .5rem;
 
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        display: flex;
+        flex-direction: column;
+        gap: 0rem;
+        margin-top: .2rem;
+    }
+
     .task-counter {
         display: flex;
         align-items: center;
@@ -138,6 +179,17 @@
         gap: 1rem;
         padding-inline: .8rem;
         font-size: .84rem;
+
+        @media screen and (min-width: 320px) and (max-width: 768px) {
+            margin-top: .5rem;
+            font-size: .7rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        @media screen and (min-width: 769px) and (max-width: 1200px) {
+            font-size: .7rem;
+        }
     }
 
     .task-filters {
@@ -146,6 +198,13 @@
         align-items: center;
         flex-direction: row;
         gap: 1rem;
+
+        @media screen and (min-width: 320px) and (max-width: 768px) {
+            padding-right: 0rem;
+            font-size: .7rem;
+            width: 100%;
+            justify-content: space-evenly;
+        }
 
         .filter {
             position: relative;
@@ -156,6 +215,11 @@
             border: none;
             background-color: transparent;
             display: flex;
+
+            @media screen and (min-width: 320px) and (max-width: 768px) {
+                font-size: .7rem;
+                width: 1rem;
+            }
         }
 
         .sort-date, .sort-difficulty {
@@ -164,6 +228,14 @@
             background-color: transparent;
             &:hover {
                 text-decoration: underline;
+            }
+
+            @media screen and (min-width: 320px) and (max-width: 768px) {
+                font-size: .7rem;
+            }
+
+            @media screen and (min-width: 769px) and (max-width: 1200px) {
+                font-size: .7rem;
             }
         }
     }

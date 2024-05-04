@@ -17,6 +17,15 @@
     cursor: pointer;
     width: 100%;
     font-size: .8rem;
+
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        justify-content: center;
+        font-size: .7rem;
+    }
+
+    @media screen and (min-width: 769px) and (max-width: 1200px) {
+        font-size: .7rem;
+    }
 }
 
 .dropdown-content {
@@ -34,6 +43,10 @@
     padding: .1rem .5rem;
     box-sizing: border-box;
     max-height: 7.5rem;
+
+    @media screen and (min-width: 320px) and (max-width: 1200px) {
+        font-size: .7rem;
+    }
 }
 
 .dropdown-option {
