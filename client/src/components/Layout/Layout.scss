@@ -5,4 +5,8 @@
     // flex-direction: row; default value
     color: #000000;
     height: 100vh;
+
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        flex-direction: column;
+    }
 }
