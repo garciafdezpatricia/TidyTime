@@ -20,6 +20,10 @@
         border-color: $medium-grey;
     }
 
+    @media screen and (min-width: 320px) and (max-width: 500px) {
+        width: 90%;
+    }
+
     .calendar-menu-events {
         display: flex;
         flex-direction: column;

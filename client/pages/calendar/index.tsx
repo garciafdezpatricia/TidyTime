@@ -1,10 +1,7 @@
-import { IoMenu } from "react-icons/io5";
 import CalendarComponent from "../../src/components/Calendar/Calendar"
 import LoginGoogleCalendar from "../../src/components/Login/GoogleCalendarLogin"
 import { useEffect, useRef, useState } from "react";
 import CalendarMenu from "../../src/components/Menu/CalendarMenu";
-import { useGoogleContext } from "@/src/components/Context/GoogleContext";
-import toast from "react-hot-toast";
 import { useGoogleHandler } from "../api/google";
 import { useSessionContext } from "@/src/components/Context/SolidContext";
 import { useRouter } from "next/router";
