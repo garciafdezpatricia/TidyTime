@@ -17,6 +17,13 @@
         justify-content: space-between;
         padding: .2rem .8rem;
 
+        @media screen and (min-width: 320px) and (max-width: 768px) {
+            flex-direction: column;
+            height: fit-content;
+            font-size: .8rem;
+            gap: .5rem;
+        }
+
         p {
             text-decoration: underline;
         }
@@ -31,6 +38,10 @@
             color: $black;
             &:hover {
                 background-color: $hover-green;
+            }
+
+            @media screen and (min-width: 320px) and (max-width: 768px) {
+                justify-content: flex-end;
             }
         }
     }
@@ -87,8 +98,12 @@
             position: relative;
             height: 99%;
             flex-grow: 1;
-            flex-basis: calc((100% / 3) - 0.5rem);
+            flex-basis: calc(32% - 0.5rem);
             width: calc(33.33% - 0.5rem);
+
+            @media screen and (min-width: 320px) and (max-width: 768px) {
+                flex-basis: 100%;
+            }
 
 
             .board-column-title {
@@ -157,6 +172,10 @@
                         font-size: .9rem;
                         line-height: 1.5;
                         cursor: pointer;
+                        
+                        @media screen and (min-width: 769px) and (max-width: 1200px) {
+                            font-size: .8rem;
+                        }
                     }
 
                 }

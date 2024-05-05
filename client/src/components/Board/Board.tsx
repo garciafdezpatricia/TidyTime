@@ -63,7 +63,7 @@ export default function Board({handleCardClick} : Props) {
     return (
         <article className="board-section">
             <section className="board-button-section">
-                <p>Organize your tasks and see your progress using the board view!
+                <p>See your progress using the board!
                 </p>
                 <button 
                     className="add-column-button"
