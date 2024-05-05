@@ -44,23 +44,7 @@ export default function ListPanel() {
         <article className="list-preferences">
             <h3>List preferences</h3>
             <hr></hr>
-            <p>This feature allows you to conveniently access and visualize tasks with assigned due dates directly within the calendar module.</p>
-            <section className="show-tasks-in-calendar">
-                <p style={{fontWeight: "bold"}}>Show tasks with due date in the calendar?</p>
-                <div className="show-buttons">
-                    <button
-                        className={showTasksInCalendar ? "active-button" : ""}
-                        onClick={() => setshowTasksInCalendar(true)}>
-                        Yes
-                    </button>
-                    <button 
-                        className={showTasksInCalendar ? "" : "active-button"}
-                        onClick={() => setshowTasksInCalendar(false)}>
-                        No
-                    </button>
-                </div>
-            </section>
-            <p>Labels serve as tools to categorize, organize, and filter tasks within your lists. You can create, delete, and customize these labels to suit your specific requirements and preferences.</p>
+            <p>Create, delete, and customize tags for your tasks.</p>
             <section className="default-labels">
                 <div className={labels.length > 0 ? "labels-input" : ""}>
                     {
@@ -92,6 +76,21 @@ export default function ListPanel() {
                     className="new-label">
                     <LuListPlus />
                 </button>
+            </section>
+            <section className="show-tasks-in-calendar">
+                <p style={{fontWeight: "bold"}}>Show tasks with due date in the calendar?</p>
+                <div className="show-buttons">
+                    <button
+                        className={showTasksInCalendar ? "active-button" : ""}
+                        onClick={() => setshowTasksInCalendar(true)}>
+                        Yes
+                    </button>
+                    <button 
+                        className={showTasksInCalendar ? "" : "active-button"}
+                        onClick={() => setshowTasksInCalendar(false)}>
+                        No
+                    </button>
+                </div>
             </section>
         </article>
     )

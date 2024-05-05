@@ -13,9 +13,13 @@
 
 .panel-content {
     padding-top: 1.5rem;
-    margin-left: 1.5rem;
     display: flex;
     gap: 2rem;
+
+    @media screen and (min-width: 320px) and (max-width: 500px) {
+        flex-direction: column;
+    }
+
     .content-box {
         border: .1rem solid $light-grey;
         border-radius: .4rem;
@@ -23,6 +27,10 @@
         grid-template-rows: .5fr 1fr;
         grid-template-columns: 1fr 1fr;
         width: 18rem;
+
+        @media screen and (min-width: 320px) and (max-width: 500px) {
+            width: 98%;
+        }
 
         .content-header {
             padding: .5rem 1rem;
