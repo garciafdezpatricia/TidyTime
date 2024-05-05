@@ -10,6 +10,18 @@
     grid-template-rows: 1fr 4fr 1fr;
     justify-items: center;
     color: var.$white;
+
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        height: 20%;
+        width: 100vw;
+        max-width: 100vw;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr auto;
+    }
+
+    @media screen and (min-width: 769px) and (max-width: 1200px) {
+        width: 23%;
+    }
 }
 
 .sidebar-menu-features {
@@ -20,6 +32,33 @@
     gap: .3em;
     align-self: flex-start;
     grid-row: 2/3;
+
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        flex-direction: row;
+        grid-row: 2/2;
+        align-self: center;
+        grid-column: 1/1;
+        width: 100%;
+        gap: 1.5rem;
+        justify-content: space-evenly;
+    }
+    
+    @media screen and (min-width: 769px) and (max-width: 1200px){
+        font-size: .9rem;
+    }
+}
+
+.sidebar-menu-settings-mobile {
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        flex-direction: row;
+        grid-row: 2/2;
+        justify-content: flex-end;
+        grid-column: 2/2;
+    }
+
+    @media screen and (min-width: 769px) {
+        display: none;
+    }
 }
 
 .sidebar-menu-settings {
@@ -29,12 +68,35 @@
     width: 100%;
     gap: .8em;
     grid-row: 3/-1;
+    
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        display: none;
+    }
+
+    @media screen and (min-width: 769px) and (max-width: 1200px){
+        font-size: .9rem;
+
+        .menu-button {
+            width: fit-content;
+        }
+    }
+}
+
+.menu-title {
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        grid-column: 1/-1;
+        grid-row: 1/1;
+    }
 }
 
 .sidebar-menu-title {
-    font-size: 2em;
+    font-size: 2rem;
     font-weight: 100;
     grid-row: 1/1;
+
+    @media screen and (min-width: 769px) and (max-width: 1200px) {
+        font-size: 1.7rem;
+    }
 }
 
 .menu-button {
@@ -53,5 +115,15 @@
     &:hover {
         text-decoration: underline;
         text-decoration-thickness: 2px;
+    }
+
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        width: fit-content;
+    }
+}
+
+.menu-button-text {
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        display: none;
     }
 }

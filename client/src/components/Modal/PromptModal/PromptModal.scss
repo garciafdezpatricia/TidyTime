@@ -27,16 +27,22 @@
 	right: 50%;
 	bottom: 50%;
 	padding: 1rem 2rem;
-	width: 40em;
-	height: 25em;
+	width: 40rem;
+	height: 25rem;
 	button {
-		width: 5em;
+		width: 5rem;
 		display: flex;
 		justify-content: center;
 		padding: .1rem .5rem;
 	}
 	h3 {
 		font-size: 1.2rem;
+	}
+
+	@media screen and (min-width: 320px) and (max-width: 768px) {
+		top: 41%;
+		width: 90%;
+		height: 28rem;
 	}
 }
 

@@ -41,7 +41,7 @@ export default function BoardPanel() {
         <article className="board-preferences">
             <h3>Board preferences</h3>
             <hr></hr>
-            <p>These columns represent the current layout of the board, intended to align with the status of your tasks or any other specific criteria you wish to visually represent. You may modify, delete, or adapt them to better suit your needs.</p>
+            <p>Modify, delete, or adapt the columns of the board to better suit your needs.</p>
             <section className="default-columns">
                 <div className={columns.length > 0 ? "columns-input" : ""}>
                     {

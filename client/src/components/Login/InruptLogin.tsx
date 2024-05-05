@@ -19,7 +19,7 @@ export default function Inrupt() {
                     <button onClick={loginInrupt}>LOGIN</button>
                 </section>
                 <section className="inrupt-login-footer">
-                    <p>Learn more about <a href="https://www.inrupt.com/products/enterprise-solid-server">Inrupt&apos;s Enterpise Solid Server</a>
+                    <p>Learn more about <a href="https://www.inrupt.com/products/enterprise-solid-server">Inrupt&apos;s ESS</a>
                     <br />Learn more about the <a href="https://solidproject.org/">Solid Project</a>
                     </p>
                 </section>

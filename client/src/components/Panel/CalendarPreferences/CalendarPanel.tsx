@@ -16,7 +16,7 @@ export default function CalendarPanel() {
         <article className="calendar-settings">
             <h3>Calendar preferences</h3>
             <hr></hr>
-            <p>You can customize your calendar by adjusting the starting day of the week, choosing from Monday through Sunday, and setting the calendar view to your liking, whether you prefer a monthly overview, agenda format, weekly snapshot, or daily breakdown.</p>
+            <p>Adjust the starting day of the week and choose the default calendar view.</p>
             <section className="week-start">
                 <p style={{fontWeight: "bold"}}>Starting day of week:</p>
                 <div className="week-days-buttons">

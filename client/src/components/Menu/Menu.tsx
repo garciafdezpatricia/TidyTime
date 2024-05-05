@@ -8,9 +8,11 @@ export function MenuSideBar() {
     const router = useRouter();
     return (
         <section className="sidebar-menu">
-            <button className="menu-button" onClick={() => {router.push('/')}}>
+            <div className="menu-title">
+                <button className="menu-button" onClick={() => {router.push('/')}}>
                     <h1 className="sidebar-menu-title">TidyTime</h1>
                 </button>
+            </div>
             <section className="sidebar-menu-features">
                 <button className="menu-button" 
                     onClick={() => { 
@@ -19,7 +21,7 @@ export function MenuSideBar() {
                         }
                     }}>
                     <Icon src="menu/todo-list.svg" alt="TO-DO List"/>
-                    List
+                    <p className="menu-button-text">List</p>
                 </button>
                 <button className="menu-button" 
                     onClick={() => { 
@@ -28,7 +30,7 @@ export function MenuSideBar() {
                         }
                     }}>
                     <Icon src="menu/board.svg" alt="Board" />
-                    Board
+                    <p className="menu-button-text">Board</p>
                 </button>
                 <button className="menu-button" 
                     onClick={() => { 
@@ -37,7 +39,7 @@ export function MenuSideBar() {
                         }
                     }}>
                     <Icon src="menu/calendar.svg" alt="Calendar" />
-                    Calendar
+                    <p className="menu-button-text">Calendar</p>
                 </button>
                 <button className="menu-button" 
                     onClick={() => { 
@@ -46,8 +48,19 @@ export function MenuSideBar() {
                         }
                     }}>
                     <Icon src="menu/tidier.svg" alt="Tidier" />
-                    Tidier
+                    <p className="menu-button-text">Tidier</p>
                 </button>
+                <section className="sidebar-menu-settings-mobile">
+                <button className="menu-button" 
+                    onClick={() => { 
+                        if (solidSession?.info.isLoggedIn) {
+                            router.push('/settings')
+                        }
+                    }}>
+                    <Icon src="menu/settings.svg" alt="Settings" />
+                    <p className="menu-button-text">Preferences</p>
+                </button>
+            </section>
             </section>
             <section className="sidebar-menu-settings">
                 <button className="menu-button" 
@@ -57,7 +70,7 @@ export function MenuSideBar() {
                         }
                     }}>
                     <Icon src="menu/settings.svg" alt="Settings" />
-                    Preferences
+                    <p className="menu-button-text">Preferences</p>
                 </button>
             </section>
         </section>

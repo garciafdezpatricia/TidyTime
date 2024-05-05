@@ -1,5 +1,4 @@
 import { useSessionContext } from "@/src/components/Context/SolidContext";
-import { Icon } from "@/src/components/Icon/Icon";
 import { useState, useEffect } from "react";
 import { useInruptHandler } from "./api/inrupt";
 import Inrupt from "@/src/components/Login/InruptLogin";
@@ -9,7 +8,7 @@ import LogoutInrupt from "@/src/components/Login/LogoutInruptBtn";
 
 export default function MainPage() {
 
-  const { getSession, logoutInrupt, getProfile } = useInruptHandler();
+  const { getSession, getProfile } = useInruptHandler();
   const { solidSession, userName } = useSessionContext();
 
   const [reRender, setRerender] = useState(Math.random());

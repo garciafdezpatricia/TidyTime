@@ -10,9 +10,18 @@
     box-sizing: border-box;
     font-size: .8rem;
 
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        gap: 1.2rem;
+    }
+
     label {
         display: flex;
         justify-content: space-between;
+
+        @media screen and (min-width: 320px) and (max-width: 768px) {
+            gap: .5rem;
+            align-items: center;
+        }
     }
 
     input[type="text"], textarea {
