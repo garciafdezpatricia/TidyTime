@@ -27,33 +27,33 @@ export default function List() {
 	const { getSession } = useInruptHandler();
 	const router = useRouter();
 
-	// useEffect(() => {
-	// 	getSession();
-	// }, [reRender])
+	useEffect(() => {
+		getSession();
+	}, [reRender])
 
-	// useEffect(() => {
-	// 	if (solidSession === undefined) {
-	// 		setLoading(true);
-	// 	} else {
-	// 		if (solidSession?.info.isLoggedIn) {
-	// 			try {
-	// 				getUserData();
-	// 			} catch (error:any) {
-	// 				if (error.message === "Failed to fetch") {
-	// 					toast.error("Error when connecting to the server");
-	// 				} else {
-	// 					if (error.message.includes('access not found') && githubLoggedIn) {
-	// 						toast.error("Please reconnect to GitHub");
-	// 					}
-	// 				}
-	// 			}
-	// 		} else {
-	// 			router.push("/");
-	// 		}
-	// 		setLoading(false);
-	// 	}
+	useEffect(() => {
+		if (solidSession === undefined) {
+			setLoading(true);
+		} else {
+			if (solidSession?.info.isLoggedIn) {
+				try {
+					getUserData();
+				} catch (error:any) {
+					if (error.message === "Failed to fetch") {
+						toast.error("Error when connecting to the server");
+					} else {
+						if (error.message.includes('access not found') && githubLoggedIn) {
+							toast.error("Please reconnect to GitHub");
+						}
+					}
+				}
+			} else {
+				router.push("/");
+			}
+			setLoading(false);
+		}
 
-	// }, [solidSession])
+	}, [solidSession])
 	
 	/**
 	 * Sets the selected task index to the index of the task being selected. Opens/closes edit modal
@@ -103,11 +103,11 @@ export default function List() {
 	}
 
 	return (
-		// loading ?
-		// <Loader />
-		// :
+		loading ?
+		<Loader />
+		:
 		(
-			// solidSession?.info.isLoggedIn &&
+			solidSession?.info.isLoggedIn &&
 			<div className='list-container'>
 				<div className="list-header-section">
 					<SearchBar />
