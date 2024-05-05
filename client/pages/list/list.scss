@@ -26,6 +26,14 @@
         padding: 0rem;
         margin-bottom: 1rem;
     }
+
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        padding: 0rem;
+        margin-bottom: 1rem;
+    }
 }
 
 .list-footer-section {
@@ -44,6 +52,7 @@
         column-gap: 1rem;
         left: 1rem;
         width: 90vw;
+        bottom: 8rem;
     }
 
     @media screen and (min-width: 769px) and (max-width: 1200px) {
@@ -68,6 +77,11 @@
         color: $light-grey;
         background-color: $primary-grey;
         cursor: auto;
+    }
+
+    @media screen and (min-width: 320px) and (max-width: 1200px) {
+        padding: .2rem;
+        font-size: .7rem;
     }
 
     @media screen and (min-width: 320px) and (max-width: 1200px) {
