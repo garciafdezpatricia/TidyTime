@@ -15,13 +15,10 @@ export default function MainPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("rerender");
     getSession();
   }, [reRender]);
 
   useEffect(() => {
-    console.log("useEffect");
-    console.log(solidSession);
     if (solidSession !== undefined && solidSession !== null) {
       if (solidSession.info.isLoggedIn){
         if (!userName) {

@@ -56,15 +56,14 @@ router.get('/google/auth/callback', async (req, res) => {
     oauth2Client.setCredentials(tokens);
     try {
         const email = await getEmail(req);
-        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/calendar?user=${email}`);
+        res.redirect(`http://localhost:3000/calendar?user=${email}`);
     } catch (error) {
-        res.redirect('https://garciafdezpatricia.github.io/TidyTime/calendar');
+        res.redirect('http://localhost:3000/calendar');
     }
 });
   
 router.get('/google/auth/url', (req, res) => {
     const userId = getUserId(req);
-    console.log("getUserId no es");
     let oauth2Client = userClients[userId];
     
     if (!oauth2Client) {

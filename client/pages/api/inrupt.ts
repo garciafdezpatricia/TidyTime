@@ -1,4 +1,6 @@
+import { useEventContext } from "@/src/components/Context/EventContext";
 import { useSessionContext } from "@/src/components/Context/SolidContext";
+import { useTaskContext } from "@/src/components/Context/TaskContext";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 
@@ -7,9 +9,11 @@ export function useInruptHandler() {
 
     const router = useRouter();
     const { setSolidSession, solidSession, setUserName } = useSessionContext();
+    const { setListNames, setLabels, setBoardColumns, setshowTasksInCalendar } = useTaskContext();
+    const { setWeekStart, setEventView} = useEventContext();
 
     const serverCheck = () => {
-        return fetch("https://tidytime.onrender.com/health-check", { method: 'GET' })
+        return fetch("http://localhost:8080/health-check", { method: 'GET' })
         .then(response => {
             if (response.ok) {
                 return true;
@@ -26,7 +30,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                window.location.assign("https://tidytime.onrender.com/solid/login");
+                window.location.assign("http://localhost:8080/solid/login");
             } else {
                 toast.error('Server appears to be down');
             }
@@ -37,13 +41,12 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("https://tidytime.onrender.com/solid/user/session", {
+                fetch("http://localhost:8080/solid/user/session", {
                     method: 'GET',
                     credentials: 'include'
                 })
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log("I'm getting a session", data);
                     if (data.status) {
                         setSolidSession(data.session);
                     } else {
@@ -67,7 +70,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("https://tidytime.onrender.com/solid/logout", {
+                fetch("http://localhost:8080/solid/logout", {
                     method: 'GET',
                     credentials: 'include',
                 })
@@ -89,15 +92,13 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("https://tidytime.onrender.com/solid/user/profile", {
+                fetch("http://localhost:8080/solid/user/profile", {
                     method: 'GET', 
                     credentials: 'include',
                 })
                 .then(response => response.json())
                 .then((data) => {
-                    console.log(data);
                     if (data.status) {
-                        console.log(data.status);
                         if (data.data) {
                             setUserName(data.data);
                         } else {
@@ -113,5 +114,83 @@ export function useInruptHandler() {
         })
     }
 
-    return { loginInrupt, getSession, logoutInrupt, getProfile };
+    const getConfiguration = () => {
+        serverCheck()
+        .then(response => {
+            if (response) {
+                fetch("http://localhost:8080/solid/container/root", {
+                    method: 'GET',
+                    credentials: 'include'
+                }).then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "retrieved") {
+                        setListNames(data.config.listNames);
+                        setBoardColumns(data.config.boardColumns);
+                        setLabels(data.config.labels);
+                        setshowTasksInCalendar(data.config.showTasksInCalendar);
+                        setWeekStart(data.config.weekStart);
+                        setEventView(data.config.calendarView);
+                    } else if (data.status === "created") {
+                        toast.success("Your POD has been initialized!");
+                    }
+                });
+            } else {
+                toast.error('Server appears to be down');
+            }
+        })
+    }
+
+    const updateListNames = (listNames: string[]) => {
+        console.log("Las listnames en inrupt.ts", listNames);
+        serverCheck()
+        .then(response => {
+            if (response) {
+                fetch("http://localhost:8080/solid/data/store/listNames", {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        listNames: listNames
+                    })
+                }).then((response) => response.json())
+                .then((data) => {
+                    if (data.status) {
+                        toast.success("Data correctly stored in your pod");
+                    } else {
+                        toast.error("There has been a problem while storing data in your pod");
+                    }
+                })
+            } else {
+                toast.error('Server appeats to be down');
+            }
+        })
+    }
+
+    const getApplicationData = async () => {
+        try {
+            const response = await serverCheck();
+            if (response) {
+                const fetchResponse = await fetch("http://localhost:8080/solid/data/get", {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+                const data = await fetchResponse.json();
+                if (data.status === "success") {
+                    setListNames(data.data.data.listNames);
+                } else if (data.status === "empty"){
+                    ;
+                } else {
+                    toast.error("There has been a problem fetching the data in your pod");
+                }
+            } else {
+                toast.error('Server appears to be down');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    return { loginInrupt, getSession, logoutInrupt, getProfile, getConfiguration, updateListNames, getApplicationData };
 }

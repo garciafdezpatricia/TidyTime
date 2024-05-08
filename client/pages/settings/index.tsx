@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { useSessionContext } from "@/src/components/Context/SolidContext";
 import { useInruptHandler } from "../api/inrupt";
 import Loader from "@/src/components/Loading/Loading";
+import { useTaskContext } from "@/src/components/Context/TaskContext";
 
 export default function Settings() {
 
@@ -18,10 +19,11 @@ export default function Settings() {
     const { getUserData } = useGithubHandler();
     const { githubLoggedIn } = useGithubContext();
     const { solidSession } = useSessionContext();
-    const { getSession } = useInruptHandler();
+    const { getSession, getConfiguration } = useInruptHandler();
+    
     const router = useRouter();
     const [reRender, setRerender] = useState(Math.random());
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     
     useEffect(() => {
         getSession();
@@ -32,6 +34,8 @@ export default function Settings() {
         setLoading(true);
     } else {
         if (solidSession?.info.isLoggedIn) {
+            // INRUPT CONFIG
+            getConfiguration();
             // ---> GOOGLE LOGIN
             const params = new URLSearchParams(location.search);
             const emailParam = params.get('user');

@@ -8,8 +8,7 @@ const cookieParser = require('cookie-parser');
 
 // ============== APPLICATION CONFIGURATIONS ==========
 const app = express();
-const PORT = 443;
-const mongoUri = process.env.MONGO_URI;
+const PORT = 8080;
 
 // ============== APPLICATION MODULES ================
 app.use(cors({
@@ -39,4 +38,4 @@ app.use(githubRouter);
 // INRUPT ->
 app.use(solidRouter);
 
-app.listen(443, () => console.log("Secure server started on port " + PORT));
+app.listen(PORT, () => console.log("Secure server started on port " + PORT));

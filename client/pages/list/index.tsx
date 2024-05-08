@@ -18,26 +18,32 @@ export default function List() {
 	const [reRender, setRerender] = useState(Math.random());
 	const [isEditingTaskModalOpen, setIsEditingTaskModalOpen] = useState(false);
 	const [isSyncingIssues, setIsSyncingIssues] = useState(false);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 
 	const {setSelectedTaskIndex, listNames, setListNames, tasks, setTasks} = useTaskContext();
 	const { getUserData, getIssuesOfUser } = useGithubHandler();
 	const { githubLoggedIn, userData } = useGithubContext();
 	const { solidSession } = useSessionContext();
-	const { getSession } = useInruptHandler();
+	const { getSession, getApplicationData } = useInruptHandler();
 	const router = useRouter();
 
 	useEffect(() => {
 		getSession();
 	}, [reRender])
 
-	useEffect(() => {
+	useEffect(() => {	
+		fetchData();
+	}, [solidSession])
+
+	const fetchData = async () => {
 		if (solidSession === undefined) {
 			setLoading(true);
 		} else {
 			if (solidSession?.info.isLoggedIn) {
 				try {
-					getUserData();
+					if (!userData) {
+						await getUserData();
+					}
 				} catch (error:any) {
 					if (error.message === "Failed to fetch") {
 						toast.error("Error when connecting to the server");
@@ -47,13 +53,13 @@ export default function List() {
 						}
 					}
 				}
+				await getApplicationData();
 			} else {
 				router.push("/");
 			}
 			setLoading(false);
 		}
-
-	}, [solidSession])
+	};
 	
 	/**
 	 * Sets the selected task index to the index of the task being selected. Opens/closes edit modal
@@ -65,7 +71,7 @@ export default function List() {
 	}
 
 	const syncIssues = async () => {
-		if (userData.login !== null) {
+		if (userData.login !== null && listNames && tasks) {
 			setIsSyncingIssues(true);
 			const issues = await getIssuesOfUser(userData.login);
 			if (issues.items && issues.items.length > 0) {
@@ -123,7 +129,7 @@ export default function List() {
 							{isSyncingIssues && <div className="loader"></div>}
 							Sync issues
 					</button>
-					{tasks.length > 0 && <NewTaskForm />}
+					{tasks && tasks.length > 0 && <NewTaskForm />}
 				</div>
 				{isEditingTaskModalOpen && 
 					<EditTaskModal 
