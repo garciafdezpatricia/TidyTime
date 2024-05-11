@@ -14,8 +14,12 @@ export default function MainPage() {
   const [reRender, setRerender] = useState(Math.random());
   const [loading, setLoading] = useState(true);
 
+  const getSessionWrapper = async () => {
+    await getSession();
+  }
+
   useEffect(() => {
-    getSession();
+    getSessionWrapper();
   }, [reRender]);
 
   useEffect(() => {

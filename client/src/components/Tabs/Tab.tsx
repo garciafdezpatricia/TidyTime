@@ -47,7 +47,6 @@ export default function Tab({handleEditModal} : Props) {
 	 * Closes the modal, clears the new list name constant and sets the selected list to the created one.
 	 */
 	const addNewTab = () => {
-		console.log("las list names", listNames);
 		const newListNames = listNames ? [...listNames, `List ${listNames.length + 1}`] : ["List 1"];
 		const newTodoList: TaskList = [];
 		setListNames(listNames ? [...listNames, `List ${listNames.length + 1}`] : ["List 1"]);

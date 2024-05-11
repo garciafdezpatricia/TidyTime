@@ -32,7 +32,7 @@ export default function StatisticsPanel() {
     <article className="statistics">
         <article className="task-progress">
           <h2>Completed tasks</h2>
-          <DonutChart total={tasks.flat().length} value={tasks.flat().filter((task) => task.done).length} />
+          <DonutChart total={tasks !== undefined ? tasks.flat().length : 0} value={tasks !== undefined ? tasks.flat().filter((task) => task.done).length : 0} />
         </article>
         <article className="upcoming-events">
           <h2>Upcoming events</h2>

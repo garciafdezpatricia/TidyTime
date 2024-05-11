@@ -3,14 +3,18 @@ import { useSessionContext } from "@/src/components/Context/SolidContext";
 import { useTaskContext } from "@/src/components/Context/TaskContext";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import _ from "lodash";
 
 
 export function useInruptHandler() {
 
     const router = useRouter();
     const { setSolidSession, solidSession, setUserName } = useSessionContext();
-    const { setListNames, setLabels, setBoardColumns, setshowTasksInCalendar } = useTaskContext();
+    const { setListNames, setLabels, setBoardColumns, setshowTasksInCalendar, setTasks } = useTaskContext();
     const { setWeekStart, setEventView} = useEventContext();
+
+    const { labels, showTasksInCalendar, boardColumns } = useTaskContext();
+    const { weekStart, eventView } = useEventContext();
 
     const serverCheck = () => {
         return fetch("http://localhost:8080/health-check", { method: 'GET' })
@@ -37,33 +41,30 @@ export function useInruptHandler() {
         })
     }
 
-    const getSession = () => {
-        serverCheck()
-        .then(response => {
+    const getSession = async () => {
+        try {
+            const response = await serverCheck();
             if (response) {
-                fetch("http://localhost:8080/solid/user/session", {
+                const fetchResponse = await fetch("http://localhost:8080/solid/user/session", {
                     method: 'GET',
-                    credentials: 'include'
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.status) {
-                        setSolidSession(data.session);
-                    } else {
-                        setSolidSession(null);
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    toast.error('There has been a problem fetching your session!');
-                })
+                    credentials: 'include',
+                });
+                const data = await fetchResponse.json();
+                if (data.status) {
+                    setSolidSession(data.session);
+                } else {
+                    setSolidSession(null);
+                }
             } else {
                 if (window.location.pathname !== "/") {
                     router.push("/");
                 }
-                toast.error('Server appears to be down in getSession');
+                toast.error('Server appears to be down');
             }
-        })
+        } catch (error) {
+            console.error(error);
+            toast.error('There has been a problem fetching your session!');
+        }
     }
 
     async function logoutInrupt() {
@@ -140,8 +141,38 @@ export function useInruptHandler() {
         })
     }
 
+    const saveConfiguration = () => {
+        serverCheck()
+        .then(response => {
+            if (response) {
+                fetch("http://localhost:8080/solid/store/configuration", {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        labels: labels,
+                        showTasksInCalendar: showTasksInCalendar,
+                        boardColumns: boardColumns,
+                        weekStart: weekStart,
+                        calendarView: eventView
+                    })
+                }).then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "stored") {
+                        toast.success("Preferences saved in your POD!");
+                    } else {
+                        toast.error("Preferences could not be saved in your POD");
+                    }
+                });
+            } else {
+                toast.error('Server appears to be down');
+            }
+        })
+    }
+
     const updateListNames = (listNames: string[]) => {
-        console.log("Las listnames en inrupt.ts", listNames);
         serverCheck()
         .then(response => {
             if (response) {
@@ -179,6 +210,8 @@ export function useInruptHandler() {
                 const data = await fetchResponse.json();
                 if (data.status === "success") {
                     setListNames(data.data.data.listNames);
+                    let tasklists = data.data.data.listNames.map((_) => { return [] });
+                    setTasks(tasklists);
                 } else if (data.status === "empty"){
                     ;
                 } else {
@@ -192,5 +225,5 @@ export function useInruptHandler() {
         }
     }
 
-    return { loginInrupt, getSession, logoutInrupt, getProfile, getConfiguration, updateListNames, getApplicationData };
+    return { loginInrupt, getSession, logoutInrupt, getProfile, getConfiguration, updateListNames, getApplicationData, saveConfiguration };
 }

@@ -5,9 +5,10 @@ const { addStringNoLocale, createThing, getSolidDataset, createContainerAt,
     getPodUrlAll,  buildThing, createSolidDataset, setThing,
     saveSolidDatasetAt, getInteger, getStringNoLocaleAll, getBoolean, 
     getThingAll,
-    removeAll} = require("@inrupt/solid-client")
+    removeAll,
+    deleteSolidDataset} = require("@inrupt/solid-client")
 const { Session, getSessionFromStorage } = require("@inrupt/solid-client-authn-node");
-const { foaf, vcard } = require('rdf-namespaces');
+const { foaf, vcard, cal } = require('rdf-namespaces');
 const { data } = require("rdf-namespaces/dist/fhir");
 
 
@@ -128,7 +129,50 @@ async function getApplicationConfiguration(session) {
             return {...result, labels: labels};
         }
     } catch (error) {
+        if (error.toString().includes("404")) {
+            throw error;
+        }
         console.log(error);
+    }
+}
+
+async function storeConfiguration(session, labels, showTasksInCalendar, boardColumns, weekStart, calendarView ) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+
+            await deleteSolidDataset(`${rootStorage}/config`, {fetch: session.fetch});
+            let dataset = createSolidDataset();
+            let configThing = buildThing(createThing({ name: "configuration" }))
+            .addStringNoLocale(CALENDAR_VIEW, calendarView)
+            .addBoolean(SHOW_TASK, showTasksInCalendar)
+            .addInteger(WEEK_START, weekStart)
+            .addUrl(CONFIG_OBJECT, CONFIG_OBJECT)
+            .build();
+
+            configThing = boardColumns.reduce((configThing, column) => {
+                configThing = addStringNoLocale(configThing, BOARD_COLUMN, column);
+                return configThing;
+            }, configThing);
+            let labelsThing = labels.map((label, index) => {
+                return buildThing(createThing({ name: `label${index}` }))
+                .addStringNoLocale(LABEL_NAME, label.name)
+                .addStringNoLocale(LABEL_COLOR, label.color)
+                .addUrl(LABEL_OBJECT, LABEL_OBJECT)
+                .build();
+            });
+            dataset = setThing(dataset, configThing);
+            dataset = labelsThing.reduce((dataset, labelThing) => {
+                dataset = setThing(dataset, labelThing);
+                return dataset;
+            }, dataset)
+            await saveSolidDatasetAt(`${rootStorage}/config`, dataset, {fetch: session.fetch});
+            return true;
+        }
+    } catch (error) {
+        console.log(error);
+        return false;
     }
 }
 
@@ -142,7 +186,8 @@ async function getApplicationData(session) {
             const things = getThingAll(dataset);
             const listNamesThing = things.filter((thing) => thing.url.includes("#listName"))[0];
             const listNames = getStringNoLocaleAll(listNamesThing, LIST_NAME);
-            // let tasks = [];
+            const tasks = [];
+            
             // if (listNames.length > 0) {
             //     tasks = await Promise.all(things
             //     .filter((thing) => thing.url.includes("#task"))
@@ -164,7 +209,7 @@ async function getApplicationData(session) {
             //         };
             //     })
             // )
-            return { status: "success", data: {listNames: listNames} }//, tasks: tasks, events: events };
+            return { status: "success", data: {listNames: listNames, tasks: tasks} }//, tasks: tasks, events: events };
         }
     } catch (error) {
         console.log(error);
@@ -260,7 +305,6 @@ router.get("/solid/user/session", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId);
         if (session) {
-            console.log(new Date(new Date().getTime() + session.info.expirationDate).toLocaleString())
             res.send({status: true, session: session});
         } else {
             res.send({status: false});
@@ -313,13 +357,38 @@ router.get("/solid/container/root", async function (req, res) {
             await poblateRootContainer(session);
             res.send({status: "created"});
         } else {
-            const configuration = await getApplicationConfiguration(session);
-            res.send({status: "retrieved" , config: configuration});
+            try {
+                const configuration = await getApplicationConfiguration(session);
+                res.send({status: "retrieved" , config: configuration});
+            } catch (error) {
+                await poblateRootContainer(session);
+                res.send({status: "created"});
+            }
         }
     } catch (error) {
         console.log(error);
     }
 })
+
+router.post("/solid/store/configuration", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const labels = req.body.labels;
+        const showTasksInCalendar = req.body.showTasksInCalendar;
+        const boardColumns = req.body.boardColumns;
+        const weekStart = req.body.weekStart;
+        const calendarView = req.body.calendarView;
+        const result = await storeConfiguration(session, labels, showTasksInCalendar, boardColumns, weekStart, calendarView);
+        if (result) {
+            res.send({status: "stored"});
+        } else {
+            res.send({status: false});
+        }
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
 
 router.post("/solid/data/store/listNames", async function (req, res) {
     try {
@@ -341,7 +410,6 @@ router.get("/solid/data/get", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId);
         const result = await getApplicationData(session);
-        console.log("result from data fetching", result);
         if (result.status === "success") {
             res.send({status: "success", data: result});
         } else if (result.status === "empty") {

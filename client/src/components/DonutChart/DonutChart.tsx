@@ -3,7 +3,7 @@ import React from 'react';
 export default function DonutChart({ total, value }: {total:any, value:any}) {
   const radius = 50; // radio del círculo
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (value / total) * circumference;
+  const strokeDashoffset = total !== 0 ? circumference - (value / total) * circumference : 0;
 
   return (
     <svg width="20%" height="20%" viewBox="0 0 120 120">

@@ -2,7 +2,7 @@ import EditTaskModal from "@/src/components/Modal/EditModal/EditTaskModal";
 import NewTaskForm from "../../src/components/Form/NewTaskForm/NewTaskForm";
 import SearchBar from "../../src/components/SearchBar/SearchBar";
 import Tab from "../../src/components/Tabs/Tab";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTaskContext } from "@/src/components/Context/TaskContext";
 import GitHubAuthButton from "@/src/components/Auth/GitHubAuth";
 import { useGithubHandler } from "../api/github";
@@ -16,6 +16,7 @@ import Loader from "@/src/components/Loading/Loading";
 
 export default function List() {
 	const [reRender, setRerender] = useState(Math.random());
+	const [firstRender, setFirstRender] = useState(true);
 	const [isEditingTaskModalOpen, setIsEditingTaskModalOpen] = useState(false);
 	const [isSyncingIssues, setIsSyncingIssues] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -27,38 +28,62 @@ export default function List() {
 	const { getSession, getApplicationData } = useInruptHandler();
 	const router = useRouter();
 
+	const getSessionWrapper = async () => {
+		await getSession();
+	}
+
 	useEffect(() => {
-		getSession();
+		console.log("rerender");
+		getSessionWrapper();
 	}, [reRender])
 
-	useEffect(() => {	
-		fetchData();
+	useEffect(() => {
+		console.log("solidSession");
+		checkAuth();
+		if (solidSession?.info.isLoggedIn && firstRender) {
+			fetchData();
+			setFirstRender(false);
+		}
 	}, [solidSession])
 
-	const fetchData = async () => {
-		if (solidSession === undefined) {
-			setLoading(true);
-		} else {
-			if (solidSession?.info.isLoggedIn) {
-				try {
-					if (!userData) {
-						await getUserData();
-					}
-				} catch (error:any) {
-					if (error.message === "Failed to fetch") {
-						toast.error("Error when connecting to the server");
-					} else {
-						if (error.message.includes('access not found') && githubLoggedIn) {
-							toast.error("Please reconnect to GitHub");
-						}
-					}
-				}
-				await getApplicationData();
-			} else {
-				router.push("/");
-			}
+	useEffect(() => {
+		console.log(listNames);
+		console.log(tasks);
+	}, [listNames, tasks])
+
+	useEffect(() => {
+		console.log(listNames);
+		if (listNames !== undefined) {
 			setLoading(false);
 		}
+	}, [listNames])
+
+	const checkAuth = async () => {
+		console.log("checkauth");
+		if (solidSession === undefined) {
+		} else {
+			if (!solidSession?.info.isLoggedIn) {
+				router.push("/");
+			}
+		}
+	};
+
+	const fetchData = async () => {
+		setLoading(true);
+		try {
+			if (!userData) {
+				await getUserData();
+			}
+		} catch (error:any) {
+			if (error.message === "Failed to fetch") {
+				toast.error("Error when connecting to the server");
+			} else {
+				if (error.message.includes('access not found') && githubLoggedIn) {
+					toast.error("Please reconnect to GitHub");
+				}
+			}
+		}
+		await getApplicationData();
 	};
 	
 	/**

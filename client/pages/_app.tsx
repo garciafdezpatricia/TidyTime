@@ -8,7 +8,7 @@ import { Toaster } from "react-hot-toast";
 import { GoogleProvider } from "@/src/components/Context/GoogleContext";
 import { GithubProvider } from "@/src/components/Context/GithubContext";
 import { SessionProvider } from "@/src/components/Context/SolidContext";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loader from "@/src/components/Loading/Loading";
 
@@ -41,11 +41,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
                 <SideMenu>
                   <MenuSideBar />
-                    {loading ?
-                      <Loader />
-                      :
-                      <Component {...pageProps} />
-                    }
+                  {loading ?
+                    <Loader />
+                    :
+                    <Component {...pageProps} />
+                  }
                 </SideMenu>
               <Toaster />
               
