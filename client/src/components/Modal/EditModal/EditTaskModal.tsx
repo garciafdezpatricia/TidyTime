@@ -10,6 +10,7 @@ import PromptModal from "../PromptModal/PromptModal";
 import { TbEyeShare } from "react-icons/tb";
 import { useGithubHandler } from "@/pages/api/github";
 import { FaCheckCircle, FaRegCircle } from "react-icons/fa";
+import { useInruptHandler } from "@/pages/api/inrupt";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -18,8 +19,8 @@ export interface Props {
 
 export default function EditTaskModal({onClose, isOpen} : Props) {
 
-    const {tasks, selectedListIndex, setTasks, labels, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
-    const taskToEdit = tasks[selectedListIndex][selectedTaskIndex];
+    const {tasks, selectedListId, setTasks, labels, selectedTaskId, setSelectedTaskId} = useTaskContext();
+    const taskToEdit = tasks?.find((list) => list.key === selectedListId)?.value.find((task) => task.id === selectedTaskId);
 
     const [newTitle, setNewTitle] = useState("");
     const [newDesc, setNewDesc] = useState("");
@@ -27,10 +28,12 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
     const [newDate, setNewDate] = useState("");
     const [important, setImportant] = useState(false);
     const [newLabels, setLabels] = useState<Label[]>([]);
+    const [newStatus, setNewStatus] = useState(false);
     
     const [isDeleting, setConfirmationDeleteModalOpen] = useState(false);
 
     const {updateIssue, openIssue, closeIssue} = useGithubHandler();
+    const { updateTask, deleteTask } = useInruptHandler();
 
     useEffect(() => {
         if (taskToEdit) {
@@ -39,95 +42,96 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
             setNewDate(taskToEdit.endDate ?? "");
             setImportant(taskToEdit.important ?? false);
             setLabels(taskToEdit.labels ?? []);
+            setNewStatus(taskToEdit.done);
         }
     }, [taskToEdit])
 
     const onCancel = () => {
-        setNewTitle(taskToEdit.title);
-        setNewDesc(prevDesc => taskToEdit.desc ?? "");
-        setNewDifficulty(-1);
-        setNewDate(taskToEdit.endDate ?? "");
-        setImportant(taskToEdit.important ?? false)
+        if (taskToEdit) {
+            setNewTitle(taskToEdit.title);
+            setNewDesc(prevDesc => taskToEdit.desc ?? "");
+            setNewDifficulty(-1);
+            setNewDate(taskToEdit.endDate ?? "");
+            setImportant(taskToEdit.important ?? false)
+            setNewStatus(taskToEdit.done);
+        }
     }
 
-    // TODO: hacer que el open/close se actualice solo al guardar
     const saveAndClose = async () => {
-        const updatedToDo = [...tasks];
-        const updatedTask = {...taskToEdit};
+        if (tasks && taskToEdit) {
+            const updatedToDo = [...tasks];
+            const updatedTask = {...taskToEdit};
+            const isDone = updatedTask.done;
 
-        updateTask(updatedTask);
+            updateTaskFields(updatedTask);
+            await updateTask(updatedTask);
+            const listIndex = tasks.findIndex((list) => list.key === selectedListId);
+            const taskIndex = tasks[listIndex].value.findIndex((task) => task.id === selectedTaskId);
 
-        updatedToDo[selectedListIndex] = [
-            ...updatedToDo[selectedListIndex].slice(0, selectedTaskIndex),
-            updatedTask,
-            ...updatedToDo[selectedListIndex].slice(selectedTaskIndex + 1)
-        ];
-        setTasks(updatedToDo);
-
-        if (taskToEdit.githubUrl) {
-            await updateIssue(taskToEdit.githubUrl, newTitle, newDesc);
+            updatedToDo[listIndex].value = [
+                ...updatedToDo[listIndex].value.slice(0, taskIndex),
+                updatedTask,
+                ...updatedToDo[listIndex].value.slice(taskIndex + 1)
+            ];
+            setTasks(updatedToDo);
+            if (updatedTask.githubUrl) {
+                await updateIssue(updatedTask.githubUrl, newTitle, newDesc);
+                if (isDone !== updatedTask.done) {
+                    isDone   
+                    ? await openIssue(updatedTask.githubUrl) // was closed so now it must be open
+                    : await closeIssue(updatedTask.githubUrl); // was open so now it must be closed
+                }
+            }
+            setSelectedTaskId('');
+            onClose();
         }
-        setSelectedTaskIndex(-1);
-        onClose();
     }
 
     const updateStatus = async () => {
-        const updatedToDo = [...tasks];
-        let updatedTask = {...taskToEdit};
-        const isDone = updatedTask.done;
-
-        updatedTask.done = !updatedTask.done;
-        updatedToDo[selectedListIndex] = [
-            ...updatedToDo[selectedListIndex].slice(0, selectedTaskIndex),
-            updatedTask,
-            ...updatedToDo[selectedListIndex].slice(selectedTaskIndex + 1)
-        ];
-        setTasks(updatedToDo);
-        
-        if (updatedTask.githubUrl) {
-            if (isDone) {
-                await openIssue(updatedTask.githubUrl);
-            } else {
-                await closeIssue(updatedTask.githubUrl);
-            }
-            
-        }
+        setNewStatus(!newStatus);
     }
 
-    const updateTask = (task:Task) => {
+    const updateTaskFields = (task:Task) => {
         task.title = newTitle;
         task.desc = newDesc;
         task.difficulty = newDifficulty;
         task.endDate = newDate;
         task.important = important;
         task.labels = newLabels;
+        task.done = newStatus;
     }
 
     const handleLabels = (labels:Label[]) => {
         setLabels(labels);
     }
 
-    const deleteTask = () => {
-        const updatedToDo = [...tasks];
+    const handleDeleteTask = async () => {
+        if (tasks) {
+            const updatedToDo = [...tasks];
+            const listIndex = tasks.findIndex((list) => list.key === selectedListId);
+            const taskIndex = tasks[listIndex].value.findIndex((task) => task.id === selectedTaskId);
+            const taskToDelete = updatedToDo[listIndex].value[taskIndex];
+            await deleteTask(taskToDelete);
 
-        updatedToDo[selectedListIndex] = [
-            ...updatedToDo[selectedListIndex].slice(0, selectedTaskIndex),
-            ...updatedToDo[selectedListIndex].slice(selectedTaskIndex + 1)
-        ];
-        setTasks(updatedToDo);
-        setSelectedTaskIndex(-1);
-        onClose();
+            updatedToDo[listIndex].value = [
+                ...updatedToDo[listIndex].value.slice(0, taskIndex),
+                ...updatedToDo[listIndex].value.slice(taskIndex + 1)
+            ];
+            setTasks(updatedToDo);
+            setSelectedTaskId('');
+            onClose();
+        }
     }
 
     const handleCloseTab = () => {
-        setSelectedTaskIndex(-1);
+        setSelectedTaskId('');
         onClose();
     }
 
     return (
         <>
         <div className="backdrop"></div>
-        {isOpen && 
+        {isOpen && taskToEdit &&
             <article className="edit-task-modal">
                 <header className="edit-task-modal-header">
                     {
@@ -139,7 +143,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                     <button 
                         onClick={updateStatus}
                         className="done-undone">
-                        {!taskToEdit.done ? (<><FaRegCircle />To do</>) : (<><FaCheckCircle />Done</>)}
+                        {!newStatus ? (<><FaRegCircle />To do</>) : (<><FaCheckCircle />Done</>)}
                     </button>
                     <button 
                         title="Close"
@@ -225,7 +229,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                     isDeleting && 
                     <PromptModal
                         title="Are you sure you want to delete this task? This action can't be undone"
-                        onPrimaryAction={() => deleteTask()}
+                        onPrimaryAction={() => handleDeleteTask()}
                         primaryActionText='Delete'
                         secondaryActionText='Cancel'
                         onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}

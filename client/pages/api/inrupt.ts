@@ -3,31 +3,30 @@ import { useSessionContext } from "@/src/components/Context/SolidContext";
 import { useTaskContext } from "@/src/components/Context/TaskContext";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import _ from "lodash";
+import { Event, Task, TaskList } from "@/src/model/Scheme";
 
 
 export function useInruptHandler() {
 
     const router = useRouter();
-    const { setSolidSession, solidSession, setUserName } = useSessionContext();
+    const { setSolidSession, setUserName } = useSessionContext();
     const { setListNames, setLabels, setBoardColumns, setshowTasksInCalendar, setTasks } = useTaskContext();
-    const { setWeekStart, setEventView} = useEventContext();
+    const { setWeekStart, setEventView, setEvents } = useEventContext();
 
     const { labels, showTasksInCalendar, boardColumns } = useTaskContext();
     const { weekStart, eventView } = useEventContext();
 
-    const serverCheck = () => {
-        return fetch("http://localhost:8080/health-check", { method: 'GET' })
-        .then(response => {
+    const serverCheck = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/health-check", {method: 'GET'});
             if (response.ok) {
                 return true;
             } else {
                 return false;
             }
-        })
-        .catch(error => {
+        } catch (error) {
             return false;
-        });
+        }
     }
 
     async function loginInrupt() {
@@ -115,37 +114,53 @@ export function useInruptHandler() {
         })
     }
 
-    const getConfiguration = () => {
-        serverCheck()
-        .then(response => {
-            if (response) {
-                fetch("http://localhost:8080/solid/container/root", {
-                    method: 'GET',
-                    credentials: 'include'
-                }).then((response) => response.json())
-                .then((data) => {
-                    if (data.status === "retrieved") {
-                        setListNames(data.config.listNames);
-                        setBoardColumns(data.config.boardColumns);
-                        setLabels(data.config.labels);
-                        setshowTasksInCalendar(data.config.showTasksInCalendar);
-                        setWeekStart(data.config.weekStart);
-                        setEventView(data.config.calendarView);
-                    } else if (data.status === "created") {
-                        toast.success("Your POD has been initialized!");
-                    }
-                });
-            } else {
-                toast.error('Server appears to be down');
+    const checkConfiguration = async () => {
+        const response = await serverCheck()
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/configuration/health-check", {
+                method: 'GET',
+                credentials: 'include'
+            })
+            const data = await fetchResponse.json()
+            if (!data.status) {
+                toast.error('Could not check the configuration');    
             }
-        })
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
+    // returns true if the pod has been initialized 
+    const getAllConfiguration = async () => {
+        const response = await serverCheck()
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/configuration", {
+                method: 'GET',
+                credentials: 'include'
+            })
+            const data = await fetchResponse.json()
+            if (data.status === "retrieved") {
+                setBoardColumns(data.config.boardColumns);
+                setLabels(data.config.labels);
+                setshowTasksInCalendar(data.config.showTasksInCalendar);
+                setWeekStart(data.config.weekStart);
+                setEventView(data.config.calendarView);
+                return false;
+            } else if (data.status === "created") {
+                toast.success("Your POD has been initialized!");
+                return true;
+            }
+        } else {
+            toast.error('Server appears to be down');
+        }
+        return true; // the server is not up so we dont want to get any data from the pod
     }
 
     const saveConfiguration = () => {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("http://localhost:8080/solid/store/configuration", {
+                fetch("http://localhost:8080/solid/configuration/store", {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -160,7 +175,7 @@ export function useInruptHandler() {
                     })
                 }).then((response) => response.json())
                 .then((data) => {
-                    if (data.status === "stored") {
+                    if (data.status) {
                         toast.success("Preferences saved in your POD!");
                     } else {
                         toast.error("Preferences could not be saved in your POD");
@@ -172,29 +187,143 @@ export function useInruptHandler() {
         })
     }
 
-    const updateListNames = (listNames: string[]) => {
-        serverCheck()
-        .then(response => {
-            if (response) {
-                fetch("http://localhost:8080/solid/data/store/listNames", {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        listNames: listNames
+    // the calendar view and week start
+    const getCalendarViewConfigurations = () => {
+
+    }
+
+    // tasks
+    const getTasks = async () => {
+        const response = await serverCheck()
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/tasks/get", {
+                method: 'GET',
+                credentials: 'include'
+            })
+            const data = await fetchResponse.json()
+            if (data.status === "success") {
+                let taskLists:TaskList[] = [];
+                let names:string[] = [];
+                // listnames
+                if (data.data.data.listNames && data.data.data.listNames.length > 0) {
+                    data.data.data.listNames.forEach((list, index) => {
+                        taskLists[index] = {key: list.id, value: []};
+                        names[index] = list.name;
                     })
-                }).then((response) => response.json())
-                .then((data) => {
-                    if (data.status) {
-                        toast.success("Data correctly stored in your pod");
-                    } else {
-                        toast.error("There has been a problem while storing data in your pod");
-                    }
-                })
+                }
+                // tasks
+                if (data.data.data.tasks && data.data.data.tasks.length > 0) {
+                    taskLists.map((list, index) => {
+                        const tasksOfTheList = data.data.data.tasks.filter((task) => {
+                            return task.listIndex === list.key
+                        })
+                        if (tasksOfTheList.length > 0) {
+                            taskLists[index].value = tasksOfTheList;
+                        }
+                    })
+                }
+                setListNames(names);
+                setTasks(taskLists)
+            } else if (data.status === "empty") {
+                setTasks([]);
+                setListNames([]);
             } else {
-                toast.error('Server appeats to be down');
+                toast.error('There has been a problem fetching your data :(');
+            }
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
+    // TODO: events
+    const getEvents = async () => {
+        
+    }
+
+    // board columns
+    const getBoardColumns = async () => {
+        const response = await serverCheck()
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/configuration/board", {
+                method: 'GET',
+                credentials: 'include'
+            })
+            const data = await fetchResponse.json()
+            if (data.status) {
+                setBoardColumns(data.data.configuration ? data.data.configuration : []);
+                
+            } else {
+                toast.error('There has been a problem fetching your columns :(');
+            }
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
+    // labels
+    const getLabels = async () => {
+        const response = await serverCheck()
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/labels/get", {
+                method: 'GET',
+                credentials: 'include'
+            })
+            const data = await fetchResponse.json()
+            if (data.status === "success") {
+                setLabels(data.data && data.data.length > 0 ? data.data : []);
+            } else if (data.status === "empty") {
+                setLabels([]);
+            } else {
+                toast.error('There has been a problem fetching your labels :(');
+            }
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
+    const updateListNames = async (listNames: string[], tasks: TaskList[]) => {
+        const listNamesAndIds = listNames.map((listname, index) => {
+            return {name: listname, id: tasks[index].key};
+        })
+        fetch("http://localhost:8080/solid/data/store/listNames", {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                listNames: listNamesAndIds
+            })
+        }).then((response) => response.json())
+        .then((data) => {
+            if (data.status) {
+                toast.success("Data correctly stored in your pod");
+            } else {
+                toast.error("There has been a problem while storing data in your pod");
+            }
+        })
+    }
+
+    const deleteList = async(listNames:string[], tasks: TaskList[], tasksIds: string[]) => {
+        const listNamesAndIds = listNames.map((listname, index) => {
+            return {name: listname, id: tasks[index].key};
+        })
+        fetch("http://localhost:8080/solid/data/store/lists/delete", {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                listNames: listNamesAndIds,
+                tasksIds: tasksIds
+            })
+        }).then((response) => response.json())
+        .then((data) => {
+            if (data.status) {
+                toast.success("List correctly deleted");
+            } else {
+                toast.error("There has been a problem while deleting the list");
             }
         })
     }
@@ -209,12 +338,43 @@ export function useInruptHandler() {
                 });
                 const data = await fetchResponse.json();
                 if (data.status === "success") {
-                    setListNames(data.data.data.listNames);
-                    let tasklists = data.data.data.listNames.map((_) => { return [] });
-                    setTasks(tasklists);
+                    let taskLists:TaskList[] = [];
+                    let names:string[] = [];
+                    let events:Event[] = [];
+                    // listnames
+                    if (data.data.tasks.listNames && data.data.tasks.listNames.length > 0) {
+                        data.data.tasks.listNames.forEach((list, index) => {
+                            taskLists[index] = {key: list.id, value: []};
+                            names[index] = list.name;
+                        })
+                    }
+                    // tasks
+                    if (data.data.tasks.tasks && data.data.tasks.tasks.length > 0) {
+                        taskLists.map((list, index) => {
+                            const tasksOfTheList = data.data.tasks.tasks.filter((task) => {
+                                task.listIndex === list.key
+                            })
+
+                            if (tasksOfTheList.length > 0) {
+                                taskLists[index].value = tasksOfTheList;
+                            }
+                        })
+                    }
+                    // events
+                    if (data.data.events && data.data.events.length > 0) {
+                        events = data.data.events;
+                    }
+                    setListNames(names);
+                    setTasks(taskLists);
+                    setEvents(events);
                 } else if (data.status === "empty"){
-                    ;
+                    setListNames([]);
+                    setTasks([]);
+                    setEvents([]);
                 } else {
+                    setListNames([]);
+                    setTasks([]);
+                    setEvents([]);
                     toast.error("There has been a problem fetching the data in your pod");
                 }
             } else {
@@ -225,5 +385,138 @@ export function useInruptHandler() {
         }
     }
 
-    return { loginInrupt, getSession, logoutInrupt, getProfile, getConfiguration, updateListNames, getApplicationData, saveConfiguration };
+    const createTask = async (task:Task) => {
+        const response = await serverCheck();
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/store/tasks/create", {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    task: task
+                })
+            })
+            const data = await fetchResponse.json();
+            data.status
+            ? toast.success('Pod updated!')
+            :toast.error('There has been a problem storing your data :(');
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
+    const updateTaskDoneUndone = async (task:Task) => {
+        const response = await serverCheck()
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/store/task/done", {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    task: task
+                })
+            })
+            const data = await fetchResponse.json();
+            data.status
+            ? toast.success('Task updated!')
+            :toast.error('There has been a problem fetching your data :(');
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
+    const updateTask = async (task:Task) => {
+        const response = await serverCheck()
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/store/tasks/update", {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    task: task
+                })
+            })
+            const data = await fetchResponse.json();
+            data.status
+            ? toast.success('Task updated!')
+            :toast.error('There has been a problem updating your data :(');
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
+    const updateTaskStatus = async (task:Task) => {
+        const response = await serverCheck()
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/store/task/status", {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    task: task
+                })
+            })
+            const data = await fetchResponse.json();
+            data.status
+            ? toast.success('Task updated!')
+            :toast.error('There has been a problem updating your data :(');
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
+    const deleteTask = async (task:Task) => {
+        const response = await serverCheck()
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/store/tasks/delete", {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    task: task
+                })
+            })
+            const data = await fetchResponse.json();
+            data.status
+            ? toast.success('Task deleted!')
+            :toast.error('There has been a problem deleting your data :(');
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
+    const storeBoardColumns = async (boardColumns: string[]) => {
+        const response = await serverCheck()
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/store/boardColumns", {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    boardColumns: boardColumns
+                })
+            })
+            const data = await fetchResponse.json();
+            data.status
+            ? toast.success('Columns updated!')
+            :toast.error('There has been a problem updating your data :(');
+        } else {
+            toast.error('Server appears to be down');
+        }
+    };
+
+    return { loginInrupt, getSession, logoutInrupt, getProfile, getAllConfiguration, updateListNames, getApplicationData, saveConfiguration, getTasks, getLabels, checkConfiguration, updateTaskDoneUndone, updateTask, deleteTask, deleteList, getBoardColumns, updateTaskStatus, storeBoardColumns, createTask
+     };
 }

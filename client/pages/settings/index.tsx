@@ -20,7 +20,7 @@ export default function Settings() {
     const { getUserData } = useGithubHandler();
     const { githubLoggedIn, userData } = useGithubContext();
     const { solidSession } = useSessionContext();
-    const { getSession, getConfiguration, saveConfiguration } = useInruptHandler();
+    const { getSession, getAllConfiguration, saveConfiguration } = useInruptHandler();
 
     const router = useRouter();
     const [reRender, setRerender] = useState(Math.random());
@@ -36,7 +36,7 @@ export default function Settings() {
         } else {
             if (solidSession?.info.isLoggedIn) {
                 // INRUPT CONFIG
-                getConfiguration();
+                await getAllConfiguration();
                 // ---> GOOGLE LOGIN
                 const params = new URLSearchParams(location.search);
                 const emailParam = params.get('user');

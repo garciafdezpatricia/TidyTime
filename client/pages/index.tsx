@@ -8,7 +8,7 @@ import LogoutInrupt from "@/src/components/Login/LogoutInruptBtn";
 
 export default function MainPage() {
 
-  const { getSession, getProfile } = useInruptHandler();
+  const { getSession, getProfile, getAllConfiguration, getApplicationData } = useInruptHandler();
   const { solidSession, userName } = useSessionContext();
 
   const [reRender, setRerender] = useState(Math.random());
@@ -22,21 +22,30 @@ export default function MainPage() {
     getSessionWrapper();
   }, [reRender]);
 
-  useEffect(() => {
+  const fetchData = async () => {
     if (solidSession !== undefined && solidSession !== null) {
       if (solidSession.info.isLoggedIn){
         if (!userName) {
           getProfile();
-        } else {
-          setLoading(false);
         }
+        const podWasInitialized = await getAllConfiguration();
+        if (!podWasInitialized) { // if the pod was initialized, there are no lists/events to fetch
+          // fetch lists
+          // TODO: fetch events
+          await getApplicationData();
+        }
+        setLoading(false);
       } else {
         setLoading(false);
       }
     } else if (solidSession === null) {
       setLoading(false);
     }
-  }, [solidSession, userName])
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [solidSession])
 
   return (
     loading ?

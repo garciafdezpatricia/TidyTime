@@ -1,41 +1,49 @@
-import { useRef, useState } from "react";
-import { FaPlusCircle } from "react-icons/fa";
+import { useRef } from "react";
 import { IoIosAddCircle } from "react-icons/io";
 import { useTaskContext } from "../../Context/TaskContext";
+import { uuid } from "uuidv4";
+import { Task } from "@/src/model/Scheme";
+import { useInruptHandler } from "@/pages/api/inrupt";
 
 export default function NewTaskForm() {
 
     // use a reference instead of state: we don't want to rerender everytime we type in the input
     const newTask = useRef(null);
-    const {listNames, tasks, selectedListIndex, setListNames, setTasks} = useTaskContext();
+    const {tasks, selectedListId, setTasks} = useTaskContext();
+    const { createTask } = useInruptHandler();
 
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyPress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         // Verificar si la tecla presionada es Enter (código de tecla 13)
         if (e.key === 'Enter') {
             e.preventDefault(); // Evitar el comportamiento predeterminado de enviar el formulario
-            createNewTask();
+            await createNewTask();
         }
     };
     
-    const createNewTask = () => {
+    const createNewTask = async () => {
         // @ts-ignore
         if (newTask.current.value !== '') {
             // @ts-ignore
-            addNewTask(newTask.current.value); // Llamar a la función onSubmit pasada como prop
+            await addNewTask(newTask.current.value); // Llamar a la función onSubmit pasada como prop
             // @ts-ignore
             newTask.current.value = '';
         }
     }
 
-    const addNewTask = (e: any) => {
-		setTasks((prevTodo) => {
-			return prevTodo.map((list, index) => {
-				if (index === selectedListIndex) {
-                    return [{ title: e, done: false, listIndex: selectedListIndex, status: 0 }, ...list];
-                } 
+    const addNewTask = async (e: any) => {
+        if (tasks) {
+            const updatedTasks = [...tasks];
+            let newTask:Task = { id: uuid(), title: e, done: false, listIndex: selectedListId, status: 0 };
+            updatedTasks.map((list) => {
+                if (list.key === selectedListId) {
+                    list.value = [newTask, ...list.value];
+                    return list;
+                }
                 return list;
-            });
-        });
+            })
+            setTasks(updatedTasks);
+            await createTask(newTask);
+        }
 	}
 
     return (

@@ -9,7 +9,7 @@ import Loader from "@/src/components/Loading/Loading";
 // go to this page as /board
 export default function List() {
     const { solidSession } = useSessionContext();
-    const { getSession} = useInruptHandler();
+    const { getSession, getTasks, getLabels, getBoardColumns } = useInruptHandler();
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [reRender, setRerender] = useState(Math.random());
     const [loading, setLoading] = useState(true);
@@ -20,19 +20,27 @@ export default function List() {
     }, [reRender])
 
     useEffect(() => {
-        if (solidSession === undefined) {
-            setLoading(true);
-        } else {
-            if (!solidSession?.info.isLoggedIn) {
-                router.push("/");
-            }
-            setLoading(false);
-        }
+        fetchData();
     }, [solidSession])
 
     const handleCardClick = () => {
         setEditModalOpen(true);
     }
+
+    const fetchData = async () => {
+        if (solidSession === undefined) {
+            setLoading(true);
+        } else {
+            if (solidSession?.info.isLoggedIn) {
+                await getTasks();
+                await getLabels();
+                await getBoardColumns();
+            } else {
+                router.push("/");
+            }
+            setLoading(false);
+        }
+    };
 
     return (
         loading ?

@@ -21,11 +21,11 @@ export default function List() {
 	const [isSyncingIssues, setIsSyncingIssues] = useState(false);
 	const [loading, setLoading] = useState(false);
 
-	const {setSelectedTaskIndex, listNames, setListNames, tasks, setTasks} = useTaskContext();
+	const {setSelectedTaskId, listNames, setListNames, tasks, setTasks, selectedListId, setSelectedListId } = useTaskContext();
 	const { getUserData, getIssuesOfUser } = useGithubHandler();
 	const { githubLoggedIn, userData } = useGithubContext();
 	const { solidSession } = useSessionContext();
-	const { getSession, getApplicationData } = useInruptHandler();
+	const { getSession, getLabels, getTasks } = useInruptHandler();
 	const router = useRouter();
 
 	const getSessionWrapper = async () => {
@@ -33,12 +33,10 @@ export default function List() {
 	}
 
 	useEffect(() => {
-		console.log("rerender");
 		getSessionWrapper();
 	}, [reRender])
 
 	useEffect(() => {
-		console.log("solidSession");
 		checkAuth();
 		if (solidSession?.info.isLoggedIn && firstRender) {
 			fetchData();
@@ -47,12 +45,12 @@ export default function List() {
 	}, [solidSession])
 
 	useEffect(() => {
-		console.log(listNames);
-		console.log(tasks);
+		if (listNames && listNames.length > 0 && selectedListId === '' && tasks && tasks.length > 0 && tasks[0]) {
+			setSelectedListId(tasks[0].key);
+		}
 	}, [listNames, tasks])
 
 	useEffect(() => {
-		console.log(listNames);
 		if (listNames !== undefined) {
 			setLoading(false);
 		}
@@ -83,15 +81,16 @@ export default function List() {
 				}
 			}
 		}
-		await getApplicationData();
+		await getLabels();
+		await getTasks();
 	};
 	
 	/**
 	 * Sets the selected task index to the index of the task being selected. Opens/closes edit modal
 	 * @param index contains the task index
 	 */
-	const handleEditModal = (index:number) => {
-		setSelectedTaskIndex(index);
+	const handleEditModal = (id:string) => {
+		setSelectedTaskId(id);
 		setIsEditingTaskModalOpen(true);
 	}
 
@@ -110,6 +109,7 @@ export default function List() {
 					if (!lists.includes(repo)) {
 						lists = [...lists, repo];
 					}
+					// TODO:
 					// if there's no task list created for this list, add it
 					const listIndex = lists.indexOf(repo);
 					if (!tasklists[listIndex]) {

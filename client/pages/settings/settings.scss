@@ -1,9 +1,9 @@
-@use "../../styles/variables" as var;
+@use "../../styles/variables" as *;
 
 .settings-container {
-    width: var.$view-width;
+    width: $view-width;
     height: 100%;
-    padding: var.$view-padding;
+    padding: $view-padding;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -16,4 +16,9 @@
     justify-content: center;
     outline: none;
     border: none;
+    background-color: $light-blue;
+    color: $black;
+    &:hover {
+        background-color: $medium-green;
+    }
 }

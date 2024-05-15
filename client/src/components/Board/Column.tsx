@@ -5,6 +5,7 @@ import { useState } from "react";
 import PromptModal from "../Modal/PromptModal/PromptModal";
 import {v4 as uuid} from 'uuid';
 import Card from "./Card";
+import { useInruptHandler } from "@/pages/api/inrupt";
 
 export interface ColumnProps {
     sectionWidth: number,
@@ -18,6 +19,7 @@ export interface ColumnProps {
 export default function Column({sectionWidth, content, index, name, handleMoveTask, handleCardClick} : ColumnProps) {
 
     const {listNames, setBoardColumns, boardColumns, tasks, setTasks} = useTaskContext();
+    const {storeBoardColumns} = useInruptHandler();
 
     const [managingListIndex, setManagingListIndex] = useState(-1);
     const [renameListName, setRenameListName] = useState("");
@@ -27,12 +29,11 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
         setManagingListIndex(index);
     }
 
-    const renameList = () => {
-        setBoardColumns((prevColumns) => {
-			const newColumns = [...prevColumns];
-			newColumns[index] = renameListName;
-			return newColumns;
-		});
+    const renameList = async () => {
+        let newColumns = [...boardColumns];
+        newColumns[index] = renameListName;
+        setBoardColumns(newColumns);
+        await storeBoardColumns(newColumns);
 		setRenameListName("");
 		setManagingListIndex(-1);
     }
@@ -41,24 +42,25 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
 		setRenameListName(name);
 	}
 
-    const deleteColumn = () => {
-        if (boardColumns.length > 0) {
-            let updatedTasks = [...tasks];
+    const deleteColumn = async () => {
+        if (boardColumns && boardColumns.length > 0) {
+            let updatedTasks = tasks ? [...tasks] : [];
             if (boardColumns.length === 1) {
                 // erase all columns
                 setBoardColumns([]);
+                await storeBoardColumns([]);
                 updatedTasks.forEach((tasklist) => {
-                    tasklist.forEach((task) => {
+                    tasklist.value.forEach((task) => {
                         task.status = 0;
                     })
                 })
             } else {
                 // erase that column
-                setBoardColumns((prevColumns) => {
-                    return prevColumns.filter((_, i) => i !== index);
-                })
+                const newColumns = boardColumns.filter((_, i) => i !== index);
+                setBoardColumns(newColumns);
+                await storeBoardColumns(newColumns)
                 updatedTasks.forEach((tasklist) => {
-                    tasklist.forEach((task) => {
+                    tasklist.value.forEach((task) => {
                         if (task.status === index) {
                             task.status = 0;
                         }
@@ -114,7 +116,7 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
             {isConfirmationDeleteModalOpen && (
 				<PromptModal
 					title="Are you sure you want to delete this list? This action can't be undone"
-					onPrimaryAction={() => deleteColumn()}
+					onPrimaryAction={async () => await deleteColumn()}
 					primaryActionText='Delete'
 					secondaryActionText='Cancel'
 					onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}

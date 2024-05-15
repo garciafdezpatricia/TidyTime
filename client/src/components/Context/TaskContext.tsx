@@ -9,12 +9,12 @@ export interface ITaskContext {
     tasks: TaskList[] | undefined,
     labels: Label[] | undefined,
     setLabels: React.Dispatch<React.SetStateAction<Label[] | undefined>>,
-    selectedListIndex: number,
-    selectedTaskIndex: number,
+    selectedListId: string,
+    selectedTaskId: string,
     setListNames: React.Dispatch<React.SetStateAction<string[] | undefined>>,
     setTasks: React.Dispatch<React.SetStateAction<TaskList[] | undefined>>,
-    setSelectedListIndex: React.Dispatch<React.SetStateAction<number>>,
-    setSelectedTaskIndex: React.Dispatch<React.SetStateAction<number>>,
+    setSelectedListId: React.Dispatch<React.SetStateAction<string>>,
+    setSelectedTaskId: React.Dispatch<React.SetStateAction<string>>,
     boardColumns: string[] | undefined,
     setBoardColumns: React.Dispatch<React.SetStateAction<string[] | undefined>>,
     showTasksInCalendar: boolean,
@@ -29,12 +29,12 @@ const defaultContext: ITaskContext ={
     tasks: listofTasklists,
     labels: undefined,
     setLabels: () => {},
-    selectedListIndex: 0,
-    selectedTaskIndex: -1,
+    selectedListId: '',
+    selectedTaskId: '',
     setListNames: () => {},
     setTasks: () => {},
-    setSelectedListIndex: () => {},
-    setSelectedTaskIndex: () => {},
+    setSelectedListId: () => {},
+    setSelectedTaskId: () => {},
     boardColumns: undefined,
     setBoardColumns: () => {},
     showTasksInCalendar: true,
@@ -63,14 +63,14 @@ export interface ITaskContextProvider {
 export function TaskProvider({children} : ITaskContextProvider) {
     const [listNames, setListNames] = useState(defaultContext.listNames);
     const [tasks, setTasks] = useState(defaultContext.tasks);
-    const [selectedListIndex, setSelectedListIndex] = useState(defaultContext.selectedListIndex);
-    const [selectedTaskIndex, setSelectedTaskIndex] = useState(defaultContext.selectedTaskIndex);
+    const [selectedListId, setSelectedListId] = useState(defaultContext.selectedListId);
+    const [selectedTaskId, setSelectedTaskId] = useState(defaultContext.selectedTaskId);
     const [boardColumns, setBoardColumns] = useState(defaultContext.boardColumns);
     const [labels, setLabels] = useState(defaultContext.labels);
     const [showTasksInCalendar, setshowTasksInCalendar] = useState(defaultContext.showTasksInCalendar);
 
-    const value ={listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, 
-        labels, setLabels, selectedTaskIndex, setSelectedTaskIndex, boardColumns, setBoardColumns, showTasksInCalendar, setshowTasksInCalendar};
+    const value ={listNames, tasks, selectedListId, setListNames, setTasks, setSelectedListId, 
+        labels, setLabels, selectedTaskId, setSelectedTaskId, boardColumns, setBoardColumns, showTasksInCalendar, setshowTasksInCalendar};
 
     
     return (

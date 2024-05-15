@@ -26,8 +26,8 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
         }
     };
 
-    const handleRename = () => {
-        onRenameAction();
+    const handleRename = async () => {
+        await onRenameAction();
         // @ts-ignore
         nameInput.current.value = "";
         setNewName("");

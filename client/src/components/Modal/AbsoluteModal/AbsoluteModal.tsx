@@ -41,7 +41,7 @@ export default function MoveModal({options, onClick, columnIndex, cardIndex, onC
                         return (
                             <div key={uuid()} className="move-button">
                                 <button 
-                                    onClick={() => onClick(index)} 
+                                    onClick={async () => await onClick(index)} 
                                     onMouseOver={() => handleHoverOn(index)}
                                     onMouseOut={() => handleHoverOff()}>
                                     {option}
