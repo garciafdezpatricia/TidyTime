@@ -10,8 +10,6 @@ const { addStringNoLocale, createThing, getSolidDataset, createContainerAt,
     removeThing} = require("@inrupt/solid-client")
 const { Session, getSessionFromStorage } = require("@inrupt/solid-client-authn-node");
 const { foaf, vcard } = require('rdf-namespaces');
-const { dataset } = require("rdf-namespaces/dist/schema");
-
 
 const router = express.Router();
 
@@ -51,10 +49,15 @@ const EVENT_GID = "https://example.com/googleId";
 const EVENT_GCALENDAR = "https://example.com/googleCalendar";
 const EVENT_GHTML = "https://example.com/googleHtml";
 
-// FUNCTIONS
-
-async function getNameFromWebId(webId, dataset) {
-    const webIdThing = await getThing(dataset, webId);
+/**
+ * Get the user name from the webId dataset
+ * @param {} webId contains the webId URL
+ * @param {*} dataset corresponds to the dataset containing the webId
+ * @returns the name present in the WebId document if any. It returns null in case
+ * no name is found for foaf.name or vcard.fn predicates
+ */
+function getNameFromWebId(webId, dataset) {
+    const webIdThing = getThing(dataset, webId);
     const namePredicates = [foaf.name, vcard.fn]; 
     const userName = namePredicates.reduce((acc, predicate) =>
         acc ??
@@ -66,8 +69,8 @@ async function getNameFromWebId(webId, dataset) {
 }
 
 /**
- * Create the root container if it doesn't already exist in the user's pod.
- * @param {*} session 
+ * Create the root container in the user Pod for the Application if it doesn't already exist in the user's pod.
+ * @param {*} session corresponds to the session from which the pod is going to be extracted.
  * @returns true if it created the container, false otherwise.
  */
 async function createRootContainer(session) {
@@ -82,12 +85,17 @@ async function createRootContainer(session) {
     }
 }
 
+/**
+ * Poblates the root container in the user Pod for the Application with the initial needed information. This information
+ * would be the default configuration and the [[Thing]] which will keep the record of tasks.
+ * @param {*} session contains the session of the user.
+ */
 async function poblateRootContainer(session) {
     try {
         if (session) {
             const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
             const rootStorage = `${storage}/TidyTime`;
-
+            // dataset containing the default configuration
             let dataset = createSolidDataset();
             const configThing = buildThing(createThing({ name: "configuration" }))
             .addStringNoLocale(CALENDAR_VIEW, "month")
@@ -118,7 +126,7 @@ async function poblateRootContainer(session) {
             dataset = setThing(dataset, label2);
             dataset = setThing(dataset, label3);
             await saveSolidDatasetAt(`${rootStorage}/config`, dataset, {fetch: session.fetch});
-
+            // dataset for the task record
             let taskRecordDataset = createSolidDataset();
             const taskRecordThing = buildThing(createThing({ name: "taskRecord" }))
             .addUrl(TASK_RECORD, TASK_RECORD)
@@ -131,12 +139,18 @@ async function poblateRootContainer(session) {
     }
 }
 
+/**
+ * Retrieves the configuration stored for the Application.
+ * @param {*} session contains the session of the user.
+ * @returns object containing the configuration as its properties: calendarView:string, showTasksInCalendar:bool, weekStart:int,
+ * boardColumns:string[] and labels: { color: string, name: string }[].
+ */
 async function getApplicationConfiguration(session) {
     try {
         if (session) {
             const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
             const rootStorage = `${storage}/TidyTime`;
-
+            // configuration dataset
             const dataset = await getSolidDataset(`${rootStorage}/config`, {fetch: session.fetch});
             const things = getThingAll(dataset);
             const configThing = things.filter((thing) => thing.url.includes("#configuration"))[0];
@@ -166,13 +180,24 @@ async function getApplicationConfiguration(session) {
     }
 }
 
+/**
+ * Stores the Application configuration in the user's pod.
+ * @param {*} session contains the session of the user.
+ * @param {*} labels contains the task labels to be stored: { color: string, name: string }[].
+ * @param {*} showTasksInCalendar contains the whether tasks with date are wanted to be shown in the calendar: boolean.
+ * @param {*} boardColumns contains the columns of the board: string[].
+ * @param {*} weekStart contains the starting week day for the calendar: int.
+ * @param {*} calendarView contains the default calendar view: string.
+ * @returns true if the configuration was correctly stored, false otherwise.
+ */
 async function storeApplicationConfiguration(session, labels, showTasksInCalendar, boardColumns, weekStart, calendarView ) {
     try {
         if (session) {
             const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
             const rootStorage = `${storage}/TidyTime`;
-
+            // delete the current configuration dataset
             await deleteSolidDataset(`${rootStorage}/config`, {fetch: session.fetch});
+            // create new configuration dataset with new values
             let dataset = createSolidDataset();
             let configThing = buildThing(createThing({ name: "configuration" }))
             .addStringNoLocale(CALENDAR_VIEW, calendarView)
@@ -180,7 +205,6 @@ async function storeApplicationConfiguration(session, labels, showTasksInCalenda
             .addInteger(WEEK_START, weekStart)
             .addUrl(CONFIG_OBJECT, CONFIG_OBJECT)
             .build();
-
             configThing = boardColumns.reduce((configThing, column) => {
                 configThing = addStringNoLocale(configThing, BOARD_COLUMN, column);
                 return configThing;
@@ -206,13 +230,17 @@ async function storeApplicationConfiguration(session, labels, showTasksInCalenda
     }
 }
 
-// board columns
+/**
+ * Retrieves the board columns from the user's pod.
+ * @param {*} session contains the session of the user.
+ * @returns object with board columns { boardColumns: string[] }.
+ */
 async function getBoardColumnsConfiguration(session) {
     try {
         if (session) {
             const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
             const rootStorage = `${storage}/TidyTime`;
-
+            // get the board columns from the config dataset
             const dataset = await getSolidDataset(`${rootStorage}/config`, {fetch: session.fetch});
             const things = getThingAll(dataset);
             const configThing = things.filter((thing) => thing.url.includes("#configuration"))[0];
@@ -229,6 +257,12 @@ async function getBoardColumnsConfiguration(session) {
     }
 }
 
+/**
+ * Stores the board columns in the user's pod
+ * @param {*} session contains the user's session
+ * @param {*} boardColumns contains the board columns to be stored: string[]
+ * @returns 
+ */
 async function storeBoardColumns(session, boardColumns) {
     try {
         if (session) {
@@ -778,7 +812,7 @@ router.get("/solid/user/profile", async function (req, res) {
         if (session) {
             const webId = session.info.webId;
             const dataset = await getSolidDataset(webId, {fetch: fetch});
-            let result = await getNameFromWebId(webId, dataset);
+            let result = getNameFromWebId(webId, dataset);
             // if result is null, that means the webId dataset does not have the any name predicate.
             // in that case, we navigate through all the predicates to check if the name is in any of them.
             if (!result) {
