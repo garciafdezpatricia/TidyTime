@@ -15,7 +15,7 @@ export default function Inrupt() {
                 </section>
                 <section className="inrupt-login-body">
                     <h2>Welcome to TidyTime!</h2>
-                    <p>TidyTime works with Solid pods, ensuring no user data is stored. Log in to your Inrupt Solid pod to start using the app.</p>
+                    <p>TidyTime works with Solid PODs, ensuring your data is only controlled by you. Log in to your Inrupt Solid POD and start using the app!</p>
                     <button onClick={loginInrupt}>LOGIN</button>
                 </section>
                 <section className="inrupt-login-footer">

@@ -3,7 +3,7 @@ import Column from "./Column";
 import { useTaskContext } from "../Context/TaskContext";
 import MoveModal from "../Modal/AbsoluteModal/AbsoluteModal";
 import { BiAddToQueue } from "react-icons/bi";
-import { Task, TaskList } from "@/src/model/Scheme";
+import { Task } from "@/src/model/Scheme";
 import { useInruptHandler } from "@/pages/api/inrupt";
 
 
@@ -27,18 +27,20 @@ export default function Board({handleCardClick} : Props) {
     }, [boardColumns])
 
     useEffect(() => {
-        mapTasksToColumns();
+        if (tasks) {
+            mapTasksToColumns();
+        }
     }, [tasks]);
 
 
     const mapTasksToColumns = () => {
-        let result: Task[][] = [[]];
-        tasks?.forEach((taskList, listIndex) => {
+        let result: Task[][] = [];
+        tasks.forEach((taskList, listIndex) => {
             taskList.value.forEach((task, taskIndex) => {
                 if (!result[task.status]) {
                     result[task.status] = [];
                 }
-                result[task.status].push({...task, taskIndexInList: taskIndex});
+                result[task.status].push({...task}); // TODO: ahora no hace falta esto porque las tasks tienen un id no?
             })
         })
         setBoardItems(result);
@@ -54,7 +56,7 @@ export default function Board({handleCardClick} : Props) {
             const newTasks = [...tasks];
             const listIndex = tasks.findIndex((list) => list.key === selectedListId);
             const taskIndex = tasks[listIndex].value.findIndex((task) => task.id === selectedTaskId);
-            const taskToMove = {...tasks[listIndex].value[taskIndex]};
+            let taskToMove = {...tasks[listIndex].value[taskIndex]};
             taskToMove.status = target;
             await updateTaskStatus(taskToMove);
             newTasks[listIndex].value = [
@@ -88,7 +90,7 @@ export default function Board({handleCardClick} : Props) {
             </section>
             <section className={boardColumns && boardColumns.length > 0 ? "board-board" : "board-board-empty"}>
                 {
-                    boardColumns && boardColumns.length > 0 ?
+                    boardColumns && boardColumns.length > 0 && boardItems ?
                     boardColumns.map((column, index) => {
                         return (
                             <Column 

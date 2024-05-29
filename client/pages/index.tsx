@@ -26,11 +26,10 @@ export default function MainPage() {
     if (solidSession !== undefined && solidSession !== null) {
       if (solidSession.info.isLoggedIn){
         if (!userName) {
-          getProfile();
+          await getProfile();
         }
         const podWasInitialized = await getAllConfiguration();
         if (!podWasInitialized) { // if the pod was initialized, there are no lists/events to fetch
-          // fetch lists
           // TODO: fetch events
           await getApplicationData();
         }

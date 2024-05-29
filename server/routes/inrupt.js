@@ -4,14 +4,13 @@ const { addStringNoLocale, createThing, getSolidDataset, createContainerAt,
     getThing, getStringNoLocale, getNamedNode, getAltProfileUrlAllFrom, 
     getPodUrlAll,  buildThing, createSolidDataset, setThing,
     saveSolidDatasetAt, getInteger, getStringNoLocaleAll, getBoolean, 
-    getThingAll,
-    removeAll,
-    deleteSolidDataset,
-    removeThing} = require("@inrupt/solid-client")
+    getThingAll, removeAll, deleteSolidDataset, removeThing} = require("@inrupt/solid-client");
 const { Session, getSessionFromStorage } = require("@inrupt/solid-client-authn-node");
 const { foaf, vcard } = require('rdf-namespaces');
+const { InMemoryStorage } = require("@inrupt/solid-client-authn-core");
 
 const router = express.Router();
+const storage = new InMemoryStorage();
 
 // vocab
 const CONFIG_OBJECT = "https://example.com/configuration";
@@ -344,7 +343,7 @@ async function getTask(session, taskId) {
             const githubHtml = getStringNoLocale(taskThing, TASK_GHHTML) ?? "";
             const githubUrl = getStringNoLocale(taskThing, TASK_GHURL) ?? "";
             const status = getInteger(taskThing, TASK_STATUS) ?? 0;
-            result = { id: id, title: title, desc: desc, date: date, difficulty: difficulty,
+            result = { id: id, title: title, desc: desc, endDate: date, difficulty: difficulty,
                 done: done, important: important, listIndex: listIndex, githubHtml: githubHtml,
                 githubUrl: githubUrl, status: status
             };
@@ -369,18 +368,18 @@ async function getApplicationData(session) {
     try {
         if (session) {
             let tasks = [];
-            console.log("estoy dentro de getApplicationData?");
+            let listNames = [];
             const taskResponse = await getTasks(session);
             if (taskResponse.status === "success") {
-                console.log("las tasks son", tasks);
-                tasks = taskResponse.data;
+                tasks = taskResponse.data.tasks;
+                listNames = taskResponse.data.listNames;
             }
             let events = [];
             const eventResponse = await getEvents(session);
             if (eventResponse.status === "success") {
                 events = eventResponse.events;
             }
-            return { status: "success", tasks: tasks, events: events };
+            return { status: "success", tasks: {tasks: tasks, listNames: listNames}, events: events };
         }
     } catch (error) {
         console.log("hola");
@@ -427,7 +426,7 @@ async function getTasks(session) {
             const rootStorage = `${storage}/TidyTime`;
 
             const dataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
-            const things = await getThingAll(dataset);
+            const things = getThingAll(dataset);
             const listNamesThings = things.filter((thing) => thing.url.includes("#listName"));
             const listNames = listNamesThings.map((thing) => {
                 const name = getStringNoLocale(thing, LIST_NAME);
@@ -457,11 +456,12 @@ async function getTasks(session) {
 }
 
 async function createTaskThing(task) {
+    console.log("task to update", task);
     let newTask = buildThing(createThing({name: "task"}))
     .addStringNoLocale(TASK_ID, task.id)
     .addStringNoLocale(TASK_TITLE, task.title)
     .addStringNoLocale(TASK_DESC, task.desc ?? "")
-    .addStringNoLocale(TASK_DATE, task.date ?? "")
+    .addStringNoLocale(TASK_DATE, task.endDate ?? "")
     .addStringNoLocale(TASK_GHHTML, task.html ?? "")
     .addStringNoLocale(TASK_GHURL, task.url ?? "")
     .addInteger(TASK_DIFFICULTY, task.difficulty ?? 0)
@@ -557,7 +557,8 @@ async function updateTask(session, task, updateAll) {
                 if (taskThing) {
                     taskThing = removeAll(taskThing, TASK_DONE);
                     taskThing = buildThing(taskThing)
-                    .addBoolean(TASK_DONE, task.done);
+                    .addBoolean(TASK_DONE, task.done)
+                    .build();
                     taskDataset = setThing(taskDataset, taskThing);
                     await saveSolidDatasetAt(`${rootStorage}/tasks/${task.id}`, taskDataset, {fetch: session.fetch});
                 }           
@@ -576,14 +577,16 @@ async function updateTaskStatus(session, task) {
             const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
             const rootStorage = `${storage}/TidyTime`;
             let taskDataset = await getSolidDataset(`${rootStorage}/tasks/${task.id}`, {fetch: session.fetch});
-            let taskThing = getThing(taskDataset, TASK);
+            let things = getThingAll(taskDataset);
+            let taskThing = things.filter((thing) => thing.url.includes("#task"))[0];
             if (taskThing) {
                 taskThing = removeAll(taskThing, TASK_STATUS);
                 taskThing = buildThing(taskThing)
-                .addInteger(TASK_STATUS, task.status);
+                .addInteger(TASK_STATUS, task.status)
+                .build();
                 taskDataset = setThing(taskDataset, taskThing);
+                await saveSolidDatasetAt(`${rootStorage}/tasks/${task.id}`, taskDataset, {fetch: session.fetch});
             }           
-            await saveSolidDatasetAt(`${rootStorage}/tasks/${task.id}`, taskDataset, {fetch: session.fetch});
             return true;
         } catch (error) {
             console.log(error);
@@ -753,17 +756,15 @@ async function storeListNames(session, listNames) {
 
 router.get("/solid/login", async function (req, res) {
     try {
-        const session = new Session();
+        const session = new Session({storage: storage, keepAlive: false});
         res.cookie("inruptSessionId", session.info.sessionId, {
             secure: true,
             httpOnly: true,
             sameSite: "none"
         });
-
         const redirectToIDP = (url) => {
             res.redirect(url);
         }
-
         await session.login({
             redirectUrl: "http://localhost:8080/solid/login/callback",
             oidcIssuer: "https://login.inrupt.com",
@@ -777,9 +778,8 @@ router.get("/solid/login", async function (req, res) {
 
 router.get("/solid/login/callback", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         await session.handleIncomingRedirect(`http://localhost:8080${req.url}`);
-
         if (session.info.isLoggedIn) {
             res.cookie("webId", session.info.webId, {
                 secure: true,
@@ -795,7 +795,7 @@ router.get("/solid/login/callback", async function (req, res) {
 
 router.get("/solid/user/session", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         if (session) {
             res.send({status: true, session: session});
         } else {
@@ -808,12 +808,12 @@ router.get("/solid/user/session", async function (req, res) {
 
 router.get("/solid/user/profile", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         if (session) {
             const webId = session.info.webId;
             const dataset = await getSolidDataset(webId, {fetch: fetch});
             let result = getNameFromWebId(webId, dataset);
-            // if result is null, that means the webId dataset does not have the any name predicate.
+            // if result is null, that means the webId dataset does not have any name predicate.
             // in that case, we navigate through all the predicates to check if the name is in any of them.
             if (!result) {
                 result = await Promise.any(getAltProfileUrlAllFrom(webId, dataset).map(
@@ -833,7 +833,7 @@ router.get("/solid/user/profile", async function (req, res) {
 
 router.get("/solid/logout", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         session.logout();
         res.send({status: true, data: "Succesfully logged out"});
     } catch (error) {
@@ -843,7 +843,7 @@ router.get("/solid/logout", async function (req, res) {
 
 router.get("/solid/configuration", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const poblate = await createRootContainer(session);
         if (poblate) {
             await poblateRootContainer(session);
@@ -860,12 +860,12 @@ router.get("/solid/configuration", async function (req, res) {
     } catch (error) {
         console.log(error);
     }
-})
+});
 
 // check if the config dataset exists
 router.get("/solid/configuration/health-check", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const poblate = await createRootContainer(session);
         if (poblate) {
             await poblateRootContainer(session);
@@ -882,7 +882,7 @@ router.get("/solid/configuration/health-check", async function (req, res) {
 // get calendar view, week start and show tasks
 router.get("/solid/configuration/calendar", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         try {
             const configuration = await getCalendarConfiguration(session);
             res.send({status: "retrieved" , calendarConfiguration: configuration});
@@ -898,12 +898,13 @@ router.get("/solid/configuration/calendar", async function (req, res) {
 // get board columns
 router.get("/solid/configuration/board", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         if (session) {
             const configuration = await getBoardColumnsConfiguration(session);
             res.send({status: true , data: configuration});
+        } else {
+            res.send({status: false});
         }        
-        res.send({status: false});
     } catch (error) {
         console.log(error);
         res.send({status: false});
@@ -912,7 +913,7 @@ router.get("/solid/configuration/board", async function (req, res) {
 
 router.post("/solid/configuration/store", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const labels = req.body.labels;
         const showTasksInCalendar = req.body.showTasksInCalendar;
         const boardColumns = req.body.boardColumns;
@@ -928,7 +929,7 @@ router.post("/solid/configuration/store", async function (req, res) {
 
 router.post("/solid/data/store/listNames", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const listNames = req.body.listNames;
         const result = await storeListNames(session, listNames);
         res.send({status: result});
@@ -940,7 +941,7 @@ router.post("/solid/data/store/listNames", async function (req, res) {
 
 router.post("/solid/data/store/lists/delete", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const listNames = req.body.listNames;
         const tasksIds = req.body.tasksIds;
         const deleteResult = await deleteList(session, tasksIds);
@@ -954,7 +955,7 @@ router.post("/solid/data/store/lists/delete", async function (req, res) {
 
 router.post("/solid/data/store/boardColumns", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const boardColumns = req.body.boardColumns;
         const result = await storeBoardColumns(session, boardColumns);
         res.send({status: result});
@@ -966,7 +967,7 @@ router.post("/solid/data/store/boardColumns", async function (req, res) {
 
 router.post("/solid/data/store/tasks/create", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const task = req.body.task;
         const result = await createTask(session, task);
         res.send({status: result});
@@ -978,7 +979,7 @@ router.post("/solid/data/store/tasks/create", async function (req, res) {
 
 router.post("/solid/data/store/task/done", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const task = req.body.task;
         const result = await updateTask(session, task, false);
         res.send({status: result});
@@ -990,7 +991,7 @@ router.post("/solid/data/store/task/done", async function (req, res) {
 
 router.post("/solid/data/store/task/status", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const task = req.body.task;
         const result = await updateTaskStatus(session, task);
         res.send({status: result});
@@ -1002,7 +1003,7 @@ router.post("/solid/data/store/task/status", async function (req, res) {
 
 router.post("/solid/data/store/tasks/update", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const task = req.body.task;
         const result = await updateTask(session, task, true);
         res.send({status: result});
@@ -1014,7 +1015,7 @@ router.post("/solid/data/store/tasks/update", async function (req, res) {
 
 router.post("/solid/data/store/tasks/delete", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const task = req.body.task;
         const result = await deleteTask(session, task);
         res.send({status: result});
@@ -1031,7 +1032,7 @@ router.post("/solid/data/store/events", async function (req, res) {
 // get all data
 router.get("/solid/data/get", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const result = await getApplicationData(session);
         if (result.status === "success") {
             res.send({status: "success", data: result});
@@ -1049,7 +1050,7 @@ router.get("/solid/data/get", async function (req, res) {
 // get labels
 router.get("/solid/data/labels/get", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const result = await getLabels(session);
         if (result && result.length > 0) {
             res.send({status: "success", data: result});
@@ -1065,7 +1066,7 @@ router.get("/solid/data/labels/get", async function (req, res) {
 // get tasks
 router.get("/solid/data/tasks/get", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const result = await getTasks(session);
         res.send({status: result.status, data: result});
     } catch (error) {
@@ -1076,7 +1077,7 @@ router.get("/solid/data/tasks/get", async function (req, res) {
 // get events
 router.get("/solid/data/events/get", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const result = await getEvents(session);
         return result;
     } catch (error) {
@@ -1084,6 +1085,5 @@ router.get("/solid/data/events/get", async function (req, res) {
         return {status: "fail"};
     }
 })
-
 
 module.exports = router;

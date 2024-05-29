@@ -20,7 +20,6 @@ export interface Props {
 export default function EditTaskModal({onClose, isOpen} : Props) {
 
     const {tasks, selectedListId, setTasks, labels, selectedTaskId, setSelectedTaskId} = useTaskContext();
-    const taskToEdit = tasks?.find((list) => list.key === selectedListId)?.value.find((task) => task.id === selectedTaskId);
 
     const [newTitle, setNewTitle] = useState("");
     const [newDesc, setNewDesc] = useState("");
@@ -29,6 +28,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
     const [important, setImportant] = useState(false);
     const [newLabels, setLabels] = useState<Label[]>([]);
     const [newStatus, setNewStatus] = useState(false);
+    const [taskToEdit, setTaskToEdit] = useState<any>(null);
     
     const [isDeleting, setConfirmationDeleteModalOpen] = useState(false);
 
@@ -45,6 +45,16 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
             setNewStatus(taskToEdit.done);
         }
     }, [taskToEdit])
+
+    useEffect(() => {
+        if (tasks) {
+            const list = tasks.find((list) => list.key === selectedListId);
+            if (list) {
+                const task = list.value.find((task) => task.id === selectedTaskId);
+                setTaskToEdit(task);
+            }
+        }
+    }, [tasks])
 
     const onCancel = () => {
         if (taskToEdit) {

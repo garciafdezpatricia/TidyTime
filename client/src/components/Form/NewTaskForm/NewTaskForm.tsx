@@ -24,9 +24,11 @@ export default function NewTaskForm() {
         // @ts-ignore
         if (newTask.current.value !== '') {
             // @ts-ignore
-            await addNewTask(newTask.current.value); // Llamar a la función onSubmit pasada como prop
+            let value = newTask.current.value;
             // @ts-ignore
             newTask.current.value = '';
+            // @ts-ignore
+            await addNewTask(value); // Llamar a la función onSubmit pasada como prop
         }
     }
 

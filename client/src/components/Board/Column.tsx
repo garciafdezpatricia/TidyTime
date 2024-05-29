@@ -97,7 +97,7 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
             </div>
             <div className="board-column-content">
                 {
-                    content.map((card, cardIndex) => {
+                    content && content.map((card, cardIndex) => {
                         return (
                             <Card 
                                 cardIndex={cardIndex} 
@@ -106,7 +106,7 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
                                 columnIndex={index} 
                                 key={uuid()}
                                 handleMoveTask={handleMoveTask}
-                                taskIndexinList={card.taskIndexInList}
+                                taskId={card.id}
                                 handleCardClick={handleCardClick}
                             />
                         )

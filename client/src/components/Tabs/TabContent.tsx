@@ -86,7 +86,11 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
                 )
             ) || [];
             setFilterApplied(filter);
-            const mergedTasks = tasks ? [...tasks] : [];
+            // duplicate tasks array to avoid references errors
+            let mergedTasks = tasks ? tasks.map(taskList => ({
+                ...taskList,
+                value: taskList.value.map(task => ({ ...task }))
+            })) : [];
             mergedTasks[listIndex].value = filteredTaskList;
             setTasksToShow(mergedTasks);
         } else {
@@ -98,7 +102,7 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
     const sortByDate = () => {
         if (tasks) {
             const listIndex = tasks.findIndex((list) => list.key === selectedListId);
-            const orderedTaskList = tasks[listIndex]?.value.
+            const orderedTaskList = tasks[listIndex].value.
             sort((task1, task2) => {
                 if (task1.endDate && task2.endDate) {
                     return new Date(task1.endDate).getTime() - new Date(task2.endDate).getTime();
@@ -118,7 +122,7 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
 
     const sortByDifficulty = () => {
         if (tasks) {
-            const index = tasks?.findIndex((list) => list.key === selectedListId);
+            const index = tasks.findIndex((list) => list.key === selectedListId);
             const orderedTaskList = tasks[index].value.
                 sort((task1, task2) => {
                     if (task1.difficulty && task2.difficulty) {
@@ -143,7 +147,7 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
         } else {
             setTasksToShow(tasks);
         }
-    }, [tasks, tasksToShow]);
+    }, [tasks]);
 
     return (
         <section className={tasks && tasks.length > 0 ? 'tab-content-container': 'tab-content-empty'}>

@@ -1,36 +1,45 @@
 import { TbArrowMoveRight } from "react-icons/tb";
 import { useTaskContext } from "../Context/TaskContext";
+import { useEffect, useState } from "react";
 
 export interface CardProps {
     cardIndex: number; // card index
     title: string,
     list: string, // task list name
-    taskIndexinList: number,
+    taskId: string,
     columnIndex: number,
     handleMoveTask: (arg?:any, arg2?:any) => void | any;
     handleCardClick: (arg?:any) => void | any;
 }
 
-export default function Card({cardIndex, title, list, columnIndex, handleMoveTask, taskIndexinList, handleCardClick} : CardProps) {
+export default function Card({cardIndex, title, list, columnIndex, handleMoveTask, taskId, handleCardClick} : CardProps) {
 
     const {listNames, setSelectedListId, setSelectedTaskId, tasks} = useTaskContext();
+    const [reRender, setRerender] = useState(Math.random());
+    const [listIndex, setListIndex] = useState(-1);
 
-    const listIndex = tasks?.findIndex((l) => l.key === list) ?? -1;
+    useEffect(() => {
+        if (tasks) {
+            setListIndex(tasks.findIndex((l) => l.key === list) ?? -1);
+        }
+    }, [tasks, list])
 
     const handleMovingTask = () => {
-        if (tasks) {
+        if (tasks && listIndex !== -1) {
             setSelectedListId(list);
-            const taskIndex = tasks[listIndex].value.findIndex((task) => task.taskIndexInList === taskIndexinList) ?? -1;
-            setSelectedTaskId(tasks[listIndex].value[taskIndex].id);
+            //const taskIndex = tasks[listIndex].value.findIndex((task) => task.id === taskId) ?? -1;
+            setSelectedTaskId(taskId);
             handleMoveTask(columnIndex);
         }
     }
 
     const handleCard = () => {
-        if (tasks) {
+        console.log("pase por aqui  y tasks es ", tasks);
+        console.log("pase por aqui  y listIndex es ", listIndex);
+        if (tasks !== undefined && listIndex !== -1) {
             setSelectedListId(list);
-            const taskIndex = tasks[listIndex].value.findIndex((task) => task.taskIndexInList === taskIndexinList) ?? -1;
-            setSelectedTaskId(tasks[listIndex].value[taskIndex].id);
+            //const taskIndex = tasks[listIndex].value.findIndex((task) => task.taskIndexInList === taskIndexinList) ?? -1;
+            setSelectedTaskId(taskId);
             handleCardClick()
         }
     }

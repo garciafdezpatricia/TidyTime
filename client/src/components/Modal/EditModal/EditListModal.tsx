@@ -28,8 +28,10 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
 
     const handleRename = async () => {
         await onRenameAction();
-        // @ts-ignore
-        nameInput.current.value = "";
+        if (nameInput.current) {
+            // @ts-ignore
+            nameInput.current.value = "";
+        }
         setNewName("");
     }
 

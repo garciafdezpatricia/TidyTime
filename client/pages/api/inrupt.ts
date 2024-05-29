@@ -88,30 +88,26 @@ export function useInruptHandler() {
         })
     }
 
-    const getProfile = () => {
-        serverCheck()
-        .then(response => {
-            if (response) {
-                fetch("http://localhost:8080/solid/user/profile", {
-                    method: 'GET', 
-                    credentials: 'include',
-                })
-                .then(response => response.json())
-                .then((data) => {
-                    if (data.status) {
-                        if (data.data) {
-                            setUserName(data.data);
-                        } else {
-                            setUserName("No user name");
-                        }
-                    } else {
-                        console.error(data.data);
-                    }
-                })
+    const getProfile = async () => {
+        const response = await serverCheck();
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/user/profile", {
+                method: 'GET', 
+                credentials: 'include',
+            });
+            const data = await fetchResponse.json();
+            if (data.status) {
+                if (data.data) {
+                    setUserName(data.data);
+                } else {
+                    setUserName("No user name");
+                }
             } else {
-                toast.error('Server appears to be down');
+                console.error(data.data);
             }
-        })
+        } else {
+            toast.error('Server appears to be down');
+        }
     }
 
     const checkConfiguration = async () => {
@@ -132,7 +128,7 @@ export function useInruptHandler() {
 
     // returns true if the pod has been initialized 
     const getAllConfiguration = async () => {
-        const response = await serverCheck()
+        const response = await serverCheck();
         if (response) {
             const fetchResponse = await fetch("http://localhost:8080/solid/configuration", {
                 method: 'GET',
@@ -250,7 +246,7 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json()
             if (data.status) {
-                setBoardColumns(data.data.configuration ? data.data.configuration : []);
+                setBoardColumns(data.data.boardColumns ? data.data.boardColumns : []);
                 
             } else {
                 toast.error('There has been a problem fetching your columns :(');
@@ -352,7 +348,7 @@ export function useInruptHandler() {
                     if (data.data.tasks.tasks && data.data.tasks.tasks.length > 0) {
                         taskLists.map((list, index) => {
                             const tasksOfTheList = data.data.tasks.tasks.filter((task) => {
-                                task.listIndex === list.key
+                                return task.listIndex === list.key
                             })
 
                             if (tasksOfTheList.length > 0) {
@@ -366,6 +362,7 @@ export function useInruptHandler() {
                     }
                     setListNames(names);
                     setTasks(taskLists);
+                    console.log(taskLists);
                     setEvents(events);
                 } else if (data.status === "empty"){
                     setListNames([]);

@@ -26,9 +26,11 @@ export default function CheckableComboBox({checkedLabels, onChange, text, varian
     const handleCheckboxChange = (option:Label) => {
         const selectedIndex = selectedOptions.findIndex((label) => label.name === option.name);
         let newSelectedOptions;
+        // if the option is a new filter, add it to the selected options
         if (selectedIndex === -1) {
             newSelectedOptions = [...selectedOptions, option];  
         } else {
+            // create a new array for the selected options and remove the option that has been unchecked
             newSelectedOptions = [...selectedOptions];
             newSelectedOptions.splice(selectedIndex, 1);
         }
@@ -44,7 +46,7 @@ export default function CheckableComboBox({checkedLabels, onChange, text, varian
             </div>
         {isOpen && (
             <div className="dropdown-content">
-            {labels.map((option, index) => (
+            {labels && labels.map((option, index) => (
                 <label className="dropdown-option" key={index}>
                 <input
                     type="checkbox"
