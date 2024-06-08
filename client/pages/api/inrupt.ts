@@ -33,7 +33,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                window.location.assign("https://tidytime.onrender.com/solid/login");
+                window.location.assign("http://localhost:8080/solid/login");
             } else {
                 toast.error('Server appears to be down');
             }
@@ -70,7 +70,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("https://tidytime.onrender.com/solid/logout", {
+                fetch("http://localhost:8080/solid/logout", {
                     method: 'GET',
                     credentials: 'include',
                 })

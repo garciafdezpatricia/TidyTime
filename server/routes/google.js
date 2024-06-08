@@ -56,9 +56,9 @@ router.get('/google/auth/callback', async (req, res) => {
     oauth2Client.setCredentials(tokens);
     try {
         const email = await getEmail(req);
-        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/calendar?user=${email}`);
+        res.redirect(`http://localhost:3000/calendar?user=${email}`);
     } catch (error) {
-        res.redirect('https://garciafdezpatricia.github.io/TidyTime/calendar');
+        res.redirect('http://localhost:3000/calendar');
     }
 });
   
