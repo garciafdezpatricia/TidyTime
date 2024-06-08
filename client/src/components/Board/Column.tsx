@@ -30,6 +30,7 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
     }
 
     const renameList = async () => {
+        // @ts-ignore
         let newColumns = [...boardColumns];
         newColumns[index] = renameListName;
         setBoardColumns(newColumns);
