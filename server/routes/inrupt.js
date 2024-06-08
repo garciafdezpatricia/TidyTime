@@ -903,6 +903,8 @@ router.get("/solid/login", async function (req, res) {
 
 router.get("/solid/login/callback", async function (req, res) {
     try {
+        console.log("las cookies", req.cookies);
+        console.log("la cookie", req.cookies.inruptSessionId);
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         await session.handleIncomingRedirect(`https://tidytime.onrender.com${req.url}`);
         if (session.info.isLoggedIn) {
