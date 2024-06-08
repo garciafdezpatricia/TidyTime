@@ -21,7 +21,8 @@ export interface ITaskContext {
     setshowTasksInCalendar: React.Dispatch<React.SetStateAction<boolean>>,
 }
 const tasks:Task[] = []
-// translate from solid tasks to list of tasklist
+// translate from solid tasks to list of tasklist 
+// TODO: creo que esto ya no hace falta???
 const listofTasklists = taskToListOfTaskList(tasks);
 
 const defaultContext: ITaskContext ={
@@ -37,7 +38,7 @@ const defaultContext: ITaskContext ={
     setSelectedTaskId: () => {},
     boardColumns: undefined,
     setBoardColumns: () => {},
-    showTasksInCalendar: true,
+    showTasksInCalendar: false,
     setshowTasksInCalendar: () => {},
 }
 // context with the default task context

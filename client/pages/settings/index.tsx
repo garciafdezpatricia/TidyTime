@@ -11,8 +11,6 @@ import { useRouter } from "next/router";
 import { useSessionContext } from "@/src/components/Context/SolidContext";
 import { useInruptHandler } from "../api/inrupt";
 import Loader from "@/src/components/Loading/Loading";
-import { useTaskContext } from "@/src/components/Context/TaskContext";
-import { useEventContext } from "@/src/components/Context/EventContext";
 
 export default function Settings() {
 
@@ -30,6 +28,28 @@ export default function Settings() {
         getSession();
     }, [reRender]); 
 
+    const authenticationActions = async () => {
+        // ---> GOOGLE LOGIN
+        const params = new URLSearchParams(location.search);
+        const emailParam = params.get('user');
+        const isUserLoggedIn = localStorage.getItem('googleLoggedIn');    
+        checkAuthentication(emailParam, isUserLoggedIn);
+        // ---> GITHUB LOGIN
+        try {
+            if (!userData) {
+                await getUserData();
+            }
+        } catch (error:any) {
+            if (error.message === "Failed to fetch") {
+                toast.error("Error when connecting to the server");
+            } else {
+                if (error.message.includes('access not found') && githubLoggedIn) {
+                    toast.error("Please reconnect to GitHub");
+                }
+            }
+        }
+    }
+
     const fetchData = async () => {
         if (solidSession === undefined) {
             setLoading(true);
@@ -37,25 +57,7 @@ export default function Settings() {
             if (solidSession?.info.isLoggedIn) {
                 // INRUPT CONFIG
                 await getAllConfiguration();
-                // ---> GOOGLE LOGIN
-                const params = new URLSearchParams(location.search);
-                const emailParam = params.get('user');
-                const isUserLoggedIn = localStorage.getItem('googleLoggedIn');    
-                checkAuthentication(emailParam, isUserLoggedIn);
-                // ---> GITHUB LOGIN
-                try {
-                    if (!userData) {
-                        await getUserData();
-                    }
-                } catch (error:any) {
-                    if (error.message === "Failed to fetch") {
-                        toast.error("Error when connecting to the server");
-                    } else {
-                        if (error.message.includes('access not found') && githubLoggedIn) {
-                            toast.error("Please reconnect to GitHub");
-                        }
-                    }
-                }
+                await authenticationActions();
             } else {
                 router.push("/");
             }

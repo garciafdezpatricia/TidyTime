@@ -135,7 +135,7 @@ export function useInruptHandler() {
                 credentials: 'include'
             })
             const data = await fetchResponse.json()
-            if (data.status === "retrieved") {
+            if (data.status === "retrieved" && data.config) {
                 setBoardColumns(data.config.boardColumns);
                 setLabels(data.config.labels);
                 setshowTasksInCalendar(data.config.showTasksInCalendar);
@@ -183,9 +183,29 @@ export function useInruptHandler() {
         })
     }
 
-    // the calendar view and week start
-    const getCalendarViewConfigurations = () => {
-
+    // the calendar view, week start and show tasks in calendar
+    const getCalendarConfiguration = async () => {
+        const response = await serverCheck();
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/configuration/calendar", {
+                method: 'GET', 
+                credentials: 'include'
+            });
+            const data = await fetchResponse.json();
+            if (data.status) {
+                setshowTasksInCalendar(data.data.showTasksInCalendar);
+                setWeekStart(data.data.weekStart);
+                setEventView(data.data.calendarView);
+                await getEvents();
+                if (data.data.showTasksInCalendar) {
+                    await getTasks();
+                }
+            } else {
+                toast.error('There has been a problem fetching your data');
+            }
+        } else {
+            toast.error('Server appears to be down');
+        }
     }
 
     // tasks
@@ -231,9 +251,32 @@ export function useInruptHandler() {
         }
     }
 
-    // TODO: events
     const getEvents = async () => {
-        
+        const response = await serverCheck();
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/events/get", {
+                method: 'GET',
+                credentials: 'include'
+            })
+            const data = await fetchResponse.json()
+            let events:Event[] = [];
+            if (data.status === "success") {
+                if (data.data.data.events && data.data.data.events.length > 0) {
+                    events = data.data.data.events;
+                    events.forEach((event) => {
+                        event.end = new Date(event.end);
+                        event.start = new Date(event.start);
+                    });
+                }
+            } else if (data.status === "empty") {
+                ;
+            } else {
+                toast.error('There has been a problem fetching your data :(');
+            }
+            setEvents(events);
+        } else {
+            toast.error('Server appears to be down');
+        }
     }
 
     // board columns
@@ -333,10 +376,10 @@ export function useInruptHandler() {
                     credentials: 'include',
                 });
                 const data = await fetchResponse.json();
+                let taskLists:TaskList[] = [];
+                let names:string[] = [];
+                let events:Event[] = [];
                 if (data.status === "success") {
-                    let taskLists:TaskList[] = [];
-                    let names:string[] = [];
-                    let events:Event[] = [];
                     // listnames
                     if (data.data.tasks.listNames && data.data.tasks.listNames.length > 0) {
                         data.data.tasks.listNames.forEach((list, index) => {
@@ -359,21 +402,20 @@ export function useInruptHandler() {
                     // events
                     if (data.data.events && data.data.events.length > 0) {
                         events = data.data.events;
+                        events.forEach((event) => {
+                            event.end = new Date(event.end);
+                            event.start = new Date(event.start);
+                        });
                     }
-                    setListNames(names);
-                    setTasks(taskLists);
-                    console.log(taskLists);
-                    setEvents(events);
                 } else if (data.status === "empty"){
-                    setListNames([]);
-                    setTasks([]);
-                    setEvents([]);
+                    toast.success("There's no data to fetch!");
                 } else {
-                    setListNames([]);
-                    setTasks([]);
-                    setEvents([]);
+                    ;
                     toast.error("There has been a problem fetching the data in your pod");
                 }
+                setListNames(names);
+                setTasks(taskLists);
+                setEvents(events);
             } else {
                 toast.error('Server appears to be down');
             }
@@ -399,6 +441,28 @@ export function useInruptHandler() {
             data.status
             ? toast.success('Pod updated!')
             :toast.error('There has been a problem storing your data :(');
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
+    const createEvent = async (event: Event) => {
+        const response = await serverCheck();
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/store/events/create", {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    event: event
+                })
+            })
+            const data = await fetchResponse.json();
+            data.status
+            ? toast.success('Pod updated!')
+            : toast.error('There has been a problem storing your data :(');
         } else {
             toast.error('Server appears to be down');
         }
@@ -448,6 +512,28 @@ export function useInruptHandler() {
         }
     }
 
+    const updateEvent = async (event: Event) => {
+        const response = await serverCheck();
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/store/events/update", {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    event: event
+                })
+            })
+            const data = await fetchResponse.json();
+            data.status
+            ? toast.success('Event updated!')
+            : toast.error('There has been a problem updating your data :(');
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
     const updateTaskStatus = async (task:Task) => {
         const response = await serverCheck()
         if (response) {
@@ -492,6 +578,28 @@ export function useInruptHandler() {
         }
     }
 
+    const deleteEvent = async (event: Event) => {
+        const response = await serverCheck();
+        if (response) {
+            const fetchResponse = await fetch("http://localhost:8080/solid/data/store/events/delete", {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    event: event
+                })
+            })
+            const data = await fetchResponse.json();
+            data.status
+            ? toast.success('Event deleted!')
+            : toast.error('There has been a problem deleting your data :(');
+        } else {
+            toast.error('Server appears to be down');
+        }
+    }
+
     const storeBoardColumns = async (boardColumns: string[]) => {
         const response = await serverCheck()
         if (response) {
@@ -514,6 +622,10 @@ export function useInruptHandler() {
         }
     };
 
-    return { loginInrupt, getSession, logoutInrupt, getProfile, getAllConfiguration, updateListNames, getApplicationData, saveConfiguration, getTasks, getLabels, checkConfiguration, updateTaskDoneUndone, updateTask, deleteTask, deleteList, getBoardColumns, updateTaskStatus, storeBoardColumns, createTask
-     };
+    return { loginInrupt, getSession, logoutInrupt, getProfile, getAllConfiguration, 
+        updateListNames, getApplicationData, saveConfiguration, getTasks, getLabels, 
+        checkConfiguration, updateTaskDoneUndone, updateTask, deleteTask, deleteList, 
+        getBoardColumns, updateTaskStatus, storeBoardColumns, createTask, getEvents,
+        createEvent, updateEvent, deleteEvent, getCalendarConfiguration, 
+    };
 }

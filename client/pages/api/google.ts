@@ -350,25 +350,22 @@ export function useGoogleHandler() {
         });
     }
 
-    const isAuthenticatedUser = async (emailParam:string):Promise<boolean> => {
-        return new Promise((resolve, reject) => {
-            fetch('http://localhost:8080/google/auth/email', {
+    const isAuthenticatedUser = async (emailParam:string) => {
+        try {
+            const fetchResponse = await fetch('http://localhost:8080/google/auth/email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email: emailParam }),
                 credentials: 'include',
-            })
-            .then(response => response.json())
-            .then((data: boolean) => {
-                resolve(data);
-            })
-            .catch(e => {
-                console.error(e);
-                resolve(false);
             });
-        });
+            const data = await fetchResponse.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
     }
 
     return {handleLogin, handleLogout, getCalendars, getCalendarEvents, exportEvent, updateAndSaveEvent, isAuthenticatedUser, checkAuthentication};

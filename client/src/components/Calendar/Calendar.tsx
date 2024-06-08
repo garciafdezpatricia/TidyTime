@@ -10,6 +10,7 @@ import EditEventModal from "@/src/components/Modal/EditModal/EditEventModal";
 import { useEventContext } from "../Context/EventContext";
 import { Event } from "@/src/model/Scheme";
 import SeeTaskModal from "../Modal/EditModal/SeeTaskModal";
+import { useInruptHandler } from "@/pages/api/inrupt";
 
 // custom event for calendar (all views)
 const components = {
@@ -36,6 +37,7 @@ const eventStyleGetter = (event:any, view:any) => {
 
 export default function CalendarComponent() {
   const { events, setEvents, setSelectedEventId, weekStart, eventView } = useEventContext();
+  const { createEvent } = useInruptHandler();
   
   dayjs.locale('en-custom', {
     ...enLocale, 
@@ -101,8 +103,8 @@ export default function CalendarComponent() {
     return result;
   }
 
-  const handleCreateEvent = () => {
-    if (createEvent()) {
+  const handleCreateEvent = async () => {
+    if (await createNewEvent()) {
       setOpenNewEventModal(false);
     }
   }
@@ -111,12 +113,14 @@ export default function CalendarComponent() {
     setSelectedColor(color);
 }
 
-  const createEvent = () => {    
+  const createNewEvent = async () => {    
     // @ts-ignore
     const title = titleRef.current.value; const info = infoRef.current.value; const from = fromDateRef.current.value; const to = toDateRef.current.value;
     if (areFieldsCompleted(title, from, to)) {
+      let event: Event = {start: new Date(from), end: new Date(to), title: title, desc: info, eventId: uuid(), color: selectedColor};
+      await createEvent(event);
       setEvents((prev) => 
-        [...prev, {start: new Date(from), end: new Date(to), title: title, desc: info, eventId: uuid(), color: selectedColor}]
+        [...prev, event]
       );
       return true;
     }
@@ -157,7 +161,7 @@ export default function CalendarComponent() {
             title="New event"
             primaryActionText="Create"
             secondaryActionText="Cancel"
-            onPrimaryAction={() => handleCreateEvent()}
+            onPrimaryAction={async () => await handleCreateEvent()}
             onSecondaryAction={() => setOpenNewEventModal(false)} 
             backdrop={false} 
             variant="shadow-modal">

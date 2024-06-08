@@ -57,7 +57,6 @@ export default function List() {
 	}, [listNames])
 
 	const checkAuth = async () => {
-		console.log("checkauth");
 		if (solidSession === undefined) {
 		} else {
 			if (!solidSession?.info.isLoggedIn) {

@@ -10,12 +10,15 @@ import { BsFillCalendarPlusFill } from "react-icons/bs";
 import { useGoogleContext } from "../Context/GoogleContext";
 import { IoMenu } from "react-icons/io5";
 import { useGoogleHandler } from "@/pages/api/google";
+import { useInruptHandler } from "@/pages/api/inrupt";
+import { Event } from "@/src/model/Scheme";
 
 export default function CalendarMenu() {
     // event context utils
     const { setEvents } = useEventContext()
     const { calendars } = useGoogleContext();
     const { getCalendars } = useGoogleHandler();
+    const { createEvent } = useInruptHandler();
 
     const [createNewEvent, setCreateNewEvent] = useState(false);
     const [selectedColor, setSelectedColor] = useState("");
@@ -60,8 +63,8 @@ export default function CalendarMenu() {
     /**
      * Handler for the creation of the event. If the event is correctly created, the creation of the event modal is closed
      */
-    const handleCreateEvent = () => {
-        if (createEvent()) {
+    const handleCreateEvent = async () => {
+        if (await constructEvent()) {
             setMenuOpened(false);
         }
     }
@@ -77,15 +80,17 @@ export default function CalendarMenu() {
      * Creates a new event from the value of the fields. If all required fields are filled, the creation action takes place.
      * @returns 
      */
-    const createEvent = () => {    
+    const constructEvent = async () => {    
         // @ts-ignore
         const title = titleRef.current.value; const info = infoRef.current.value; 
         // @ts-ignore
         const from = fromDateRef.current.value; const to = toDateRef.current.value; 
         if (areFieldsCompleted(title, from, to)) {
             // need to create the event dates with new Date() for them to be displayed on the calendar
+            const event: Event = { start: new Date(from), end: new Date(to), title: title, desc: info, color: selectedColor, eventId: uuid() };
+            await createEvent(event);
             setEvents((prev) => 
-            [...prev, {start: new Date(from), end: new Date(to), title: title, desc: info, color: selectedColor, eventId: uuid()}]
+            [...prev, event]
             );
             return true;
         }

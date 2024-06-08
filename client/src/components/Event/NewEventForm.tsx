@@ -18,7 +18,7 @@ export default function NewEventForm({startDate, endDate, titleRef, infoRef, fro
     const end = endDate
     ? new Date(endDate.getTime() - (endDate.getTimezoneOffset() * 60000)).toISOString().slice(0, 16) 
     : "";  
-    const [selectedColor, setSelectedColor] = useState("");
+    const [selectedColor, setSelectedColor] = useState("#3E5B41");
 
     const handleOptionChange = (color:string) => {
         setSelectedColor(color);

@@ -18,15 +18,7 @@ export interface IEventContext {
 }
 
 const defaultContext: IEventContext={
-    events: [
-        // {start: new Date("2024-02-18T12:00:00"), 
-        //   end: new Date("2024-02-18T14:00:00"),
-        //   title: "Comida con Manolo",
-        //   desc: "una pequeña descripcion",
-        //   eventId: uuid(),
-        //   color: "#ffa500"
-        // },
-    ],
+    events: [],
     selectedEventId: "",
     setSelectedEventId: () => {},
     setEvents: () => {},
@@ -65,9 +57,10 @@ export function EventProvider({children} : IEventContextProvider) {
 
 
     useEffect(() => {
-      if (showTasksInCalendar) {
+      if (showTasksInCalendar && tasks) {
         // Filtrar las tareas que tienen fecha definida
-        const tasksWithEndDate = tasks.flat().filter(task => task.endDate);
+        const listOfTasks = tasks.map((tasklist) => tasklist.value);
+        const tasksWithEndDate = listOfTasks.flat().filter(task => task.endDate);
       
         // Convertir las tareas en eventos
         const taskEvents = tasksWithEndDate.map(task => task ={

@@ -4,7 +4,9 @@ const { addStringNoLocale, createThing, getSolidDataset, createContainerAt,
     getThing, getStringNoLocale, getNamedNode, getAltProfileUrlAllFrom, 
     getPodUrlAll,  buildThing, createSolidDataset, setThing,
     saveSolidDatasetAt, getInteger, getStringNoLocaleAll, getBoolean, 
-    getThingAll, removeAll, deleteSolidDataset, removeThing} = require("@inrupt/solid-client");
+    getThingAll, removeAll, deleteSolidDataset, removeThing,
+    getDate,
+    getDatetime} = require("@inrupt/solid-client");
 const { Session, getSessionFromStorage } = require("@inrupt/solid-client-authn-node");
 const { foaf, vcard } = require('rdf-namespaces');
 const { InMemoryStorage } = require("@inrupt/solid-client-authn-core");
@@ -23,7 +25,7 @@ const LIST_ID = "https://example.com/listId";
 const LABEL_OBJECT = "https://example.com/label";
 const LABEL_NAME = "https://example.com/name";
 const LABEL_COLOR = "https://example.com/color";
-const TASK_RECORD = "https://example.com/taskRecord";
+const DATA_RECORD = "https://example.com/dataRecord";
 const TASK = "https://example.com/task";
 const TASK_ID = "https://example.com/taskId";
 const TASK_TITLE = "https://example.com/taskTitle";
@@ -125,13 +127,17 @@ async function poblateRootContainer(session) {
             dataset = setThing(dataset, label2);
             dataset = setThing(dataset, label3);
             await saveSolidDatasetAt(`${rootStorage}/config`, dataset, {fetch: session.fetch});
-            // dataset for the task record
-            let taskRecordDataset = createSolidDataset();
+            // dataset for the records
+            let recordDataset = createSolidDataset();
             const taskRecordThing = buildThing(createThing({ name: "taskRecord" }))
-            .addUrl(TASK_RECORD, TASK_RECORD)
+            .addUrl(DATA_RECORD, DATA_RECORD)
             .build();
-            taskRecordDataset = setThing(taskRecordDataset, taskRecordThing);
-            await saveSolidDatasetAt(`${rootStorage}/data`, taskRecordDataset, {fetch: session.fetch});
+            const eventRecordThing = buildThing(createThing({ name: "eventRecord" }))
+            .addUrl(DATA_RECORD, DATA_RECORD)
+            .build();
+            recordDataset = setThing(recordDataset, taskRecordThing);
+            recordDataset = setThing(recordDataset, eventRecordThing);
+            await saveSolidDatasetAt(`${rootStorage}/data`, recordDataset, {fetch: session.fetch});
         }
     } catch (error) {
         console.log(error);
@@ -302,11 +308,11 @@ async function getCalendarConfiguration(session) {
                 showTasksInCalendar: getBoolean(configThing, SHOW_TASK),
                 weekStart: getInteger(configThing, WEEK_START),
             }
-            return result;
+            return {status: true, data: result};
         }
     } catch (error) {
         console.log(error);
-        return {};
+        return {status: false};
     }
 }
 
@@ -318,6 +324,18 @@ function getTasksIds(session, things) {
             tasksIds = getStringNoLocaleAll(taskRecordThing, TASK_ID);
         }
         return tasksIds;
+    }
+}
+ 
+// TODO: make getEVentsIds and getTasksIds the same function -> make taskRecord smth like dataRecord
+function getEventsIds(session, things) {
+    if (session) {
+        const eventRecordThing = things.filter((thing) => thing.url.includes("#eventRecord"))[0];
+        let eventsIds = [];
+        if (eventRecordThing) {
+            eventsIds = getStringNoLocaleAll(eventRecordThing, EVENT_ID); // TODO: same here, event id and task id could point to the same url
+        }
+        return eventsIds;
     }
 }
 
@@ -377,12 +395,12 @@ async function getApplicationData(session) {
             let events = [];
             const eventResponse = await getEvents(session);
             if (eventResponse.status === "success") {
-                events = eventResponse.events;
+                events = eventResponse.data.events;
+                console.log("los events", eventResponse.data.events);
             }
             return { status: "success", tasks: {tasks: tasks, listNames: listNames}, events: events };
         }
     } catch (error) {
-        console.log("hola");
         if (error.response && error.response.status === 404) {
             return {status: "empty"};    
         }
@@ -443,11 +461,9 @@ async function getTasks(session) {
             let data = {
                 listNames: listNames, tasks: tasks
             }
-            console.log("en getTasks estoy devolviendo", data);
             return { status: "success", data: {listNames: listNames, tasks: tasks} }
         }
     } catch (error) {
-        console.log("el error en getTasks", error);
         if (error.response && error.response.status === 404) {
             return {status: "empty"};    
         }
@@ -456,7 +472,6 @@ async function getTasks(session) {
 }
 
 async function createTaskThing(task) {
-    console.log("task to update", task);
     let newTask = buildThing(createThing({name: "task"}))
     .addStringNoLocale(TASK_ID, task.id)
     .addStringNoLocale(TASK_TITLE, task.title)
@@ -473,6 +488,23 @@ async function createTaskThing(task) {
     .build();
     
     return newTask;
+}
+
+async function createEventThing(event) {
+    let newEvent = buildThing(createThing({name: "event"}))
+    .addStringNoLocale(EVENT_ID, event.eventId)
+    .addStringNoLocale(EVENT_TITLE, event.title)
+    .addStringNoLocale(EVENT_DESC, event.desc ?? "")
+    .addDatetime(EVENT_START_DATE, new Date(event.start))
+    .addDatetime(EVENT_END_DATE, new Date(event.end)) 
+    .addStringNoLocale(EVENT_COLOR, event.color)
+    .addBoolean(EVENT_ISTASK, event.isTask ?? 0)
+    .addStringNoLocale(EVENT_GHTML, event.googleHTML ?? "")
+    .addStringNoLocale(EVENT_GID, event.googleId ?? "")
+    .addStringNoLocale(EVENT_GCALENDAR, event.googleCalendar ?? "")
+    .addUrl(EVENT, EVENT)
+    .build();
+    return newEvent;
 }
 
 async function createTask(session, task) {
@@ -523,6 +555,41 @@ async function createTask(session, task) {
     }
 }
 
+async function createEvent(session, event) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            
+            // create thing dataset and add the things
+            let eventDataset = createSolidDataset();
+            let eventThing = await createEventThing(event);
+            eventDataset = setThing(eventDataset, eventThing);
+            await saveSolidDatasetAt(`${rootStorage}/events/${event.eventId}`, eventDataset, {fetch: session.fetch});
+
+            // if it exists, update event record, else create it
+            let dataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
+            const things = getThingAll(dataset);
+            let eventRecordThing = things.filter((thing) => thing.url.includes("#eventRecord"))[0];
+            if (eventRecordThing) {
+                eventRecordThing = buildThing(eventRecordThing)
+                .addStringNoLocale(EVENT_ID, event.eventId)
+                .build();
+            } else {
+                eventRecordThing = buildThing(createThing({name: "eventRecord"}))
+                .addStringNoLocale(EVENT_ID, event.eventId)
+                .build();
+            }
+            dataset = setThing(dataset, eventRecordThing);
+            await saveSolidDatasetAt(`${rootStorage}/data`, dataset, {fetch: session.fetch});
+            return true;
+        }
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
 async function updateTask(session, task, updateAll) {
     if (session) {
         try {
@@ -564,6 +631,29 @@ async function updateTask(session, task, updateAll) {
                 }           
             }
             return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+}
+
+async function updateEvent(session, event) {
+    if (session) {
+        try {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            let eventDataset = await getSolidDataset(`${rootStorage}/events/${event.eventId}`, {fetch: session.fetch});
+            let things = getThingAll(eventDataset);
+            let eventThing = things.filter((thing) => thing.url.includes("#event"))[0];
+            if (eventThing) {
+                await deleteSolidDataset(`${rootStorage}/events/${event.eventId}`, {fetch: session.fetch});
+                eventDataset = createSolidDataset();
+                let newEvent = await createEventThing(event);
+                eventDataset = setThing(eventDataset, newEvent);
+                await saveSolidDatasetAt(`${rootStorage}/events/${event.eventId}`, eventDataset, {fetch: session.fetch});
+                return true;
+            }
         } catch (error) {
             console.log(error);
             return false;
@@ -628,6 +718,38 @@ async function deleteTask(session, task) {
     }
 }
 
+async function deleteEvent(session, event) {
+    if (session) {
+        try {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            
+            let eventRecordDataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
+            const things = getThingAll(eventRecordDataset);
+            // remove event from record
+            let eventRecordThing = things.filter((thing) => thing.url.includes("#eventRecord"))[0];
+            if (eventRecordThing) {
+                let eventsIds = getStringNoLocaleAll(eventRecordThing, EVENT_ID).filter((eventId) => eventId !== event.eventId);
+                eventRecordThing = removeAll(eventRecordThing, EVENT_ID);
+                if (eventsIds && eventsIds.length > 0) {
+                    eventRecordThing = eventsIds.reduce((eventRecordThing, eventId) => {
+                        eventRecordThing = addStringNoLocale(eventRecordThing, EVENT_ID, eventId);
+                        return eventRecordThing;
+                    }, eventRecordThing)
+                }
+                eventRecordDataset = setThing(eventRecordDataset, eventRecordThing);
+                await saveSolidDatasetAt(`${rootStorage}/data`, eventRecordDataset, {fetch: session.fetch});
+            }
+            // remove event dataset
+            await deleteSolidDataset(`${rootStorage}/events/${event.eventId}`, {fetch: session.fetch});
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+}
+
 async function deleteList(session, tasksIds) {
     if (session) {
         try {
@@ -670,13 +792,13 @@ async function getEvents(session) {
             const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
             const rootStorage = `${storage}/TidyTime`;
 
-            const dataset = await getSolidDataset(`${rootStorage}/data/events`, {fetch: session.fetch});
+            const dataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
             const things = getThingAll(dataset);
-            events = await Promise.all(things.map(async (thing) => await getEvent(session, thing)));
-            return { status: "success", events: events } 
+            const eventsIds = getEventsIds(session, things);
+            events = await Promise.all(eventsIds.map(async (eventId) => await getEvent(session, eventId)));
+            return { status: "success", data: {events: events} }
         }
     } catch (error) {
-        console.log(error.status);
         if (error.response && error.response.status === 404) {
             return {status: "empty"};    
         }
@@ -684,31 +806,33 @@ async function getEvents(session) {
     }
 }
 
-async function getEvent(session, thing) {
+async function getEvent(session, eventId) {
     if (session) {
+        const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+        const rootStorage = `${storage}/TidyTime`;
+
+        const taskDataset = await getSolidDataset(`${rootStorage}/events/${eventId}`, {fetch: session.fetch});
+        const things = getThingAll(taskDataset);
+        const thing = things.filter((thing) => thing.url.includes("#event"))[0];
         let result = null
         if (thing) {
             const id = getStringNoLocale(thing, EVENT_ID);
-            const title = getStringNoLocale(thing, EVENT_TITLE);
-            const desc = getStringNoLocale(thing, EVENT_DESC);
-            const startDate = getStringNoLocale(thing, EVENT_START_DATE); // TODO: date
-            const endDate = getStringNoLocale(thing, EVENT_END_DATE); // TODO: date
+            const title = getStringNoLocale(thing, EVENT_TITLE); //TODO: title and desc can be the same for tasks and events
+            const desc = getStringNoLocale(thing, EVENT_DESC) ?? "";
+            const startDate = getDatetime(thing, EVENT_START_DATE); // TODO: date
+            const endDate = getDatetime(thing, EVENT_END_DATE); // TODO: date
             const color = getStringNoLocale(thing, EVENT_COLOR);
-            const isTask = getBoolean(thing, EVENT_ISTASK);
-            const googleHtml = getStringNoLocale(thing, EVENT_GHTML);
-            const googleId = getStringNoLocale(thing, EVENT_GID);
-            const googleCalendar = getStringNoLocale(thing, EVENT_GCALENDAR);
-            result = { id: id, title: title, desc: desc, startDate: startDate, endDate: endDate,
-                color: color, isTask: isTask, googleHtml: googleHtml, googleId: googleId,
+            const isTask = getBoolean(thing, EVENT_ISTASK) ?? false;
+            const googleHtml = getStringNoLocale(thing, EVENT_GHTML) ?? "";
+            const googleId = getStringNoLocale(thing, EVENT_GID) ?? "";
+            const googleCalendar = getStringNoLocale(thing, EVENT_GCALENDAR) ?? "";
+            result = { eventId: id, title: title, desc: desc, start: startDate, end: endDate,
+                color: color, isTask: isTask, googleHTML: googleHtml, googleId: googleId,
                 googleCalendar: googleCalendar
             };
-        }   
+        } 
         return result;
     }
-}
-
-async function storeEvents(session, events) {
-
 }
 
 async function storeListNames(session, listNames) {
@@ -756,7 +880,7 @@ async function storeListNames(session, listNames) {
 
 router.get("/solid/login", async function (req, res) {
     try {
-        const session = new Session({storage: storage, keepAlive: false});
+        const session = new Session({storage: storage, keepAlive: true});
         res.cookie("inruptSessionId", session.info.sessionId, {
             secure: true,
             httpOnly: true,
@@ -883,15 +1007,11 @@ router.get("/solid/configuration/health-check", async function (req, res) {
 router.get("/solid/configuration/calendar", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
-        try {
-            const configuration = await getCalendarConfiguration(session);
-            res.send({status: "retrieved" , calendarConfiguration: configuration});
-        } catch (error) {
-            await poblateRootContainer(session);
-            res.send({status: "created"});
-        }
+        const configuration = await getCalendarConfiguration(session);
+        res.send({status: configuration.status, data: configuration.data});
     } catch (error) {
         console.log(error);
+        res.send({status: false});
     }
 })
 
@@ -1025,8 +1145,40 @@ router.post("/solid/data/store/tasks/delete", async function (req, res) {
     }
 });
 
-router.post("/solid/data/store/events", async function (req, res) {
+router.post("/solid/data/store/events/create", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const event = req.body.event;
+        const result = await createEvent(session, event);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
 
+router.post("/solid/data/store/events/update", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const event = req.body.event;
+        const result = await updateEvent(session, event);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+router.post("/solid/data/store/events/delete", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const event = req.body.event;
+        const result = await deleteEvent(session, event);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
 });
 
 // get all data
@@ -1079,7 +1231,7 @@ router.get("/solid/data/events/get", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const result = await getEvents(session);
-        return result;
+        res.send({status: result.status, data: result});
     } catch (error) {
         console.log(error);
         return {status: "fail"};
