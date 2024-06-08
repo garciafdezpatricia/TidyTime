@@ -6,6 +6,7 @@ export function MenuSideBar() {
 
     const { solidSession } = useSessionContext();
     const router = useRouter();
+
     return (
         <section className="sidebar-menu">
             <div className="menu-title">

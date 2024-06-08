@@ -1,61 +1,44 @@
-import { TaskList, Label, taskToListOfTaskList, listOfTaskListToTask } from "@/src/model/Scheme";
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
+import { TaskList, Label, taskToListOfTaskList, Task } from "@/src/model/Scheme";
+import { ReactNode, createContext, useContext, useState } from "react";
 
 /**
  * Interface for the task context of the application.
  */
 export interface ITaskContext {
-    listNames: string[],
-    tasks: TaskList[],
-    labels: Label[],
-    setLabels: React.Dispatch<React.SetStateAction<Label[]>>,
-    selectedListIndex: number,
-    selectedTaskIndex: number,
-    setListNames: React.Dispatch<React.SetStateAction<string[]>>,
-    setTasks: React.Dispatch<React.SetStateAction<TaskList[]>>,
-    setSelectedListIndex: React.Dispatch<React.SetStateAction<number>>,
-    setSelectedTaskIndex: React.Dispatch<React.SetStateAction<number>>,
-    boardColumns: string[],
-    setBoardColumns: React.Dispatch<React.SetStateAction<string[]>>,
+    listNames: string[] | undefined,
+    tasks: TaskList[] | undefined,
+    labels: Label[] | undefined,
+    setLabels: React.Dispatch<React.SetStateAction<Label[] | undefined>>,
+    selectedListId: string,
+    selectedTaskId: string,
+    setListNames: React.Dispatch<React.SetStateAction<string[] | undefined>>,
+    setTasks: React.Dispatch<React.SetStateAction<TaskList[] | undefined>>,
+    setSelectedListId: React.Dispatch<React.SetStateAction<string>>,
+    setSelectedTaskId: React.Dispatch<React.SetStateAction<string>>,
+    boardColumns: string[] | undefined,
+    setBoardColumns: React.Dispatch<React.SetStateAction<string[] | undefined>>,
     showTasksInCalendar: boolean,
     setshowTasksInCalendar: React.Dispatch<React.SetStateAction<boolean>>,
 }
-
-const tasks = [
-    { done: false, title: "Disable button if new list name is empty string", listIndex: 0, status: 0 },
-    { done: false, title: "Call granny", listIndex: 0, status: 0 },
-    { done: false, title: "Buy vacuum", listIndex: 0, status: 0 },
-    { done: false, title: "This is content 4", listIndex: 0, status: 0 },
-    { done: false, title: "Call granny", listIndex: 0, status: 0 },
-    { done: false, title: "Buy vacuum", listIndex: 0, status: 0 },
-    { done: false, title: "WTF", listIndex: 1, status: 0 },
-    { done: false, title: "Cleaning the bathroom", listIndex: 1, status: 0 },
-    { done: false, title: "Do laundry", listIndex: 1, status: 0 },
-    { done: false, title: "Mop", listIndex: 1, status: 0 },
-    { done: false, title: "Call Giselle", listIndex: 2, status: 0 },
-    { done: false, title: "Print EDP reports", listIndex: 2, status: 0 },
-    { done: false, title: "Update documentation", listIndex: 2, status: 0 },
-    { done: false, title: "Clean calendar", listIndex: 2, status: 0 },
-]
-
+const tasks:Task[] = []
+// translate from solid tasks to list of tasklist 
+// TODO: creo que esto ya no hace falta???
 const listofTasklists = taskToListOfTaskList(tasks);
 
-// TODO: replace it with solid logic
-// const with default context (it's not the one from the user's pod)
 const defaultContext: ITaskContext ={
-    listNames: ["TFG", "Home", "Work"],
+    listNames: undefined,
     tasks: listofTasklists,
-    labels: [{color: "#ad30ad", name: "school"}, {color: "#5930ab", name: "work"}, {color: "#e6a937", name: "home"}],
+    labels: undefined,
     setLabels: () => {},
-    selectedListIndex: 0,
-    selectedTaskIndex: -1,
+    selectedListId: '',
+    selectedTaskId: '',
     setListNames: () => {},
     setTasks: () => {},
-    setSelectedListIndex: () => {},
-    setSelectedTaskIndex: () => {},
-    boardColumns: ["To do", "In progress", "Done"],
+    setSelectedListId: () => {},
+    setSelectedTaskId: () => {},
+    boardColumns: undefined,
     setBoardColumns: () => {},
-    showTasksInCalendar: true,
+    showTasksInCalendar: false,
     setshowTasksInCalendar: () => {},
 }
 // context with the default task context
@@ -81,15 +64,16 @@ export interface ITaskContextProvider {
 export function TaskProvider({children} : ITaskContextProvider) {
     const [listNames, setListNames] = useState(defaultContext.listNames);
     const [tasks, setTasks] = useState(defaultContext.tasks);
-    const [selectedListIndex, setSelectedListIndex] = useState(defaultContext.selectedListIndex);
-    const [selectedTaskIndex, setSelectedTaskIndex] = useState(defaultContext.selectedTaskIndex);
+    const [selectedListId, setSelectedListId] = useState(defaultContext.selectedListId);
+    const [selectedTaskId, setSelectedTaskId] = useState(defaultContext.selectedTaskId);
     const [boardColumns, setBoardColumns] = useState(defaultContext.boardColumns);
     const [labels, setLabels] = useState(defaultContext.labels);
     const [showTasksInCalendar, setshowTasksInCalendar] = useState(defaultContext.showTasksInCalendar);
-    
-    const value ={listNames, tasks, selectedListIndex, setListNames, setTasks, setSelectedListIndex, 
-        labels, setLabels, selectedTaskIndex, setSelectedTaskIndex, boardColumns, setBoardColumns, showTasksInCalendar, setshowTasksInCalendar};
 
+    const value ={listNames, tasks, selectedListId, setListNames, setTasks, setSelectedListId, 
+        labels, setLabels, selectedTaskId, setSelectedTaskId, boardColumns, setBoardColumns, showTasksInCalendar, setshowTasksInCalendar};
+
+    
     return (
         <TaskContext.Provider value={value}>
             {children}

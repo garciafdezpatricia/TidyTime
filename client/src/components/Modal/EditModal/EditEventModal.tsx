@@ -13,6 +13,7 @@ import { PiWarningOctagonFill } from "react-icons/pi";
 import ShareModal from "../ShareModal/ShareEventModal";
 import PromptModal from "../PromptModal/PromptModal";
 import { useGoogleHandler } from "@/pages/api/google";
+import { useInruptHandler } from "@/pages/api/inrupt";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -21,6 +22,7 @@ export interface Props {
 export default function EditEventModal({onClose} : Props) {
     // event context utils
     const {setEvents, events, selectedEventId } = useEventContext();
+    const { updateEvent, deleteEvent } = useInruptHandler();
     const { updateAndSaveEvent } = useGoogleHandler();
 
     const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -62,6 +64,7 @@ export default function EditEventModal({onClose} : Props) {
             }
         })
     }, [events]);
+    
     /**
      * Auxiliary function to compare original values of the event with the ones present when the saving-event action is triggered. 
      * @param eventToUpdate contains the event to be updated
@@ -112,7 +115,7 @@ export default function EditEventModal({onClose} : Props) {
      * @param event the event to be updated
      * @param valuesToChange the values of the event that need to be updated
      */
-    const updateEvent = (event:Event, valuesToChange:{title: string, desc: string, start: string, end: string, color: string}) => {
+    const updateEventValues = (event:Event, valuesToChange:{title: string, desc: string, start: string, end: string, color: string}) => {
         if (valuesToChange.title !== "") {
             event.title = valuesToChange.title;
         }
@@ -141,7 +144,7 @@ export default function EditEventModal({onClose} : Props) {
     /**
      * Save changes made to the event.
      */
-    const onSave = () => {
+    const onSave = async () => {
         // get event to be saved
         let updatedEvents = [...events];
         const eventToUpdate = events[selectedIndex];
@@ -149,16 +152,14 @@ export default function EditEventModal({onClose} : Props) {
         const changedValues = checkChangedValues(eventToUpdate);
         if (changedValues) {
             // save correspondent information
-            updateEvent(eventToUpdate, changedValues);
+            updateEventValues(eventToUpdate, changedValues);
             updatedEvents = [
                 ...events.slice(0, selectedIndex),
                 eventToUpdate,
                 ...events.slice(selectedIndex + 1)
             ];
             setEvents(updatedEvents);
-            toast.success('Saved event!', {
-                position: "bottom-center"
-            });
+            await updateEvent(eventToUpdate);
             // google flow
             if (isGoogleEvent) {
                 if (needToUpdateGoogle(changedValues)) {
@@ -191,11 +192,12 @@ export default function EditEventModal({onClose} : Props) {
     /**
      * Deletes the event from the set of events.
      */
-    const onDelete = () => {
+    const onDelete = async () => {
+        const eventToUpdate = events[selectedIndex];
+        await deleteEvent(eventToUpdate);
         setEvents((prevEvents) => {
 			return prevEvents.filter((_, i) => i !== selectedIndex);
 		});
-        toast.success('Event succesfully deleted!', {position: "bottom-center"});
         // close edit modal
         onClose();
     }

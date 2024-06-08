@@ -5,7 +5,7 @@ import { useTaskContext } from "../../Context/TaskContext"
 
 export default function ListPanel() {
 
-    const {labels, setLabels, showTasksInCalendar, setshowTasksInCalendar} = useTaskContext();
+    const { labels, setLabels, showTasksInCalendar, setshowTasksInCalendar } = useTaskContext();
 
 
     const handleLabelRename = (value:string, index:number) => {
@@ -46,8 +46,12 @@ export default function ListPanel() {
             <hr></hr>
             <p>Create, delete, and customize tags for your tasks.</p>
             <section className="default-labels">
-                <div className={labels.length > 0 ? "labels-input" : ""}>
+                {
+                    labels !== undefined 
+                    ?
+                    <div className="labels-input">
                     {
+                        labels.length > 0 ?
                         labels.map((column, index) => {
                             return (
                                 <div key={index} className="individual-label">
@@ -69,8 +73,15 @@ export default function ListPanel() {
                                 </div>
                             )
                         })
+                        : <div style={{paddingInline: ".5rem"}}><p style={{fontSize: ".7rem"}}>Create a new tag!</p></div>
                     }
-                </div>
+                    </div>
+                    :
+                    <div style={{display: "flex", alignItems: "center", gap: ".5rem"}}>
+                        <p>Loading...</p>
+                        <div className="loader"></div>
+                    </div>
+                }
                 <button 
                     onClick={addNewInput}
                     className="new-label">

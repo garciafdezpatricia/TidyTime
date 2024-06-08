@@ -1,4 +1,7 @@
+import { uuid } from "uuidv4";
+
 export interface Task {
+    id: string,
     title: string,
     desc?: string,
     labels?: Label[],
@@ -6,40 +9,41 @@ export interface Task {
     difficulty?: number,
     done: boolean,
     important?: boolean,
-    listIndex: number,
+    listIndex: string,
     githubHtml?: string,
     githubUrl?: string,
     status: number;
     taskIndexInList?: number,
 }
 
-export type TaskList = Task[];
+export type TaskList = {key: string, value: Task[]};
 
 export function taskToListOfTaskList(tasks: Task[]) {
     let result:TaskList[] = [];
     for (const task of tasks) {
         // get list index from task
         const { listIndex, ...rest } = task;
-        if (!result[listIndex]) {
-            result[listIndex] = []; // Si no existe una lista para este índice, la creamos
+        if (!result.find((list) => list.key === listIndex)) {
+            result.push({key: listIndex, value: []}); // Si no existe una lista para este índice, la creamos
         }
-        result[listIndex].push(task); // Agregamos la tarea a la lista correspondiente
+        const index = result.findIndex((list) => list.key === listIndex);
+        result[index].value.push(task); // Agregamos la tarea a la lista correspondiente
     }
     return result;
 }
 
-export function listOfTaskListToTask(tasks: TaskList[]) {
-    const result: Task[] = [];
-    // Iterar sobre cada TaskList en el arreglo
-    tasks.forEach((taskList, listIndex) => {
-        // Iterar sobre cada tarea en la TaskList
-        taskList.forEach(task => {
-            // Añadir la tarea al resultado, asignándole el listIndex correspondiente
-            result.push({ ...task, listIndex });
-        });
-    });
-    return result;
-}
+// export function listOfTaskListToTask(tasks: TaskList[]) {
+//     const result: Task[] = [];
+//     // Iterar sobre cada TaskList en el arreglo
+//     tasks.forEach((taskList, listIndex) => {
+//         // Iterar sobre cada tarea en la TaskList
+//         taskList.forEach(task => {
+//             // Añadir la tarea al resultado, asignándole el listIndex correspondiente
+//             result.push({ ...task, listIndex });
+//         });
+//     });
+//     return result;
+// }
 
 export interface Event {
     start: Date,

@@ -8,6 +8,8 @@ import { useTaskContext } from "../Context/TaskContext";
 import { TaskList } from "@/src/model/Scheme";
 import TabContent from "./TabContent";
 import { useGithubHandler } from "@/pages/api/github";
+import { useInruptHandler } from "@/pages/api/inrupt";
+import { uuid } from "uuidv4";
 
 
 export interface Props {
@@ -27,10 +29,11 @@ export default function Tab({handleEditModal} : Props) {
 	const [renameListName, setRenameListName] = useState("");
 	
 	// const with the lists, tasks and reference to the current active list extracted from the context.
-    const {listNames, selectedListIndex, setListNames, setTasks, tasks, 
-		setSelectedListIndex, selectedTaskIndex, setSelectedTaskIndex} = useTaskContext();
+    const {listNames, selectedListId, setListNames, setTasks, tasks, 
+		setSelectedListId, selectedTaskId, setSelectedTaskId} = useTaskContext();
 
 	const { closeIssue, openIssue } = useGithubHandler();
+	const { updateListNames, deleteList, updateTaskDoneUndone } = useInruptHandler();
 
 	// scroll to selected task
 	useEffect(() => {
@@ -38,18 +41,20 @@ export default function Tab({handleEditModal} : Props) {
 		if (selectedTaskElement) {
 			selectedTaskElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
-	}, [selectedListIndex, selectedTaskIndex]);
+	}, [selectedListId, selectedTaskId]);
 
 	/**
 	 * Creates a new tab, having a default name for the tab if none is provided.
 	 * Closes the modal, clears the new list name constant and sets the selected list to the created one.
 	 */
-	const addNewTab = () => {
-		// TODO: create the list structure for the pod
-		const newTodoList: TaskList = []
-		setListNames([...listNames, `List ${listNames.length + 1}`])
-		setTasks(prevTodo => [...prevTodo, newTodoList])
-		setSelectedListIndex(listNames.length);
+	const addNewTab = async () => {
+		const newListNames = listNames ? [...listNames, `List ${listNames.length + 1}`] : ["List 1"];
+		const newTodoList: TaskList = {key: uuid(), value: []};
+		const newTasks = tasks ? [...tasks, newTodoList] : [newTodoList]
+		setListNames(listNames ? [...listNames, `List ${listNames.length + 1}`] : ["List 1"]);
+		setTasks(newTasks);
+		setSelectedListId(newTodoList.key);
+		await updateListNames(newListNames, newTasks);
 	};
 
 	/**
@@ -57,9 +62,9 @@ export default function Tab({handleEditModal} : Props) {
 	 * Closes the options modal of any tab if any is opened.
 	 * @param index corresponds to the tab being clicked.
 	 */
-	const handleTabSelection = (index: SetStateAction<number>) => {
-		setSelectedListIndex(index);
-		setSelectedTaskIndex(-1);
+	const handleTabSelection = (index: number) => {
+		setSelectedListId(tasks?.at(index)?.key ?? '');
+		setSelectedTaskId('');
 		if (managingList) {
 			setManagingList(false);
 		}
@@ -72,58 +77,74 @@ export default function Tab({handleEditModal} : Props) {
 	 * @param itemIndex corresponds with the index of the task inside of its list.
 	 */
 	const handleCheck = async (task: any, itemIndex: any) => {
-		if (managingList) {
-			setManagingList(false);
+		if (tasks) {
+			if (managingList) {
+				setManagingList(false);
+			}
+			const updatedToDo = [...tasks];
+			let listIndex = tasks.findIndex((list) => list.key === selectedListId);
+			if (listIndex !== -1) {
+				let updatedTask = tasks[listIndex].value[itemIndex];
+				const isDone = updatedTask.done;
+		
+				updatedTask.done = !updatedTask.done;
+				updateTaskDoneUndone(updatedTask);
+				updatedToDo[listIndex].value = [
+					...updatedToDo[listIndex].value.slice(0, itemIndex),
+					updatedTask,
+					...updatedToDo[listIndex].value.slice(itemIndex + 1),
+				]
+				setTasks(updatedToDo);
+				
+				if (updatedTask.githubUrl) {
+					if (isDone) {
+						await openIssue(updatedTask.githubUrl);
+					} else {
+						await closeIssue(updatedTask.githubUrl);
+					}
+					
+				}
+			}
 		}
-		const updatedToDo = [...tasks];
-        let updatedTask = tasks[selectedListIndex][itemIndex];
-        const isDone = updatedTask.done;
-
-        updatedTask.done = !updatedTask.done;
-        updatedToDo[selectedListIndex] = [
-            ...updatedToDo[selectedListIndex].slice(0, itemIndex),
-            updatedTask,
-            ...updatedToDo[selectedListIndex].slice(itemIndex + 1)
-        ];
-        setTasks(updatedToDo);
-        
-        if (updatedTask.githubUrl) {
-            if (isDone) {
-                await openIssue(updatedTask.githubUrl);
-            } else {
-                await closeIssue(updatedTask.githubUrl);
-            }
-            
-        }
 	};
 
 	/**
 	 * Deletes the tab and content whose index corresponds to the selected tab index. Closes the confirmation modal
 	 * raised to inform of the deletion of the tab.
 	 */
-	const deleteTab = () => {
-		setDeletingList(true);
-		setListNames((prevTabs) => {
-			return prevTabs.filter((_, i) => i !== selectedListIndex);
-		});
-		setTasks((prevTodo) => {
-			return prevTodo.filter((_, i) => i !== selectedListIndex);
-		});
-		setConfirmationDeleteModalOpen(false);
+	const deleteTab = async () => {
+		if (listNames && tasks) {
+			setDeletingList(true);
+			const index = tasks.findIndex((list) => list.key === selectedListId);
+			const newListNames = listNames.filter((_, i) => i !== index);
+			let taskIdsToDelete:string[] = [];
+			if (tasks[index].value && tasks[index].value.length > 0) {
+				taskIdsToDelete = tasks[index].value.map((task) => {return task.id});
+			}
+			const newTasks = tasks.filter((_, i) => i !== index)!;
+			setListNames(newListNames);
+			setTasks(newTasks);
+			setConfirmationDeleteModalOpen(false);
+			await deleteList(newListNames, newTasks, taskIdsToDelete);
+		}
 	};
 
 	/**
 	 * Renames the tab whose index corresponds to the selected tab index. Closes the modal prompting for the new tab name.
 	 * Clears the const storing the new tab name.
 	 */
-	const renameTab = () => {
-		setListNames((prevTabs) => {
-			const newTabs = [...prevTabs];
-			newTabs[selectedListIndex] = renameListName;
-			return newTabs;
-		});
-		setRenameListName("");
-		setManagingList(false);
+	const renameTab = async () => {
+		if (listNames) {
+			let newListNames = [...listNames];
+			const index = tasks?.findIndex((list) => list.key === selectedListId);
+			if (index !== undefined && index >= 0) {
+				newListNames[index] = renameListName;
+				setListNames(newListNames);
+				setRenameListName("");
+				setManagingList(false);
+				await updateListNames(newListNames, tasks!);
+			}
+		}
 	};
 
 	/**
@@ -139,7 +160,7 @@ export default function Tab({handleEditModal} : Props) {
 	 */
 	useEffect(() => {
 		if (deletingList) {
-			setSelectedListIndex(0);
+			setSelectedListId(tasks?.at(0)?.key ?? '');
 			setManagingList(false);
 			setDeletingList(false);
 		}
@@ -153,9 +174,9 @@ export default function Tab({handleEditModal} : Props) {
 	return (
 		<article className='tab-container'>
 				<section className='tab-container bloc-tabs'>{" "}
-					{listNames.map((tab, index) => (
+					{listNames && listNames.map((tab, index) => (
 						<section
-							className={selectedListIndex === index ? "active-tab" : "tab"}
+							className={tasks?.findIndex((list) => list.key === selectedListId) === index ? "active-tab" : "tab"}
 							key={index}
 						>
 							<p onClick={() => handleTabSelection(index)}>{tab}</p>
@@ -187,7 +208,7 @@ export default function Tab({handleEditModal} : Props) {
 			</button>
 			<TabContent seeDone={seeDone}  handleCheck={handleCheck} handleEditModal={handleEditModal}/>
 			{
-				tasks.length > 0 &&
+				tasks && tasks.length > 0 &&
 				<button className='see-done-task' onClick={() => setSeeDone(!seeDone)}>
 					{seeDone ? <AiFillEyeInvisible /> : <AiFillEye /> }
 					{seeDone ? "Hide" : "Show"} done tasks

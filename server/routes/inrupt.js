@@ -1,15 +1,64 @@
 const express = require("express");
 require('dotenv').config();
-const { getProfileAll, getSourceUrl, getSolidDataset, getThing, getStringNoLocale, getNamedNode, getAltProfileUrlAllFrom } = require("@inrupt/solid-client")
+const { addStringNoLocale, createThing, getSolidDataset, createContainerAt,  
+    getThing, getStringNoLocale, getNamedNode, getAltProfileUrlAllFrom, 
+    getPodUrlAll,  buildThing, createSolidDataset, setThing,
+    saveSolidDatasetAt, getInteger, getStringNoLocaleAll, getBoolean, 
+    getThingAll, removeAll, deleteSolidDataset, removeThing,
+    getDate,
+    getDatetime} = require("@inrupt/solid-client");
 const { Session, getSessionFromStorage } = require("@inrupt/solid-client-authn-node");
 const { foaf, vcard } = require('rdf-namespaces');
-
+const { InMemoryStorage } = require("@inrupt/solid-client-authn-core");
 
 const router = express.Router();
+const storage = new InMemoryStorage();
 
+// vocab
+const CONFIG_OBJECT = "https://example.com/configuration";
+const WEEK_START = "https://example.com/weekStart";
+const CALENDAR_VIEW = "https://example.com/calendarView";
+const SHOW_TASK = "https://example.com/showTask";
+const BOARD_COLUMN = "https://example.com/boardColumns";
+const LIST_NAME = "https://example.com/listNames";
+const LIST_ID = "https://example.com/listId";
+const LABEL_OBJECT = "https://example.com/label";
+const LABEL_NAME = "https://example.com/name";
+const LABEL_COLOR = "https://example.com/color";
+const DATA_RECORD = "https://example.com/dataRecord";
+const TASK = "https://example.com/task";
+const TASK_ID = "https://example.com/taskId";
+const TASK_TITLE = "https://example.com/taskTitle";
+const TASK_DESC = "https://example.com/taskDesc";
+const TASK_DATE = "https://example.com/taskDate";
+const TASK_DIFFICULTY = "https://example.com/taskDifficulty";
+const TASK_DONE = "https://example.com/taskDone";
+const TASK_IMPORTANT = "https://example.com/taskImportant";
+const TASK_LISTINDEX = "https://example.com/taskListIndex";
+const TASK_GHHTML = "https://example.com/taskGhHtml";
+const TASK_GHURL = "https://example.com/taskGhUrl";
+const TASK_STATUS = "https://example.com/taskStatus";
+const EVENT = "https://example.com/event";
+const EVENT_ID = "https://example.com/eventId";
+const EVENT_TITLE = "https://example.com/eventTitle";
+const EVENT_DESC = "https://example.com/eventDesc";
+const EVENT_START_DATE = "https://example.com/eventStartDate";
+const EVENT_END_DATE = "https://example.com/eventEndDate";
+const EVENT_COLOR = "https://example.com/eventColor";
+const EVENT_ISTASK = "https://example.com/isTask";
+const EVENT_GID = "https://example.com/googleId";
+const EVENT_GCALENDAR = "https://example.com/googleCalendar";
+const EVENT_GHTML = "https://example.com/googleHtml";
 
-async function getNameFromWebId(webId, dataset) {
-    const webIdThing = await getThing(dataset, webId);
+/**
+ * Get the user name from the webId dataset
+ * @param {} webId contains the webId URL
+ * @param {*} dataset corresponds to the dataset containing the webId
+ * @returns the name present in the WebId document if any. It returns null in case
+ * no name is found for foaf.name or vcard.fn predicates
+ */
+function getNameFromWebId(webId, dataset) {
+    const webIdThing = getThing(dataset, webId);
     const namePredicates = [foaf.name, vcard.fn]; 
     const userName = namePredicates.reduce((acc, predicate) =>
         acc ??
@@ -20,45 +69,858 @@ async function getNameFromWebId(webId, dataset) {
     return userName;
 }
 
-router.get("/solid/login", async function (req, res) {
-    const session = new Session();
-    res.cookie("inruptSessionId", session.info.sessionId, {
-        secure: true,
-        httpOnly: true,
-        sameSite: "none"
-    });
-
-    const redirectToIDP = (url) => {
-        res.redirect(url);
+/**
+ * Create the root container in the user Pod for the Application if it doesn't already exist in the user's pod.
+ * @param {*} session corresponds to the session from which the pod is going to be extracted.
+ * @returns true if it created the container, false otherwise.
+ */
+async function createRootContainer(session) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            await createContainerAt(`${storage}/TidyTime`, {fetch: session.fetch});
+            return true;
+        }
+    } catch (error)  {
+        return false;
     }
+}
 
-    await session.login({
-        redirectUrl: "https://tidytime.onrender.com/solid/login/callback",
-        oidcIssuer: "https://login.inrupt.com",
-        clientName: "TidyTimeDev",
-        handleRedirect: redirectToIDP
-    });
-});
+/**
+ * Poblates the root container in the user Pod for the Application with the initial needed information. This information
+ * would be the default configuration and the [[Thing]] which will keep the record of tasks.
+ * @param {*} session contains the session of the user.
+ */
+async function poblateRootContainer(session) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            // dataset containing the default configuration
+            let dataset = createSolidDataset();
+            const configThing = buildThing(createThing({ name: "configuration" }))
+            .addStringNoLocale(CALENDAR_VIEW, "month")
+            .addStringNoLocale(BOARD_COLUMN, "To do")
+            .addStringNoLocale(BOARD_COLUMN, "In progress")
+            .addStringNoLocale(BOARD_COLUMN, "Done")
+            .addBoolean(SHOW_TASK, true)
+            .addInteger(WEEK_START, 1)
+            .addUrl(CONFIG_OBJECT, CONFIG_OBJECT)
+            .build();
+            const label1 = buildThing(createThing({ name: "label1" }))
+            .addStringNoLocale(LABEL_NAME, "home")
+            .addStringNoLocale(LABEL_COLOR, "#ad30ad")
+            .addUrl(LABEL_OBJECT, LABEL_OBJECT)
+            .build();
+            const label2 = buildThing(createThing({ name: "label2" }))
+            .addStringNoLocale(LABEL_NAME, "school")
+            .addStringNoLocale(LABEL_COLOR, "#5930ab")
+            .addUrl(LABEL_OBJECT, LABEL_OBJECT)
+            .build();
+            const label3 = buildThing(createThing({ name: "label3" }))
+            .addStringNoLocale(LABEL_NAME, "work")
+            .addStringNoLocale(LABEL_COLOR, "#e6a937")
+            .addUrl(LABEL_OBJECT, LABEL_OBJECT)
+            .build();
+            dataset = setThing(dataset, configThing);
+            dataset = setThing(dataset, label1);
+            dataset = setThing(dataset, label2);
+            dataset = setThing(dataset, label3);
+            await saveSolidDatasetAt(`${rootStorage}/config`, dataset, {fetch: session.fetch});
+            // dataset for the records
+            let recordDataset = createSolidDataset();
+            const taskRecordThing = buildThing(createThing({ name: "taskRecord" }))
+            .addUrl(DATA_RECORD, DATA_RECORD)
+            .build();
+            const eventRecordThing = buildThing(createThing({ name: "eventRecord" }))
+            .addUrl(DATA_RECORD, DATA_RECORD)
+            .build();
+            recordDataset = setThing(recordDataset, taskRecordThing);
+            recordDataset = setThing(recordDataset, eventRecordThing);
+            await saveSolidDatasetAt(`${rootStorage}/data`, recordDataset, {fetch: session.fetch});
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 
-router.get("/solid/login/callback", async function (req, res) {
-    const session = await getSessionFromStorage(req.cookies.inruptSessionId);
-    await session.handleIncomingRedirect(`https://tidytime.onrender.com${req.url}`);
+/**
+ * Retrieves the configuration stored for the Application.
+ * @param {*} session contains the session of the user.
+ * @returns object containing the configuration as its properties: calendarView:string, showTasksInCalendar:bool, weekStart:int,
+ * boardColumns:string[] and labels: { color: string, name: string }[].
+ */
+async function getApplicationConfiguration(session) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            // configuration dataset
+            const dataset = await getSolidDataset(`${rootStorage}/config`, {fetch: session.fetch});
+            const things = getThingAll(dataset);
+            const configThing = things.filter((thing) => thing.url.includes("#configuration"))[0];
+            let result = {
+                calendarView: getStringNoLocale(configThing, CALENDAR_VIEW),
+                showTasksInCalendar: getBoolean(configThing, SHOW_TASK),
+                weekStart: getInteger(configThing, WEEK_START),
+                boardColumns: getStringNoLocaleAll(configThing, BOARD_COLUMN),
+            }
+            const labels = await Promise.all(things
+            .filter((thing) => thing.url.includes("#label"))
+            .map(async (thing) => {
+                const name = getStringNoLocale(thing, LABEL_NAME);
+                const color = getStringNoLocale(thing, LABEL_COLOR);
+                return {
+                    color: color,
+                    name: name
+                };
+            }));
+            return {...result, labels: labels};
+        }
+    } catch (error) {
+        if (error.toString().includes("404")) {
+            throw error;
+        }
+        console.log(error);
+    }
+}
 
-    if (session.info.isLoggedIn) {
-        res.cookie("webId", session.info.webId, {
+/**
+ * Stores the Application configuration in the user's pod.
+ * @param {*} session contains the session of the user.
+ * @param {*} labels contains the task labels to be stored: { color: string, name: string }[].
+ * @param {*} showTasksInCalendar contains the whether tasks with date are wanted to be shown in the calendar: boolean.
+ * @param {*} boardColumns contains the columns of the board: string[].
+ * @param {*} weekStart contains the starting week day for the calendar: int.
+ * @param {*} calendarView contains the default calendar view: string.
+ * @returns true if the configuration was correctly stored, false otherwise.
+ */
+async function storeApplicationConfiguration(session, labels, showTasksInCalendar, boardColumns, weekStart, calendarView ) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            // delete the current configuration dataset
+            await deleteSolidDataset(`${rootStorage}/config`, {fetch: session.fetch});
+            // create new configuration dataset with new values
+            let dataset = createSolidDataset();
+            let configThing = buildThing(createThing({ name: "configuration" }))
+            .addStringNoLocale(CALENDAR_VIEW, calendarView)
+            .addBoolean(SHOW_TASK, showTasksInCalendar)
+            .addInteger(WEEK_START, weekStart)
+            .addUrl(CONFIG_OBJECT, CONFIG_OBJECT)
+            .build();
+            configThing = boardColumns.reduce((configThing, column) => {
+                configThing = addStringNoLocale(configThing, BOARD_COLUMN, column);
+                return configThing;
+            }, configThing);
+            let labelsThing = labels.map((label, index) => {
+                return buildThing(createThing({ name: `label${index}` }))
+                .addStringNoLocale(LABEL_NAME, label.name)
+                .addStringNoLocale(LABEL_COLOR, label.color)
+                .addUrl(LABEL_OBJECT, LABEL_OBJECT)
+                .build();
+            });
+            dataset = setThing(dataset, configThing);
+            dataset = labelsThing.reduce((dataset, labelThing) => {
+                dataset = setThing(dataset, labelThing);
+                return dataset;
+            }, dataset)
+            await saveSolidDatasetAt(`${rootStorage}/config`, dataset, {fetch: session.fetch});
+            return true;
+        }
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
+/**
+ * Retrieves the board columns from the user's pod.
+ * @param {*} session contains the session of the user.
+ * @returns object with board columns { boardColumns: string[] }.
+ */
+async function getBoardColumnsConfiguration(session) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            // get the board columns from the config dataset
+            const dataset = await getSolidDataset(`${rootStorage}/config`, {fetch: session.fetch});
+            const things = getThingAll(dataset);
+            const configThing = things.filter((thing) => thing.url.includes("#configuration"))[0];
+            let result = {
+                boardColumns: getStringNoLocaleAll(configThing, BOARD_COLUMN),
+            }
+            return result;
+        }
+    } catch (error) {
+        if (error.toString().includes("404")) {
+            throw error;
+        }
+        console.log(error);
+    }
+}
+
+/**
+ * Stores the board columns in the user's pod
+ * @param {*} session contains the user's session
+ * @param {*} boardColumns contains the board columns to be stored: string[]
+ * @returns 
+ */
+async function storeBoardColumns(session, boardColumns) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            
+            let dataset = await getSolidDataset(`${rootStorage}/config`, {fetch: session.fetch});
+            const things = getThingAll(dataset);
+            let configThing = things.filter((thing) => thing.url.includes("#configuration"))[0];
+            // remove all
+            configThing = removeAll(configThing, BOARD_COLUMN);
+            configThing = boardColumns.reduce((configThing, column) => {
+                configThing = addStringNoLocale(configThing, BOARD_COLUMN, column);
+                return configThing;
+            }, configThing);
+            dataset = setThing(dataset, configThing);
+            await saveSolidDatasetAt(`${rootStorage}/config`, dataset, {fetch: session.fetch});
+            return true;
+        }
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
+// calendar view, week start and show tasks in calendar (change that bit to calendar panel)
+async function getCalendarConfiguration(session) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+
+            const dataset = await getSolidDataset(`${rootStorage}/config`, {fetch: session.fetch});
+            const things = getThingAll(dataset);
+            const configThing = things.filter((thing) => thing.url.includes("#configuration"))[0];
+            let result = {
+                calendarView: getStringNoLocale(configThing, CALENDAR_VIEW),
+                showTasksInCalendar: getBoolean(configThing, SHOW_TASK),
+                weekStart: getInteger(configThing, WEEK_START),
+            }
+            return {status: true, data: result};
+        }
+    } catch (error) {
+        console.log(error);
+        return {status: false};
+    }
+}
+
+function getTasksIds(session, things) {
+    if (session) {
+        const taskRecordThing = things.filter((thing) => thing.url.includes("#taskRecord"))[0];
+        let tasksIds = [];
+        if (taskRecordThing) {
+            tasksIds = getStringNoLocaleAll(taskRecordThing, TASK_ID);
+        }
+        return tasksIds;
+    }
+}
+ 
+// TODO: make getEVentsIds and getTasksIds the same function -> make taskRecord smth like dataRecord
+function getEventsIds(session, things) {
+    if (session) {
+        const eventRecordThing = things.filter((thing) => thing.url.includes("#eventRecord"))[0];
+        let eventsIds = [];
+        if (eventRecordThing) {
+            eventsIds = getStringNoLocaleAll(eventRecordThing, EVENT_ID); // TODO: same here, event id and task id could point to the same url
+        }
+        return eventsIds;
+    }
+}
+
+// get task from task dataset
+async function getTask(session, taskId) {
+    if (session) {
+        const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+        const rootStorage = `${storage}/TidyTime`;
+
+        const taskDataset = await getSolidDataset(`${rootStorage}/tasks/${taskId}`, {fetch: session.fetch});
+        const things = getThingAll(taskDataset);
+        const taskThing = things.filter((thing) => thing.url.includes("#task"))[0];
+        let result = null
+        if (taskThing) {
+            const id = getStringNoLocale(taskThing, TASK_ID);
+            const title = getStringNoLocale(taskThing, TASK_TITLE);
+            const desc = getStringNoLocale(taskThing, TASK_DESC) ?? "";
+            const date = getStringNoLocale(taskThing, TASK_DATE) ?? "";
+            const difficulty = getInteger(taskThing, TASK_DIFFICULTY) ?? 0;
+            const done = getBoolean(taskThing, TASK_DONE) ?? false;
+            const important = getBoolean(taskThing, TASK_IMPORTANT) ?? 0;
+            const listIndex = getStringNoLocale(taskThing, TASK_LISTINDEX);
+            const githubHtml = getStringNoLocale(taskThing, TASK_GHHTML) ?? "";
+            const githubUrl = getStringNoLocale(taskThing, TASK_GHURL) ?? "";
+            const status = getInteger(taskThing, TASK_STATUS) ?? 0;
+            result = { id: id, title: title, desc: desc, endDate: date, difficulty: difficulty,
+                done: done, important: important, listIndex: listIndex, githubHtml: githubHtml,
+                githubUrl: githubUrl, status: status
+            };
+        }   
+        const labels = await Promise.all(things
+            .filter((thing) => thing.url.includes("#label"))
+            .map(async (thing) => {
+                const name = getStringNoLocale(thing, LABEL_NAME);
+                const color = getStringNoLocale(thing, LABEL_COLOR);
+                return {
+                    color: color,
+                    name: name
+                };
+            }));
+        result = {...result, labels: labels};
+        return result;
+    }
+}
+
+// get all data
+async function getApplicationData(session) {
+    try {
+        if (session) {
+            let tasks = [];
+            let listNames = [];
+            const taskResponse = await getTasks(session);
+            if (taskResponse.status === "success") {
+                tasks = taskResponse.data.tasks;
+                listNames = taskResponse.data.listNames;
+            }
+            let events = [];
+            const eventResponse = await getEvents(session);
+            if (eventResponse.status === "success") {
+                events = eventResponse.data.events;
+                console.log("los events", eventResponse.data.events);
+            }
+            return { status: "success", tasks: {tasks: tasks, listNames: listNames}, events: events };
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return {status: "empty"};    
+        }
+        return {status: "fail"};
+    }
+}
+
+//config labels
+async function getLabels(session) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+
+            const dataset = await getSolidDataset(`${rootStorage}/config`, {fetch: session.fetch});
+            const things = getThingAll(dataset);
+            const labels = await Promise.all(things
+            .filter((thing) => thing.url.includes("#label"))
+            .map(async (thing) => {
+                const name = getStringNoLocale(thing, LABEL_NAME);
+                const color = getStringNoLocale(thing, LABEL_COLOR);
+                return {
+                    color: color,
+                    name: name
+                };
+            }));
+            return labels;
+        }
+    } catch (error) {
+        console.log("error en linea 377");
+        return [];
+    }
+}
+
+// tasks and list names
+async function getTasks(session) {
+    try {
+        if (session) {
+            let tasks = [];
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+
+            const dataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
+            const things = getThingAll(dataset);
+            const listNamesThings = things.filter((thing) => thing.url.includes("#listName"));
+            const listNames = listNamesThings.map((thing) => {
+                const name = getStringNoLocale(thing, LIST_NAME);
+                const id = getStringNoLocale(thing, LIST_ID);
+                return {
+                    name: name,
+                    id: id
+                }
+            });
+            if (listNames.length > 0) {
+                const tasksIds = getTasksIds(session, things);
+                tasks = await Promise.all(tasksIds.map(async (taskId) => await getTask(session, taskId)));
+            }
+            let data = {
+                listNames: listNames, tasks: tasks
+            }
+            return { status: "success", data: {listNames: listNames, tasks: tasks} }
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return {status: "empty"};    
+        }
+        return {status: "fail"};
+    }
+}
+
+async function createTaskThing(task) {
+    let newTask = buildThing(createThing({name: "task"}))
+    .addStringNoLocale(TASK_ID, task.id)
+    .addStringNoLocale(TASK_TITLE, task.title)
+    .addStringNoLocale(TASK_DESC, task.desc ?? "")
+    .addStringNoLocale(TASK_DATE, task.endDate ?? "")
+    .addStringNoLocale(TASK_GHHTML, task.html ?? "")
+    .addStringNoLocale(TASK_GHURL, task.url ?? "")
+    .addInteger(TASK_DIFFICULTY, task.difficulty ?? 0)
+    .addStringNoLocale(TASK_LISTINDEX, task.listIndex)
+    .addInteger(TASK_STATUS, task.status ?? 0)
+    .addBoolean(TASK_DONE, task.done ?? false)
+    .addBoolean(TASK_IMPORTANT, task.important ?? false)
+    .addUrl(TASK, TASK)
+    .build();
+    
+    return newTask;
+}
+
+async function createEventThing(event) {
+    let newEvent = buildThing(createThing({name: "event"}))
+    .addStringNoLocale(EVENT_ID, event.eventId)
+    .addStringNoLocale(EVENT_TITLE, event.title)
+    .addStringNoLocale(EVENT_DESC, event.desc ?? "")
+    .addDatetime(EVENT_START_DATE, new Date(event.start))
+    .addDatetime(EVENT_END_DATE, new Date(event.end)) 
+    .addStringNoLocale(EVENT_COLOR, event.color)
+    .addBoolean(EVENT_ISTASK, event.isTask ?? 0)
+    .addStringNoLocale(EVENT_GHTML, event.googleHTML ?? "")
+    .addStringNoLocale(EVENT_GID, event.googleId ?? "")
+    .addStringNoLocale(EVENT_GCALENDAR, event.googleCalendar ?? "")
+    .addUrl(EVENT, EVENT)
+    .build();
+    return newEvent;
+}
+
+async function createTask(session, task) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            
+            // create thing dataset and add the things and labels (if any)
+            let taskDataset = createSolidDataset();
+            let taskThing = await createTaskThing(task);
+            taskDataset = setThing(taskDataset, taskThing);
+            if (task.labels) {
+                let labelsThing = task.labels.map((label, index) => {
+                    return buildThing(createThing({ name: `label${index}` }))
+                    .addStringNoLocale(LABEL_NAME, label.name)
+                    .addStringNoLocale(LABEL_COLOR, label.color)
+                    .addUrl(LABEL_OBJECT, LABEL_OBJECT)
+                    .build();
+                });
+                taskDataset = labelsThing.reduce((taskDataset, labelThing) => {
+                    taskDataset = setThing(taskDataset, labelThing);
+                    return taskDataset;
+                }, taskDataset)
+            }
+            await saveSolidDatasetAt(`${rootStorage}/tasks/${task.id}`, taskDataset, {fetch: session.fetch});
+
+            // if it exists, update task record, else create it
+            let dataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
+            const things = getThingAll(dataset);
+            let taskRecordThing = things.filter((thing) => thing.url.includes("#taskRecord"))[0];
+            if (taskRecordThing) {
+                taskRecordThing = buildThing(taskRecordThing)
+                .addStringNoLocale(TASK_ID, task.id)
+                .build();
+            } else {
+                taskRecordThing = buildThing(createThing({name: "taskRecord"}))
+                .addStringNoLocale(TASK_ID, task.id)
+                .build();
+            }
+            dataset = setThing(dataset, taskRecordThing);
+            await saveSolidDatasetAt(`${rootStorage}/data`, dataset, {fetch: session.fetch});
+            return true;
+        }
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
+async function createEvent(session, event) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            
+            // create thing dataset and add the things
+            let eventDataset = createSolidDataset();
+            let eventThing = await createEventThing(event);
+            eventDataset = setThing(eventDataset, eventThing);
+            await saveSolidDatasetAt(`${rootStorage}/events/${event.eventId}`, eventDataset, {fetch: session.fetch});
+
+            // if it exists, update event record, else create it
+            let dataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
+            const things = getThingAll(dataset);
+            let eventRecordThing = things.filter((thing) => thing.url.includes("#eventRecord"))[0];
+            if (eventRecordThing) {
+                eventRecordThing = buildThing(eventRecordThing)
+                .addStringNoLocale(EVENT_ID, event.eventId)
+                .build();
+            } else {
+                eventRecordThing = buildThing(createThing({name: "eventRecord"}))
+                .addStringNoLocale(EVENT_ID, event.eventId)
+                .build();
+            }
+            dataset = setThing(dataset, eventRecordThing);
+            await saveSolidDatasetAt(`${rootStorage}/data`, dataset, {fetch: session.fetch});
+            return true;
+        }
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
+async function updateTask(session, task, updateAll) {
+    if (session) {
+        try {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            let taskDataset = await getSolidDataset(`${rootStorage}/tasks/${task.id}`, {fetch: session.fetch});
+            let things = getThingAll(taskDataset);
+            let taskThing = things.filter((thing) => thing.url.includes("#task"))[0];
+
+            if (updateAll) {
+                if (taskThing) {
+                    await deleteSolidDataset(`${rootStorage}/tasks/${task.id}`, {fetch: session.fetch});
+                    taskDataset = createSolidDataset();
+                    let newTask = await createTaskThing(task);
+                    taskDataset = setThing(taskDataset, newTask);
+                    if (task.labels) {
+                        let labelsThing = task.labels.map((label, index) => {
+                            return buildThing(createThing({ name: `label${index}` }))
+                            .addStringNoLocale(LABEL_NAME, label.name)
+                            .addStringNoLocale(LABEL_COLOR, label.color)
+                            .addUrl(LABEL_OBJECT, LABEL_OBJECT)
+                            .build();
+                        });
+                        taskDataset = labelsThing.reduce((taskDataset, labelThing) => {
+                            taskDataset = setThing(taskDataset, labelThing);
+                            return taskDataset;
+                        }, taskDataset)
+                    }
+                    await saveSolidDatasetAt(`${rootStorage}/tasks/${task.id}`, taskDataset, {fetch: session.fetch});
+                }
+            } else {
+                if (taskThing) {
+                    taskThing = removeAll(taskThing, TASK_DONE);
+                    taskThing = buildThing(taskThing)
+                    .addBoolean(TASK_DONE, task.done)
+                    .build();
+                    taskDataset = setThing(taskDataset, taskThing);
+                    await saveSolidDatasetAt(`${rootStorage}/tasks/${task.id}`, taskDataset, {fetch: session.fetch});
+                }           
+            }
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+}
+
+async function updateEvent(session, event) {
+    if (session) {
+        try {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            let eventDataset = await getSolidDataset(`${rootStorage}/events/${event.eventId}`, {fetch: session.fetch});
+            let things = getThingAll(eventDataset);
+            let eventThing = things.filter((thing) => thing.url.includes("#event"))[0];
+            if (eventThing) {
+                await deleteSolidDataset(`${rootStorage}/events/${event.eventId}`, {fetch: session.fetch});
+                eventDataset = createSolidDataset();
+                let newEvent = await createEventThing(event);
+                eventDataset = setThing(eventDataset, newEvent);
+                await saveSolidDatasetAt(`${rootStorage}/events/${event.eventId}`, eventDataset, {fetch: session.fetch});
+                return true;
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+}
+
+async function updateTaskStatus(session, task) {
+    if (session) {
+        try {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            let taskDataset = await getSolidDataset(`${rootStorage}/tasks/${task.id}`, {fetch: session.fetch});
+            let things = getThingAll(taskDataset);
+            let taskThing = things.filter((thing) => thing.url.includes("#task"))[0];
+            if (taskThing) {
+                taskThing = removeAll(taskThing, TASK_STATUS);
+                taskThing = buildThing(taskThing)
+                .addInteger(TASK_STATUS, task.status)
+                .build();
+                taskDataset = setThing(taskDataset, taskThing);
+                await saveSolidDatasetAt(`${rootStorage}/tasks/${task.id}`, taskDataset, {fetch: session.fetch});
+            }           
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+}
+
+async function deleteTask(session, task) {
+    if (session) {
+        try {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            
+            let taskRecordDataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
+            const things = getThingAll(taskRecordDataset);
+            // remove task from record
+            let taskRecordThing = things.filter((thing) => thing.url.includes("#taskRecord"))[0];
+            if (taskRecordThing) {
+                let tasksIds = getStringNoLocaleAll(taskRecordThing, TASK_ID).filter((taskId) => taskId !== task.id);
+                taskRecordThing = removeAll(taskRecordThing, TASK_ID);
+                if (tasksIds && tasksIds.length > 0) {
+                    taskRecordThing = tasksIds.reduce((taskRecordThing, taskId) => {
+                        taskRecordThing = addStringNoLocale(taskRecordThing, TASK_ID, taskId);
+                        return taskRecordThing;
+                    }, taskRecordThing)
+                }
+                taskRecordDataset = setThing(taskRecordDataset, taskRecordThing);
+                await saveSolidDatasetAt(`${rootStorage}/data`, taskRecordDataset, {fetch: session.fetch});
+            }
+            
+            // remove task dataset
+            await deleteSolidDataset(`${rootStorage}/tasks/${task.id}`, {fetch: session.fetch});
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+}
+
+async function deleteEvent(session, event) {
+    if (session) {
+        try {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            
+            let eventRecordDataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
+            const things = getThingAll(eventRecordDataset);
+            // remove event from record
+            let eventRecordThing = things.filter((thing) => thing.url.includes("#eventRecord"))[0];
+            if (eventRecordThing) {
+                let eventsIds = getStringNoLocaleAll(eventRecordThing, EVENT_ID).filter((eventId) => eventId !== event.eventId);
+                eventRecordThing = removeAll(eventRecordThing, EVENT_ID);
+                if (eventsIds && eventsIds.length > 0) {
+                    eventRecordThing = eventsIds.reduce((eventRecordThing, eventId) => {
+                        eventRecordThing = addStringNoLocale(eventRecordThing, EVENT_ID, eventId);
+                        return eventRecordThing;
+                    }, eventRecordThing)
+                }
+                eventRecordDataset = setThing(eventRecordDataset, eventRecordThing);
+                await saveSolidDatasetAt(`${rootStorage}/data`, eventRecordDataset, {fetch: session.fetch});
+            }
+            // remove event dataset
+            await deleteSolidDataset(`${rootStorage}/events/${event.eventId}`, {fetch: session.fetch});
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+}
+
+async function deleteList(session, tasksIds) {
+    if (session) {
+        try {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+            
+            let taskRecordDataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
+            const things = getThingAll(taskRecordDataset);
+            // remove tasks from record
+            let taskRecordThing = things.filter((thing) => thing.url.includes("#taskRecord"))[0];
+            if (taskRecordThing) {
+                let remainingIds = getStringNoLocaleAll(taskRecordThing, TASK_ID)
+                    .filter((taskId) => !tasksIds.some((id) => id === taskId));
+                taskRecordThing = removeAll(taskRecordThing, TASK_ID);
+                if (remainingIds && remainingIds.length > 0) {
+                    taskRecordThing = remainingIds.reduce((taskRecordThing, taskId) => {
+                        taskRecordThing = addStringNoLocale(taskRecordThing, TASK_ID, taskId);
+                        return taskRecordThing;
+                    }, taskRecordThing)
+                }
+                taskRecordDataset = setThing(taskRecordDataset, taskRecordThing);
+                await saveSolidDatasetAt(`${rootStorage}/data`, taskRecordDataset, {fetch: session.fetch});
+            }
+            // remove tasks dataset
+            await Promise.all(tasksIds.map(async (id) => {
+                await deleteSolidDataset(`${rootStorage}/tasks/${id}`, {fetch: session.fetch});
+            }))
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+}
+
+async function getEvents(session) {
+    try {
+        if (session) {
+            let events = [];
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+
+            const dataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
+            const things = getThingAll(dataset);
+            const eventsIds = getEventsIds(session, things);
+            events = await Promise.all(eventsIds.map(async (eventId) => await getEvent(session, eventId)));
+            return { status: "success", data: {events: events} }
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return {status: "empty"};    
+        }
+        return {status: "fail"};
+    }
+}
+
+async function getEvent(session, eventId) {
+    if (session) {
+        const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+        const rootStorage = `${storage}/TidyTime`;
+
+        const taskDataset = await getSolidDataset(`${rootStorage}/events/${eventId}`, {fetch: session.fetch});
+        const things = getThingAll(taskDataset);
+        const thing = things.filter((thing) => thing.url.includes("#event"))[0];
+        let result = null
+        if (thing) {
+            const id = getStringNoLocale(thing, EVENT_ID);
+            const title = getStringNoLocale(thing, EVENT_TITLE); //TODO: title and desc can be the same for tasks and events
+            const desc = getStringNoLocale(thing, EVENT_DESC) ?? "";
+            const startDate = getDatetime(thing, EVENT_START_DATE); // TODO: date
+            const endDate = getDatetime(thing, EVENT_END_DATE); // TODO: date
+            const color = getStringNoLocale(thing, EVENT_COLOR);
+            const isTask = getBoolean(thing, EVENT_ISTASK) ?? false;
+            const googleHtml = getStringNoLocale(thing, EVENT_GHTML) ?? "";
+            const googleId = getStringNoLocale(thing, EVENT_GID) ?? "";
+            const googleCalendar = getStringNoLocale(thing, EVENT_GCALENDAR) ?? "";
+            result = { eventId: id, title: title, desc: desc, start: startDate, end: endDate,
+                color: color, isTask: isTask, googleHTML: googleHtml, googleId: googleId,
+                googleCalendar: googleCalendar
+            };
+        } 
+        return result;
+    }
+}
+
+async function storeListNames(session, listNames) {
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+
+            let dataset = null;
+            let listNameThings = null;
+            try {
+                dataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
+                // get current list names if any
+                const things = getThingAll(dataset);
+                listNameThings = things.filter((thing) => thing.url.includes("#listName"));
+                // remove all
+                dataset = listNameThings.reduce((dataset, listThing) => {
+                    dataset = removeThing(dataset, listThing);
+                    return dataset;
+                }, dataset);
+                listNameThings = listNames.map((listName, index) => {
+                    return buildThing(createThing({ name: `listName${index}` }))
+                    .addStringNoLocale(LIST_NAME, listName.name)
+                    .addStringNoLocale(LIST_ID, listName.id)
+                    .addUrl(LIST_NAME, LIST_NAME)
+                    .build();
+                });
+                dataset = listNameThings.reduce((dataset, listThing) => {
+                    dataset = setThing(dataset, listThing);
+                    return dataset;
+                }, dataset);
+                await saveSolidDatasetAt(`${rootStorage}/data`, dataset, {fetch: session.fetch});
+                return true;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
+// ROUTES
+
+router.get("/solid/login", async function (req, res) {
+    try {
+        const session = new Session({storage: storage, keepAlive: true});
+        res.cookie("inruptSessionId", session.info.sessionId, {
             secure: true,
             httpOnly: true,
             sameSite: "none"
         });
-        res.redirect(`https://garciafdezpatricia.github.io/TidyTime?user=${session.info.webId}`)
+        const redirectToIDP = (url) => {
+            res.redirect(url);
+        }
+        await session.login({
+            redirectUrl: "http://localhost:8080/solid/login/callback",
+            oidcIssuer: "https://login.inrupt.com",
+            clientName: "TidyTimeDev",
+            handleRedirect: redirectToIDP
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.get("/solid/login/callback", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        await session.handleIncomingRedirect(`http://localhost:8080${req.url}`);
+        if (session.info.isLoggedIn) {
+            res.cookie("webId", session.info.webId, {
+                secure: true,
+                httpOnly: true,
+                sameSite: "none"
+            });
+            res.redirect(`http://localhost:3000?user=${session.info.webId}`)
+        }
+    } catch (error) {
+        console.log(error);
     }
 })
 
 router.get("/solid/user/session", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         if (session) {
-            console.log(new Date(new Date().getTime() + session.info.expirationDate).toLocaleString())
             res.send({status: true, session: session});
         } else {
             res.send({status: false});
@@ -70,12 +932,12 @@ router.get("/solid/user/session", async function (req, res) {
 
 router.get("/solid/user/profile", async function (req, res) {
     try {
-        const session = await getSessionFromStorage(req.cookies.inruptSessionId);
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         if (session) {
             const webId = session.info.webId;
             const dataset = await getSolidDataset(webId, {fetch: fetch});
-            let result = await getNameFromWebId(webId, dataset);
-            // if result is null, that means the webId dataset does not have the any name predicate.
+            let result = getNameFromWebId(webId, dataset);
+            // if result is null, that means the webId dataset does not have any name predicate.
             // in that case, we navigate through all the predicates to check if the name is in any of them.
             if (!result) {
                 result = await Promise.any(getAltProfileUrlAllFrom(webId, dataset).map(
@@ -94,14 +956,286 @@ router.get("/solid/user/profile", async function (req, res) {
 });
 
 router.get("/solid/logout", async function (req, res) {
-    const session = await getSessionFromStorage(req.cookies.inruptSessionId);
-    session.logout();
-    res.send({status: true, data: "Succesfully logged out"});
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        session.logout();
+        res.send({status: true, data: "Succesfully logged out"});
+    } catch (error) {
+        console.log(error);
+    }
 });
 
+router.get("/solid/configuration", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const poblate = await createRootContainer(session);
+        if (poblate) {
+            await poblateRootContainer(session);
+            res.send({status: "created"});
+        } else {
+            try {
+                const configuration = await getApplicationConfiguration(session);
+                res.send({status: "retrieved" , config: configuration});
+            } catch (error) {
+                await poblateRootContainer(session);
+                res.send({status: "created"});
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
 
+// check if the config dataset exists
+router.get("/solid/configuration/health-check", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const poblate = await createRootContainer(session);
+        if (poblate) {
+            await poblateRootContainer(session);
+            res.send({status: true});
+        } else {
+            res.send({status: true})
+        }
+    } catch (error) {
+        console.log(error);
+        res.send({status: false})
+    }
+});
 
+// get calendar view, week start and show tasks
+router.get("/solid/configuration/calendar", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const configuration = await getCalendarConfiguration(session);
+        res.send({status: configuration.status, data: configuration.data});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+})
 
+// get board columns
+router.get("/solid/configuration/board", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        if (session) {
+            const configuration = await getBoardColumnsConfiguration(session);
+            res.send({status: true , data: configuration});
+        } else {
+            res.send({status: false});
+        }        
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+})
 
+router.post("/solid/configuration/store", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const labels = req.body.labels;
+        const showTasksInCalendar = req.body.showTasksInCalendar;
+        const boardColumns = req.body.boardColumns;
+        const weekStart = req.body.weekStart;
+        const calendarView = req.body.calendarView;
+        const result = await storeApplicationConfiguration(session, labels, showTasksInCalendar, boardColumns, weekStart, calendarView);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+router.post("/solid/data/store/listNames", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const listNames = req.body.listNames;
+        const result = await storeListNames(session, listNames);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false, data: []});
+    }
+});
+
+router.post("/solid/data/store/lists/delete", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const listNames = req.body.listNames;
+        const tasksIds = req.body.tasksIds;
+        const deleteResult = await deleteList(session, tasksIds);
+        const result = await storeListNames(session, listNames);
+        res.send({status: result && deleteResult});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false, data: []});
+    }
+});
+
+router.post("/solid/data/store/boardColumns", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const boardColumns = req.body.boardColumns;
+        const result = await storeBoardColumns(session, boardColumns);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+router.post("/solid/data/store/tasks/create", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const task = req.body.task;
+        const result = await createTask(session, task);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+router.post("/solid/data/store/task/done", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const task = req.body.task;
+        const result = await updateTask(session, task, false);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+router.post("/solid/data/store/task/status", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const task = req.body.task;
+        const result = await updateTaskStatus(session, task);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+router.post("/solid/data/store/tasks/update", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const task = req.body.task;
+        const result = await updateTask(session, task, true);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+router.post("/solid/data/store/tasks/delete", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const task = req.body.task;
+        const result = await deleteTask(session, task);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+router.post("/solid/data/store/events/create", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const event = req.body.event;
+        const result = await createEvent(session, event);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+router.post("/solid/data/store/events/update", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const event = req.body.event;
+        const result = await updateEvent(session, event);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+router.post("/solid/data/store/events/delete", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const event = req.body.event;
+        const result = await deleteEvent(session, event);
+        res.send({status: result});
+    } catch (error) {
+        console.log(error);
+        res.send({status: false});
+    }
+});
+
+// get all data
+router.get("/solid/data/get", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const result = await getApplicationData(session);
+        if (result.status === "success") {
+            res.send({status: "success", data: result});
+        } else if (result.status === "empty") {
+            res.send({status: "empty"});
+        } else {
+            res.send({status: "whatever"});
+        }
+    } catch (error) {
+        res.send({status: "whatever"});
+        console.log("error en linea 970");
+    }
+})
+
+// get labels
+router.get("/solid/data/labels/get", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const result = await getLabels(session);
+        if (result && result.length > 0) {
+            res.send({status: "success", data: result});
+        } else {
+            res.send({status: "empty"});
+        }
+    } catch (error) {
+        console.log("error en linea 997");
+        res.send({status: "fail"});
+    }
+})
+
+// get tasks
+router.get("/solid/data/tasks/get", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const result = await getTasks(session);
+        res.send({status: result.status, data: result});
+    } catch (error) {
+        console.log("error en linea 1009");
+    }
+})
+
+// get events
+router.get("/solid/data/events/get", async function (req, res) {
+    try {
+        const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
+        const result = await getEvents(session);
+        res.send({status: result.status, data: result});
+    } catch (error) {
+        console.log(error);
+        return {status: "fail"};
+    }
+})
 
 module.exports = router;

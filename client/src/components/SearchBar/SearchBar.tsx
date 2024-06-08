@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 export default function SearchBar() {
 
-    const { tasks, setSelectedListIndex, setSelectedTaskIndex } = useTaskContext();
+    const { tasks, setSelectedListId, setSelectedTaskId } = useTaskContext();
 
     const [result, setResult] = useState<Task[]>([]);
     const [search, setSearch] = useState("");
@@ -13,7 +13,15 @@ export default function SearchBar() {
 
 
     const searchTasks = (searchString: string) => {
-        return tasks.flat().filter((task) => task.title.toLowerCase().includes(searchString.toLowerCase()));
+        if (tasks) {
+            if (tasks.every((list) => !list.value || list.value.length === 0)) {
+                return [];
+            }
+            return tasks.map((list) => {
+                return list.value.filter((task) => task.title.toLowerCase().includes(searchString.toLowerCase()));
+            }).flat();
+        } 
+        return [];
     }
 
     const handleKeyDown = (e:any) => {
@@ -64,11 +72,8 @@ export default function SearchBar() {
 
     const selectTask = (task: Task) => {
         setSearch("");
-        setSelectedListIndex(task.listIndex);
-        const taskIndex = tasks[task.listIndex].findIndex(item => item === task);
-        if (taskIndex !== -1) {
-            setSelectedTaskIndex(taskIndex);
-        }
+        setSelectedListId(task.listIndex);
+        setSelectedTaskId(task.id);
     }
 
     return (

@@ -2,7 +2,7 @@ import EditTaskModal from "@/src/components/Modal/EditModal/EditTaskModal";
 import NewTaskForm from "../../src/components/Form/NewTaskForm/NewTaskForm";
 import SearchBar from "../../src/components/SearchBar/SearchBar";
 import Tab from "../../src/components/Tabs/Tab";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTaskContext } from "@/src/components/Context/TaskContext";
 import GitHubAuthButton from "@/src/components/Auth/GitHubAuth";
 import { useGithubHandler } from "../api/github";
@@ -16,56 +16,85 @@ import Loader from "@/src/components/Loading/Loading";
 
 export default function List() {
 	const [reRender, setRerender] = useState(Math.random());
+	const [firstRender, setFirstRender] = useState(true);
 	const [isEditingTaskModalOpen, setIsEditingTaskModalOpen] = useState(false);
 	const [isSyncingIssues, setIsSyncingIssues] = useState(false);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 
-	const {setSelectedTaskIndex, listNames, setListNames, tasks, setTasks} = useTaskContext();
+	const {setSelectedTaskId, listNames, setListNames, tasks, setTasks, selectedListId, setSelectedListId } = useTaskContext();
 	const { getUserData, getIssuesOfUser } = useGithubHandler();
 	const { githubLoggedIn, userData } = useGithubContext();
 	const { solidSession } = useSessionContext();
-	const { getSession } = useInruptHandler();
+	const { getSession, getLabels, getTasks } = useInruptHandler();
 	const router = useRouter();
 
+	const getSessionWrapper = async () => {
+		await getSession();
+	}
+
 	useEffect(() => {
-		getSession();
+		getSessionWrapper();
 	}, [reRender])
 
 	useEffect(() => {
-		if (solidSession === undefined) {
-			setLoading(true);
-		} else {
-			if (solidSession?.info.isLoggedIn) {
-				try {
-					getUserData();
-				} catch (error:any) {
-					if (error.message === "Failed to fetch") {
-						toast.error("Error when connecting to the server");
-					} else {
-						if (error.message.includes('access not found') && githubLoggedIn) {
-							toast.error("Please reconnect to GitHub");
-						}
-					}
-				}
-			} else {
-				router.push("/");
-			}
+		checkAuth();
+		if (solidSession?.info.isLoggedIn && firstRender) {
+			fetchData();
+			setFirstRender(false);
+		}
+	}, [solidSession])
+
+	useEffect(() => {
+		if (listNames && listNames.length > 0 && selectedListId === '' && tasks && tasks.length > 0 && tasks[0]) {
+			setSelectedListId(tasks[0].key);
+		}
+	}, [listNames, tasks])
+
+	useEffect(() => {
+		if (listNames !== undefined) {
 			setLoading(false);
 		}
+	}, [listNames])
 
-	}, [solidSession])
+	const checkAuth = async () => {
+		if (solidSession === undefined) {
+		} else {
+			if (!solidSession?.info.isLoggedIn) {
+				router.push("/");
+			}
+		}
+	};
+
+	const fetchData = async () => {
+		setLoading(true);
+		try {
+			if (!userData) {
+				await getUserData();
+			}
+		} catch (error:any) {
+			if (error.message === "Failed to fetch") {
+				toast.error("Error when connecting to the server");
+			} else {
+				if (error.message.includes('access not found') && githubLoggedIn) {
+					toast.error("Please reconnect to GitHub");
+				}
+			}
+		}
+		await getLabels();
+		await getTasks();
+	};
 	
 	/**
 	 * Sets the selected task index to the index of the task being selected. Opens/closes edit modal
 	 * @param index contains the task index
 	 */
-	const handleEditModal = (index:number) => {
-		setSelectedTaskIndex(index);
+	const handleEditModal = (id:string) => {
+		setSelectedTaskId(id);
 		setIsEditingTaskModalOpen(true);
 	}
 
 	const syncIssues = async () => {
-		if (userData.login !== null) {
+		if (userData.login !== null && listNames && tasks) {
 			setIsSyncingIssues(true);
 			const issues = await getIssuesOfUser(userData.login);
 			if (issues.items && issues.items.length > 0) {
@@ -79,6 +108,7 @@ export default function List() {
 					if (!lists.includes(repo)) {
 						lists = [...lists, repo];
 					}
+					// TODO:
 					// if there's no task list created for this list, add it
 					const listIndex = lists.indexOf(repo);
 					if (!tasklists[listIndex]) {
@@ -123,7 +153,7 @@ export default function List() {
 							{isSyncingIssues && <div className="loader"></div>}
 							Sync issues
 					</button>
-					{tasks.length > 0 && <NewTaskForm />}
+					{tasks && tasks.length > 0 && <NewTaskForm />}
 				</div>
 				{isEditingTaskModalOpen && 
 					<EditTaskModal 

@@ -22,14 +22,21 @@ export interface FilterSectionProps {
 
 export function FilterSection({handleFilter, sortByDate, sortByDifficulty} : FilterSectionProps) {
 
-    const { tasks, selectedListIndex } = useTaskContext();
+    const { tasks, selectedListId } = useTaskContext();
     const [tasksToFilter, setTasksToFilter] = useState<Task[]>([]);
     const [doneTasksCounter, setDoneTasksCounter] = useState(0);
     const [undoneTasksCounter, setUndoneTasksCounter] = useState(0);
 
     useEffect(() => {
-        setTasksToFilter(tasks.flat().filter((task) => task.listIndex === selectedListIndex))
-    }, [tasks, selectedListIndex])
+        if (tasks) {
+            const allTasks = tasks.map((list) =>{return list.value ? list.value : []}).flat();
+            if (allTasks.length > 0) {
+                setTasksToFilter(allTasks.filter((task) => task.listIndex === selectedListId))
+            } else {
+                setTasksToFilter([])
+            }
+        }
+    }, [tasks, selectedListId])
 
     useEffect(() => {
         let done = 0;
@@ -64,13 +71,14 @@ export function FilterSection({handleFilter, sortByDate, sortByDifficulty} : Fil
 
 export default function TabContent({ handleCheck, handleEditModal, seeDone} : Props ) {
 
-    const {tasks, selectedListIndex, selectedTaskIndex} = useTaskContext();
+    const {tasks, selectedListId, selectedTaskId} = useTaskContext();
     const [tasksToShow, setTasksToShow] = useState(tasks);
     const [filterApplied, setFilterApplied] = useState<Label[]>([]);
 
     const handleFilter = (filter: Label[]) => {
-        if (filter.length > 0) {
-            const filteredTaskList = tasksToShow[selectedListIndex]?.filter((task) =>
+        if (filter.length > 0 && tasksToShow) {
+            const listIndex = tasksToShow?.findIndex((list) => list.key === selectedListId);
+            const filteredTaskList = tasksToShow[listIndex].value.filter((task) =>
                 task.labels?.some((label) =>
                     filter.some((filterLabel) =>
                         filterLabel.name === label.name && filterLabel.color === label.color
@@ -78,8 +86,12 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
                 )
             ) || [];
             setFilterApplied(filter);
-            const mergedTasks = [...tasks];
-            mergedTasks[selectedListIndex] = filteredTaskList;
+            // duplicate tasks array to avoid references errors
+            let mergedTasks = tasks ? tasks.map(taskList => ({
+                ...taskList,
+                value: taskList.value.map(task => ({ ...task }))
+            })) : [];
+            mergedTasks[listIndex].value = filteredTaskList;
             setTasksToShow(mergedTasks);
         } else {
             setFilterApplied([]);
@@ -88,7 +100,9 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
     }
 
     const sortByDate = () => {
-        const orderedTaskList = tasks[selectedListIndex]?.
+        if (tasks) {
+            const listIndex = tasks.findIndex((list) => list.key === selectedListId);
+            const orderedTaskList = tasks[listIndex].value.
             sort((task1, task2) => {
                 if (task1.endDate && task2.endDate) {
                     return new Date(task1.endDate).getTime() - new Date(task2.endDate).getTime();
@@ -101,26 +115,30 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
                 }
             });
         const mergedTasks = [...tasks];
-        mergedTasks[selectedListIndex] = orderedTaskList;
+        mergedTasks[listIndex].value = orderedTaskList;
         setTasksToShow(mergedTasks);
+        }
     }
 
     const sortByDifficulty = () => {
-        const orderedTaskList = tasks[selectedListIndex]?.
-            sort((task1, task2) => {
-                if (task1.difficulty && task2.difficulty) {
-                    return task1.difficulty - task2.difficulty;
-                } else if (task1.difficulty) {
-                    return 1; // Las tareas con dificultad van después
-                } else if (task2.difficulty) {
-                    return -1; // Las tareas sin dificultad van primero
-                } else {
-                    return 0; // Ambas tareas sin dificultad se consideran iguales
-                }
-            });
-            const mergedTasks = [...tasks];
-            mergedTasks[selectedListIndex] = orderedTaskList;
-            setTasksToShow(mergedTasks);
+        if (tasks) {
+            const index = tasks.findIndex((list) => list.key === selectedListId);
+            const orderedTaskList = tasks[index].value.
+                sort((task1, task2) => {
+                    if (task1.difficulty && task2.difficulty) {
+                        return task1.difficulty - task2.difficulty;
+                    } else if (task1.difficulty) {
+                        return 1; // Las tareas con dificultad van después
+                    } else if (task2.difficulty) {
+                        return -1; // Las tareas sin dificultad van primero
+                    } else {
+                        return 0; // Ambas tareas sin dificultad se consideran iguales
+                    }
+                });
+                const mergedTasks = [...tasks];
+                mergedTasks[index].value = orderedTaskList;
+                setTasksToShow(mergedTasks);
+        }
     }
 
     useEffect(() => {
@@ -129,24 +147,24 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
         } else {
             setTasksToShow(tasks);
         }
-    }, [tasks, tasksToShow]);
+    }, [tasks]);
 
     return (
-        <section className={tasks.length > 0 ? 'tab-content-container': 'tab-content-empty'}>
+        <section className={tasks && tasks.length > 0 ? 'tab-content-container': 'tab-content-empty'}>
             {
-                tasks.length > 0 
+                tasks && tasks.length > 0 
                 ? <FilterSection handleFilter={handleFilter} sortByDate={sortByDate} sortByDifficulty={sortByDifficulty}/>
                 : <p className="empty-tab-title">Add task lists!</p>
             }
-				{tasksToShow.map((content, index) => (
-					<ul className={selectedListIndex === index ? "active-content" : "content"} key={index}>
-						{content.map((item, itemIndex) => {
+				{tasksToShow && tasksToShow.map((content, index) => (
+					<ul className={tasksToShow.findIndex((list) => list.key === selectedListId) === index ? "active-content" : "content"} key={index}>
+						{content.value && content.value.map((item, itemIndex) => {
 							if (item.done && !seeDone) {
 								return null;
 							}
 							return (
 								<li
-									className={`${item.done ? "task-done" : "task"} ${selectedTaskIndex === itemIndex ? "selected-task" : ""}`}
+									className={`${item.done ? "task-done" : "task"} ${selectedTaskId === item.id ? "selected-task" : ""}`}
 									key={itemIndex}
 								>
 									<div className='icon-container'>
@@ -192,7 +210,7 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
 									</div>
 									<MdEdit
 										className="edit-icon"
-										onClick={() => handleEditModal(itemIndex)}
+										onClick={() => handleEditModal(item.id)}
 									/>
 								</li>
 							);

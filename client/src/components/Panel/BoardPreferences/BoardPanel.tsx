@@ -5,36 +5,44 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 
 export default function BoardPanel() {
 
-    const [columns, setColumns] = useState<string[]>([]);
+    const [columns, setColumns] = useState<string[] | undefined>(undefined);
     const { boardColumns, setBoardColumns } = useTaskContext();
 
     useEffect(() => {
-        let result:string[] = [];
-        boardColumns.forEach((column) => {
-            result.push(column);
-        })
-        setColumns(result);
+        if (boardColumns) {
+            let result:string[] = [];
+            boardColumns.forEach((column) => {
+                result.push(column);
+            })
+            setColumns(result);
+        }
     }, [boardColumns])
 
     const handleColumnRename = (value:string, index:number) => {
-        let result = [...columns];
-        let updatedColumn = result[index];
-        updatedColumn = value;
-        result = [...result.slice(0, index),
-            updatedColumn,
-            ...result.slice(index + 1)
-        ];
-        setBoardColumns(result);
-    }
+        if (columns) {
+            let result = [...columns];
+            let updatedColumn = result[index];
+            updatedColumn = value;
+            result = [...result.slice(0, index),
+                updatedColumn,
+                ...result.slice(index + 1)
+            ];
+            setBoardColumns(result);
+        }
+    }   
 
     const handleColumnDeletion = (index:number) => {
-        let result = columns.filter((column, columnIndex) => index !== columnIndex);
-        setBoardColumns(result);
+        if (columns) {
+            let result = columns.filter((column, columnIndex) => index !== columnIndex);
+            setBoardColumns(result);
+        }
     }
 
     const addNewInput = () => {
-        let result = [...columns, "New column"];
-        setBoardColumns(result);
+        if (columns) {
+            let result = [...columns, "New column"];
+            setBoardColumns(result);
+        }
     }
 
     return (
@@ -43,8 +51,12 @@ export default function BoardPanel() {
             <hr></hr>
             <p>Modify, delete, or adapt the columns of the board to better suit your needs.</p>
             <section className="default-columns">
-                <div className={columns.length > 0 ? "columns-input" : ""}>
+                {
+                    columns !== undefined
+                    ?
+                    <div className="columns-input">
                     {
+                        columns.length > 0 ?
                         columns.map((column, index) => {
                             return (
                                 <div key={index} className="individual-input">
@@ -61,8 +73,15 @@ export default function BoardPanel() {
                                 </div>
                             )
                         })
+                        : <div style={{paddingInline: ".5rem"}}><p style={{fontSize: ".7rem"}}>Add a column!</p></div>
                     }
-                </div>
+                    </div>
+                    :
+                    <div style={{display: "flex", alignItems: "center", gap: ".5rem"}}>
+                        <p>Loading...</p>
+                        <div className="loader"></div>
+                    </div>
+                }
                 <button 
                     onClick={addNewInput}
                     className="new-column">

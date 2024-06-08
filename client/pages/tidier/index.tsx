@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import {} from "react"
 import { useInruptHandler } from "../api/inrupt";
 import Loader from "@/src/components/Loading/Loading";
+import toast from "react-hot-toast";
 
 export default function Tidier() {
 
@@ -33,7 +34,9 @@ export default function Tidier() {
         <Loader />
         :
         <div className="tidier-container">
-            <h1>Hello Tidier!</h1>
+            <button>
+                Create container
+            </button>
         </div>
     )
 }

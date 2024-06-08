@@ -10,6 +10,8 @@ export default function StatisticsPanel() {
     const { events } = useEventContext();
 
     const [eventsToShow, setEventsToShow] = useState<Event[]>([])
+    const [totalTasks, setTotalTasks] = useState(0);
+    const [doneTasks, setDoneTasks] = useState(0);
 
     useEffect(() => {
       const today = new Date();
@@ -28,11 +30,29 @@ export default function StatisticsPanel() {
         return Math.ceil(miliseconds / (1000 * 60 * 60 * 24));
     }
 
+    useEffect(() => {
+      if (tasks && tasks.length > 0) {
+        let totalCounter = 0;
+        let doneCounter = 0;
+        tasks.forEach((list) => {
+          if (list.value) {
+            totalCounter += list.value.length;
+            doneCounter += list.value.filter((task) => task.done).length;
+          }
+        })
+        setTotalTasks(totalCounter);
+        setDoneTasks(doneCounter);
+      } else {
+        setTotalTasks(0);
+        setDoneTasks(0)
+      }
+    }, [tasks])
+
     return (
     <article className="statistics">
         <article className="task-progress">
           <h2>Completed tasks</h2>
-          <DonutChart total={tasks.flat().length} value={tasks.flat().filter((task) => task.done).length} />
+          <DonutChart total={totalTasks} value={doneTasks} />
         </article>
         <article className="upcoming-events">
           <h2>Upcoming events</h2>

@@ -12,30 +12,41 @@ import Loader from "@/src/components/Loading/Loading";
 export default function Calendar() {
 
     const { solidSession } = useSessionContext();
-    const { getSession } = useInruptHandler();
+    const { getSession, getCalendarConfiguration } = useInruptHandler();
     const { checkAuthentication } = useGoogleHandler();
+
     const [reRender, setRerender] = useState(Math.random());
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
+    const getSessionWrapper = async () => {
+		await getSession();
+	}
+
+    const initialActions = async () => {
+        const params = new URLSearchParams(location.search);
+        const emailParam = params.get('user');
+        const isUserLoggedIn = localStorage.getItem('googleLoggedIn');    
+        await checkAuthentication(emailParam, isUserLoggedIn);
+        await getCalendarConfiguration();
+    };
+
+    const checkAuth = async () => {	
+        if (solidSession !== undefined && !solidSession?.info.isLoggedIn) {
+            router.push("/");
+        }
+	};
+    
     useEffect(() => {
-        getSession()
-    }, [reRender]); // this will be executed on every renderization of the page (new tab and refresh page included)
+        getSessionWrapper();
+    }, [reRender]);
 
     useEffect(() => {
-        if (solidSession === undefined) {
-            setLoading(true);
-        } else {
-            if (solidSession?.info.isLoggedIn) {
-                const params = new URLSearchParams(location.search);
-                const emailParam = params.get('user');
-                const isUserLoggedIn = localStorage.getItem('googleLoggedIn');    
-                checkAuthentication(emailParam, isUserLoggedIn);
-            } else {
-                router.push("/");
-            }
-            setLoading(false);
+        checkAuth();
+        if (solidSession?.info.isLoggedIn) {
+            initialActions();
         }
+        setLoading(false);
     }, [solidSession])
 
     return (

@@ -3,7 +3,8 @@ import Column from "./Column";
 import { useTaskContext } from "../Context/TaskContext";
 import MoveModal from "../Modal/AbsoluteModal/AbsoluteModal";
 import { BiAddToQueue } from "react-icons/bi";
-import { TaskList } from "@/src/model/Scheme";
+import { Task } from "@/src/model/Scheme";
+import { useInruptHandler } from "@/pages/api/inrupt";
 
 
 export interface Props {
@@ -12,31 +13,34 @@ export interface Props {
 
 export default function Board({handleCardClick} : Props) {
 
-    const {tasks, boardColumns, setBoardColumns, setTasks, selectedListIndex, selectedTaskIndex} = useTaskContext();
+    const {tasks, boardColumns, setBoardColumns, setTasks, selectedListId, selectedTaskId} = useTaskContext();
+    const {updateTaskStatus, storeBoardColumns} = useInruptHandler();
 
-    const [sectionWidth, setSectionWidth] = useState(100 / boardColumns.length);
+    const [sectionWidth, setSectionWidth] = useState(100 / (boardColumns ? boardColumns.length : 1));
     const [columnIndex, setColumnIndex] = useState(-1);
     const [cardIndex, setCardIndex] = useState(-1);
     const [isMovingTask, setIsMovingTask] = useState(false);
     const [boardItems, setBoardItems] = useState<any[]>([]);
 
     useEffect(() => {
-        setSectionWidth(100 / boardColumns.length);
+        setSectionWidth(100 / (boardColumns ? boardColumns.length : 1));
     }, [boardColumns])
 
     useEffect(() => {
-        mapTasksToColumns();
+        if (tasks) {
+            mapTasksToColumns();
+        }
     }, [tasks]);
 
 
     const mapTasksToColumns = () => {
-        let result: TaskList[] = [];
+        let result: Task[][] = [];
         tasks.forEach((taskList, listIndex) => {
-            taskList.forEach((task, taskIndex) => {
+            taskList.value.forEach((task, taskIndex) => {
                 if (!result[task.status]) {
                     result[task.status] = [];
                 }
-                result[task.status].push({...task, taskIndexInList: taskIndex});
+                result[task.status].push({...task}); // TODO: ahora no hace falta esto porque las tasks tienen un id no?
             })
         })
         setBoardItems(result);
@@ -47,17 +51,28 @@ export default function Board({handleCardClick} : Props) {
         setColumnIndex(columnIndex);
     }
 
-    const moveTask = (target: number) => {
-        const newTasks = [...tasks];
-        const taskToMove = {...tasks[selectedListIndex][selectedTaskIndex]};
-        taskToMove.status = target;
-        newTasks[selectedListIndex] = [
-            ...newTasks[selectedListIndex].slice(0, selectedTaskIndex),
-            taskToMove,
-            ...newTasks[selectedListIndex].slice(selectedTaskIndex + 1)
-        ];
-        setTasks(newTasks);
-        setIsMovingTask(false);
+    const moveTask = async (target: number) => {
+        if (tasks) {
+            const newTasks = [...tasks];
+            const listIndex = tasks.findIndex((list) => list.key === selectedListId);
+            const taskIndex = tasks[listIndex].value.findIndex((task) => task.id === selectedTaskId);
+            let taskToMove = {...tasks[listIndex].value[taskIndex]};
+            taskToMove.status = target;
+            await updateTaskStatus(taskToMove);
+            newTasks[listIndex].value = [
+                ...newTasks[listIndex].value.slice(0, taskIndex),
+                taskToMove,
+                ...newTasks[listIndex].value.slice(taskIndex + 1)
+            ];
+            setTasks(newTasks);
+            setIsMovingTask(false);
+        }
+    }
+
+    const handleCreateNewColumn = async () => {
+        const newColumns = [...boardColumns, "New column"];
+        setBoardColumns(newColumns);
+        await storeBoardColumns(newColumns);
     }
 
     return (
@@ -67,15 +82,15 @@ export default function Board({handleCardClick} : Props) {
                 </p>
                 <button 
                     className="add-column-button"
-                    onClick={() => setBoardColumns([...boardColumns, "New column"])}
+                    onClick={handleCreateNewColumn}
                 >
                     <BiAddToQueue />
                     Add new column
                 </button>
             </section>
-            <section className={boardColumns.length > 0 ? "board-board" : "board-board-empty"}>
+            <section className={boardColumns && boardColumns.length > 0 ? "board-board" : "board-board-empty"}>
                 {
-                    boardColumns.length > 0 ?
+                    boardColumns && boardColumns.length > 0 && boardItems ?
                     boardColumns.map((column, index) => {
                         return (
                             <Column 
@@ -95,7 +110,7 @@ export default function Board({handleCardClick} : Props) {
             </section>
             { isMovingTask && 
                 <MoveModal 
-                    options={boardColumns} 
+                    options={boardColumns ?? []} 
                     columnIndex={columnIndex}
                     cardIndex={cardIndex}
                     onClick={moveTask} 
