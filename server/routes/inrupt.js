@@ -883,8 +883,7 @@ router.get("/solid/login", async function (req, res) {
         const session = new Session({storage: storage, keepAlive: true});
         res.cookie("inruptSessionId", session.info.sessionId, {
             secure: true,
-            //httpOnly: true,
-            domain: '.onrender.com',
+            httpOnly: true,
             sameSite: "none"
         });
         const redirectToIDP = (url) => {
@@ -903,15 +902,12 @@ router.get("/solid/login", async function (req, res) {
 
 router.get("/solid/login/callback", async function (req, res) {
     try {
-        console.log("las cookies", req.cookies);
-        console.log("la cookie", req.cookies.inruptSessionId);
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         await session.handleIncomingRedirect(`https://tidytime.onrender.com${req.url}`);
         if (session.info.isLoggedIn) {
             res.cookie("webId", session.info.webId, {
                 secure: true,
-                //httpOnly: true,
-                domain: '.onrender.com',
+                httpOnly: true,
                 sameSite: "none"
             });
             res.redirect(`https://tidytime-wh88.onrender.com?user=${session.info.webId}`)
