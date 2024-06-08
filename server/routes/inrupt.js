@@ -884,7 +884,7 @@ router.get("/solid/login", async function (req, res) {
         res.cookie("inruptSessionId", session.info.sessionId, {
             secure: true,
             //httpOnly: true,
-            domain: 'onrender.com',
+            domain: '.onrender.com',
             sameSite: "none"
         });
         const redirectToIDP = (url) => {
@@ -911,7 +911,7 @@ router.get("/solid/login/callback", async function (req, res) {
             res.cookie("webId", session.info.webId, {
                 secure: true,
                 //httpOnly: true,
-                domain: 'onrender.com',
+                domain: '.onrender.com',
                 sameSite: "none"
             });
             res.redirect(`https://tidytime-wh88.onrender.com?user=${session.info.webId}`)
