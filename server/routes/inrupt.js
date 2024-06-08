@@ -885,7 +885,7 @@ router.get("/solid/login", async function (req, res) {
             secure: true,
             httpOnly: true,
             domain: '.onrender.com',
-            sameSite: "Strict"
+            sameSite: "none"
         });
         const redirectToIDP = (url) => {
             res.redirect(url);
@@ -910,7 +910,7 @@ router.get("/solid/login/callback", async function (req, res) {
                 secure: true,
                 httpOnly: true,
                 domain: '.onrender.com',
-                sameSite: "Strict"
+                sameSite: "none"
             });
             res.redirect(`https://tidytime-wh88.onrender.com?user=${session.info.webId}`)
         }
