@@ -53,7 +53,8 @@ router.get("/github/auth/callback", async function (req, res) {
         res.cookie('access_token', encryptedToken, {
           secure: true,
           httpOnly: true,
-          sameSite: "none"
+          domain: '.onrender.com',
+          sameSite: "Strict"
         })
         res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=success`);
       } else {
