@@ -55,12 +55,12 @@ router.get("/github/auth/callback", async function (req, res) {
           httpOnly: true,
           sameSite: "none"
         })
-        res.redirect(`http://localhost:3000/list?status=success`);
+        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=success`);
       } else {
-        res.redirect(`http://localhost:3000/list?status=failure`)
+        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=failure`)
       }
     } catch(error) {
-        res.redirect(`http://localhost:3000/list?status=failure`)
+        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=failure`)
     };
 });
 

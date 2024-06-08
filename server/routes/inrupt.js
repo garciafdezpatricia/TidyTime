@@ -890,7 +890,7 @@ router.get("/solid/login", async function (req, res) {
             res.redirect(url);
         }
         await session.login({
-            redirectUrl: "http://localhost:8080/solid/login/callback",
+            redirectUrl: "https://tidytime.onrender.com/solid/login/callback",
             oidcIssuer: "https://login.inrupt.com",
             clientName: "TidyTimeDev",
             handleRedirect: redirectToIDP
@@ -903,14 +903,14 @@ router.get("/solid/login", async function (req, res) {
 router.get("/solid/login/callback", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
-        await session.handleIncomingRedirect(`http://localhost:8080${req.url}`);
+        await session.handleIncomingRedirect(`https://tidytime.onrender.com${req.url}`);
         if (session.info.isLoggedIn) {
             res.cookie("webId", session.info.webId, {
                 secure: true,
                 httpOnly: true,
                 sameSite: "none"
             });
-            res.redirect(`http://localhost:3000?user=${session.info.webId}`)
+            res.redirect(`https://garciafdezpatricia.github.io/TidyTime?user=${session.info.webId}`)
         }
     } catch (error) {
         console.log(error);

@@ -35,7 +35,7 @@ export default function Board({handleCardClick} : Props) {
 
     const mapTasksToColumns = () => {
         let result: Task[][] = [];
-        tasks.forEach((taskList, listIndex) => {
+        tasks?.forEach((taskList, listIndex) => {
             taskList.value.forEach((task, taskIndex) => {
                 if (!result[task.status]) {
                     result[task.status] = [];
@@ -70,6 +70,7 @@ export default function Board({handleCardClick} : Props) {
     }
 
     const handleCreateNewColumn = async () => {
+        // @ts-ignore
         const newColumns = [...boardColumns, "New column"];
         setBoardColumns(newColumns);
         await storeBoardColumns(newColumns);

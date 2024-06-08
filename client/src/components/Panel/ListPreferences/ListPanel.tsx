@@ -9,6 +9,7 @@ export default function ListPanel() {
 
 
     const handleLabelRename = (value:string, index:number) => {
+        // @ts-ignore
         let result = [...labels];
         let updatedColumn = result[index];
         updatedColumn.name = value;
@@ -20,16 +21,18 @@ export default function ListPanel() {
     }
 
     const handleLabelDeletion = (index:number) => {
-        let result = labels.filter((label, labelIndex) => index !== labelIndex);
+        let result = labels?.filter((label, labelIndex) => index !== labelIndex);
         setLabels(result);
     }
 
     const addNewInput = () => {
+        // @ts-ignore
         let result = [...labels, {name: `New label ${labels.length + 1}`, color: "#000000"}];
         setLabels(result);
     }
 
     const handleLabelColor = (color:string, index:number) => {
+        // @ts-ignore
         let result = [...labels];
         let updatedColumn = result[index];
         updatedColumn.color = color;
