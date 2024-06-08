@@ -883,7 +883,7 @@ router.get("/solid/login", async function (req, res) {
         const session = new Session({storage: storage, keepAlive: true});
         res.cookie("inruptSessionId", session.info.sessionId, {
             secure: true,
-            httpOnly: true,
+            //httpOnly: true,
             domain: 'onrender.com',
             sameSite: "none"
         });
@@ -910,7 +910,7 @@ router.get("/solid/login/callback", async function (req, res) {
         if (session.info.isLoggedIn) {
             res.cookie("webId", session.info.webId, {
                 secure: true,
-                httpOnly: true,
+                //httpOnly: true,
                 domain: 'onrender.com',
                 sameSite: "none"
             });
