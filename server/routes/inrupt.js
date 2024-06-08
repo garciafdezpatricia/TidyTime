@@ -912,7 +912,7 @@ router.get("/solid/login/callback", async function (req, res) {
                 domain: '.onrender.com',
                 sameSite: "Strict"
             });
-            res.redirect(`https://garciafdezpatricia.github.io/TidyTime?user=${session.info.webId}`)
+            res.redirect(`https://tidytime-wh88.onrender.com?user=${session.info.webId}`)
         }
     } catch (error) {
         console.log(error);
