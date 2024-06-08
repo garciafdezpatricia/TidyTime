@@ -53,14 +53,15 @@ router.get("/github/auth/callback", async function (req, res) {
         res.cookie('access_token', encryptedToken, {
           secure: true,
           httpOnly: true,
-          sameSite: "none"
+          domain: '.onrender.com',
+          sameSite: "Strict"
         })
-        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=success`);
+        res.redirect(`https://tidytime-wh88.onrender.com/list?status=success`);
       } else {
-        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=failure`)
+        res.redirect(`https://tidytime-wh88.onrender.com/list?status=failure`)
       }
     } catch(error) {
-        res.redirect(`https://garciafdezpatricia.github.io/TidyTime/list?status=failure`)
+        res.redirect(`https://tidytime-wh88.onrender.com/list?status=failure`)
     };
 });
 

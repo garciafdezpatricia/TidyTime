@@ -884,7 +884,8 @@ router.get("/solid/login", async function (req, res) {
         res.cookie("inruptSessionId", session.info.sessionId, {
             secure: true,
             httpOnly: true,
-            sameSite: "none"
+            domain: '.onrender.com',
+            sameSite: "Strict"
         });
         const redirectToIDP = (url) => {
             res.redirect(url);
@@ -908,9 +909,10 @@ router.get("/solid/login/callback", async function (req, res) {
             res.cookie("webId", session.info.webId, {
                 secure: true,
                 httpOnly: true,
-                sameSite: "none"
+                domain: '.onrender.com',
+                sameSite: "Strict"
             });
-            res.redirect(`https://garciafdezpatricia.github.io/TidyTime?user=${session.info.webId}`)
+            res.redirect(`https://tidytime-wh88.onrender.com?user=${session.info.webId}`)
         }
     } catch (error) {
         console.log(error);

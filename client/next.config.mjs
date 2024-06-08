@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-//  basePath: "/TidyTime",
-//  output: "export",
+  // basePath: "/TidyTime",
+  // output: "export",
   reactStrictMode: false,
 };
 
