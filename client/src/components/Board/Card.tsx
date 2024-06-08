@@ -47,7 +47,7 @@ export default function Card({cardIndex, title, list, columnIndex, handleMoveTas
     return (
         <article key={cardIndex} className="board-column-content-item">
             <div className="item-header">
-                <p>#{listNames[listIndex]}</p>
+                <p>#{listNames !== undefined && listNames[listIndex]}</p>
                 <div className="move-to-icon">
                     <TbArrowMoveRight 
                         onClick={handleMovingTask} 

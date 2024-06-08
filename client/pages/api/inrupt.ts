@@ -222,6 +222,7 @@ export function useInruptHandler() {
                 let names:string[] = [];
                 // listnames
                 if (data.data.data.listNames && data.data.data.listNames.length > 0) {
+                    // @ts-ignore
                     data.data.data.listNames.forEach((list, index) => {
                         taskLists[index] = {key: list.id, value: []};
                         names[index] = list.name;
@@ -230,6 +231,7 @@ export function useInruptHandler() {
                 // tasks
                 if (data.data.data.tasks && data.data.data.tasks.length > 0) {
                     taskLists.map((list, index) => {
+                        // @ts-ignore
                         const tasksOfTheList = data.data.data.tasks.filter((task) => {
                             return task.listIndex === list.key
                         })
@@ -382,6 +384,7 @@ export function useInruptHandler() {
                 if (data.status === "success") {
                     // listnames
                     if (data.data.tasks.listNames && data.data.tasks.listNames.length > 0) {
+                        // @ts-ignore
                         data.data.tasks.listNames.forEach((list, index) => {
                             taskLists[index] = {key: list.id, value: []};
                             names[index] = list.name;
@@ -390,6 +393,7 @@ export function useInruptHandler() {
                     // tasks
                     if (data.data.tasks.tasks && data.data.tasks.tasks.length > 0) {
                         taskLists.map((list, index) => {
+                            // @ts-ignore
                             const tasksOfTheList = data.data.tasks.tasks.filter((task) => {
                                 return task.listIndex === list.key
                             })

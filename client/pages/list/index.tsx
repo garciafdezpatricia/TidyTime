@@ -112,6 +112,8 @@ export default function List() {
 					// if there's no task list created for this list, add it
 					const listIndex = lists.indexOf(repo);
 					if (!tasklists[listIndex]) {
+						// TODO: update GH with new tasklist schema
+						// @ts-ignore
 						tasklists[listIndex] = [];
 					}
 					const task:Task = {
@@ -120,9 +122,11 @@ export default function List() {
 						done: false,
 						githubHtml: issue.html_url,
 						githubUrl: issue.url,
+						// @ts-ignore
 						listIndex: listIndex,
 						status: 0,
 					};
+					// @ts-ignore
 					tasklists[listIndex].push(task); 
 				});
 				setListNames(lists);
