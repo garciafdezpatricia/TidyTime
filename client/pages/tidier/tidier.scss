@@ -171,18 +171,21 @@
         align-items: center;
     }
     
-    //TODO: in chrome the clock icon is not necessary or try to remove the clock icon of chrome time input
-    // .input-container input {
-    //     width: 100%;
-    //     padding-right: 2rem; /* Espacio para el ícono */
-    //     box-sizing: border-box;
-    // }
+    .input-container input {
+        width: 100%;
+        padding-right: 2rem; /* Espacio para el ícono */
+        box-sizing: border-box;
+    }
     
-    // .input-container .clock-from {
-    //     position: absolute;
-    //     right: 0.5rem;
-    //     pointer-events: none; /* Asegura que el ícono no bloquee la interacción con el input */
-    // }
+    .input-container .clock-from {
+        position: absolute;
+        right: 0.5rem;
+        pointer-events: none; /* Asegura que el ícono no bloquee la interacción con el input */
+    }
+
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        display: none;
+    }
 
     @media screen and (min-width: 320px) and (max-width: 768px) {
         margin-left: 0rem;
