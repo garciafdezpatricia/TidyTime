@@ -2,9 +2,10 @@ import { VscCircleLargeFilled } from "react-icons/vsc"
 
 export interface Props {
     difficulty: number,
+    color?: string
 }
 
-export default function Difficulty({difficulty} : Props) {
+export default function Difficulty({difficulty, color} : Props) {
     
     return (
         <>
@@ -12,7 +13,7 @@ export default function Difficulty({difficulty} : Props) {
             ? [...Array(difficulty)].map((point, index) => {
                 return (
                     // eslint-disable-next-line react/jsx-key
-                    <VscCircleLargeFilled size={"1.2rem"} color={"#3E5B41"} /> 
+                    <VscCircleLargeFilled size={"1.2rem"} color={color ?  color : "#3E5B41"} /> 
                 )
             })
             : <></>

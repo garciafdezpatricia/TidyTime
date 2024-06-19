@@ -45,20 +45,6 @@ export default function ComboBox({text, options, colors, checkedOption, onOption
             ))}
             </div>
         )}
-        {/* {
-            // come here if a combobox without colors as options is needed
-            isOpen && options &&  ( // content combobox
-            <div className="dropdown-content">
-            {options.map((option, index) => (
-                <label key={index}>
-                    <button 
-                        onClick={() => handleSelection(option)}>
-                    </button>
-                    {option}
-                </label>
-            ))}
-            </div>
-        )} */}
         </div>
     )
 }

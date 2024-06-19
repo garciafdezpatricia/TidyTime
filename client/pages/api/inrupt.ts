@@ -18,7 +18,7 @@ export function useInruptHandler() {
 
     const serverCheck = async () => {
         try {
-            const response = await fetch("https://tidytime.onrender.com/health-check", {method: 'GET'});
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/health-check`, {method: 'GET'});
             if (response.ok) {
                 return true;
             } else {
@@ -33,7 +33,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                window.location.assign("https://tidytime.onrender.com/solid/login");
+                window.location.assign(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/login`);
             } else {
                 toast.error('Server appears to be down');
             }
@@ -44,7 +44,7 @@ export function useInruptHandler() {
         try {
             const response = await serverCheck();
             if (response) {
-                const fetchResponse = await fetch("https://tidytime.onrender.com/solid/user/session", {
+                const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/user/session`, {
                     method: 'GET',
                     credentials: 'include',
                 });
@@ -70,7 +70,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("https://tidytime.onrender.com/solid/logout", {
+                fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/logout`, {
                     method: 'GET',
                     credentials: 'include',
                 })
@@ -91,7 +91,7 @@ export function useInruptHandler() {
     const getProfile = async () => {
         const response = await serverCheck();
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/user/profile", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/user/profile`, {
                 method: 'GET', 
                 credentials: 'include',
             });
@@ -113,7 +113,7 @@ export function useInruptHandler() {
     const checkConfiguration = async () => {
         const response = await serverCheck()
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/configuration/health-check", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/configuration/health-check`, {
                 method: 'GET',
                 credentials: 'include'
             })
@@ -130,7 +130,7 @@ export function useInruptHandler() {
     const getAllConfiguration = async () => {
         const response = await serverCheck();
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/configuration", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/configuration`, {
                 method: 'GET',
                 credentials: 'include'
             })
@@ -156,7 +156,7 @@ export function useInruptHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch("https://tidytime.onrender.com/solid/configuration/store", {
+                fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/configuration/store`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -187,7 +187,7 @@ export function useInruptHandler() {
     const getCalendarConfiguration = async () => {
         const response = await serverCheck();
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/configuration/calendar", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/configuration/calendar`, {
                 method: 'GET', 
                 credentials: 'include'
             });
@@ -212,7 +212,7 @@ export function useInruptHandler() {
     const getTasks = async () => {
         const response = await serverCheck()
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/tasks/get", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/tasks/get`, {
                 method: 'GET',
                 credentials: 'include'
             })
@@ -256,7 +256,7 @@ export function useInruptHandler() {
     const getEvents = async () => {
         const response = await serverCheck();
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/events/get", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/events/get`, {
                 method: 'GET',
                 credentials: 'include'
             })
@@ -285,7 +285,7 @@ export function useInruptHandler() {
     const getBoardColumns = async () => {
         const response = await serverCheck()
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/configuration/board", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/configuration/board`, {
                 method: 'GET',
                 credentials: 'include'
             })
@@ -305,7 +305,7 @@ export function useInruptHandler() {
     const getLabels = async () => {
         const response = await serverCheck()
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/labels/get", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/labels/get`, {
                 method: 'GET',
                 credentials: 'include'
             })
@@ -326,7 +326,7 @@ export function useInruptHandler() {
         const listNamesAndIds = listNames.map((listname, index) => {
             return {name: listname, id: tasks[index].key};
         })
-        fetch("https://tidytime.onrender.com/solid/data/store/listNames", {
+        fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/listNames`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -349,7 +349,7 @@ export function useInruptHandler() {
         const listNamesAndIds = listNames.map((listname, index) => {
             return {name: listname, id: tasks[index].key};
         })
-        fetch("https://tidytime.onrender.com/solid/data/store/lists/delete", {
+        fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/lists/delete`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -373,7 +373,7 @@ export function useInruptHandler() {
         try {
             const response = await serverCheck();
             if (response) {
-                const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/get", {
+                const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/get`, {
                     method: 'GET',
                     credentials: 'include',
                 });
@@ -431,7 +431,7 @@ export function useInruptHandler() {
     const createTask = async (task:Task) => {
         const response = await serverCheck();
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/store/tasks/create", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/tasks/create`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -453,7 +453,7 @@ export function useInruptHandler() {
     const createEvent = async (event: Event) => {
         const response = await serverCheck();
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/store/events/create", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/events/create`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -475,7 +475,7 @@ export function useInruptHandler() {
     const updateTaskDoneUndone = async (task:Task) => {
         const response = await serverCheck()
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/store/task/done", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/task/done`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -497,7 +497,7 @@ export function useInruptHandler() {
     const updateTask = async (task:Task) => {
         const response = await serverCheck()
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/store/tasks/update", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/tasks/update`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -519,7 +519,7 @@ export function useInruptHandler() {
     const updateEvent = async (event: Event) => {
         const response = await serverCheck();
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/store/events/update", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/events/update`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -541,7 +541,7 @@ export function useInruptHandler() {
     const updateTaskStatus = async (task:Task) => {
         const response = await serverCheck()
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/store/task/status", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/task/status`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -563,7 +563,7 @@ export function useInruptHandler() {
     const deleteTask = async (task:Task) => {
         const response = await serverCheck()
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/store/tasks/delete", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/tasks/delete`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -585,7 +585,7 @@ export function useInruptHandler() {
     const deleteEvent = async (event: Event) => {
         const response = await serverCheck();
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/store/events/delete", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/events/delete`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -607,7 +607,7 @@ export function useInruptHandler() {
     const storeBoardColumns = async (boardColumns: string[]) => {
         const response = await serverCheck()
         if (response) {
-            const fetchResponse = await fetch("https://tidytime.onrender.com/solid/data/store/boardColumns", {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/boardColumns`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

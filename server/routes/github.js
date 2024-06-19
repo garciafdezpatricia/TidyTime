@@ -56,12 +56,12 @@ router.get("/github/auth/callback", async function (req, res) {
           domain: '.onrender.com',
           sameSite: "Strict"
         })
-        res.redirect(`https://tidytime-wh88.onrender.com/list?status=success`);
+        res.redirect(`${process.env.FRONT_URL}/list?status=success`);
       } else {
-        res.redirect(`https://tidytime-wh88.onrender.com/list?status=failure`)
+        res.redirect(`${process.env.FRONT_URL}/list?status=failure`)
       }
     } catch(error) {
-        res.redirect(`https://tidytime-wh88.onrender.com/list?status=failure`)
+        res.redirect(`${process.env.FRONT_URL}/list?status=failure`)
     };
 });
 

@@ -56,9 +56,9 @@ router.get('/google/auth/callback', async (req, res) => {
     oauth2Client.setCredentials(tokens);
     try {
         const email = await getEmail(req);
-        res.redirect(`https://tidytime-wh88.onrender.com/calendar?user=${email}`);
+        res.redirect(`${process.env.FRONT_URL}/calendar?user=${email}`);
     } catch (error) {
-        res.redirect('https://tidytime-wh88.onrender.com/calendar');
+        res.redirect(`${process.env.FRONT_URL}/calendar`);
     }
 });
   

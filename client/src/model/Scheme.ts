@@ -32,19 +32,6 @@ export function taskToListOfTaskList(tasks: Task[]) {
     return result;
 }
 
-// export function listOfTaskListToTask(tasks: TaskList[]) {
-//     const result: Task[] = [];
-//     // Iterar sobre cada TaskList en el arreglo
-//     tasks.forEach((taskList, listIndex) => {
-//         // Iterar sobre cada tarea en la TaskList
-//         taskList.forEach(task => {
-//             // Añadir la tarea al resultado, asignándole el listIndex correspondiente
-//             result.push({ ...task, listIndex });
-//         });
-//     });
-//     return result;
-// }
-
 export interface Event {
     start: Date,
     end: Date,
@@ -64,3 +51,9 @@ export interface Label {
 }
 
 export interface CalendarItem { id: string, name: string, color: string};
+
+export interface ScheduleItem {
+    title: string;
+    hours: string;
+    minutes: string;
+}
