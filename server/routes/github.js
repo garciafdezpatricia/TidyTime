@@ -53,8 +53,7 @@ router.get("/github/auth/callback", async function (req, res) {
         res.cookie('access_token', encryptedToken, {
           secure: true,
           httpOnly: true,
-          domain: '.onrender.com',
-          sameSite: "Strict"
+          sameSite: "none"
         })
         res.redirect(`${process.env.FRONT_URL}/list?status=success`);
       } else {
