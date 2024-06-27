@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 
 // ============== APPLICATION CONFIGURATIONS ==========
 const app = express();
-const PORT = 443;
+const PORT = 8080;
 
 // ============== APPLICATION MODULES ================
 app.use(cors({

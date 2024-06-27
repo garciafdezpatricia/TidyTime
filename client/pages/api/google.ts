@@ -9,7 +9,7 @@ export function useGoogleHandler() {
     const { events, setEvents } = useEventContext();
 
     const serverCheck = () => {
-        return fetch("https://tidytime.onrender.com/health-check", { method: 'GET' })
+        return fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/health-check`, { method: 'GET' })
         .then(response => {
             if (response.ok) {
                 return true;
@@ -26,7 +26,7 @@ export function useGoogleHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch('https://tidytime.onrender.com/google/auth/logout', {
+                fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/google/auth/logout`, {
                     method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ export function useGoogleHandler() {
         serverCheck()
         .then(response => {
             if (response) {
-                fetch('https://tidytime.onrender.com/google/auth/url', {
+                fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/google/auth/url`, {
                     method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export function useGoogleHandler() {
         .then(response => {
             if (response) {
                 return new Promise<boolean>((resolve, reject) => {
-                    fetch('https://tidytime.onrender.com/google/calendar/list', {
+                    fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/google/calendar/list`, {
                             method: 'GET',
                             credentials: 'include',
                         })
@@ -171,7 +171,7 @@ export function useGoogleHandler() {
         .then(response => {
             if (response) {
                 return new Promise<boolean>((resolve, reject) => {
-                    fetch('https://tidytime.onrender.com/google/events/get', {
+                    fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/google/events/get`, {
                             method: 'POST',
                             credentials: 'include',
                             headers: { 'Content-Type': 'application/json'},
@@ -252,7 +252,7 @@ export function useGoogleHandler() {
                     // format date to google format
                     const ISOStartDate = new Date(new Date(eventToShare.start).getTime() - (new Date(eventToShare.start).getTimezoneOffset() * 60000)).toISOString();
                     const ISOEndDate = new Date(new Date(eventToShare.end).getTime() - (new Date(eventToShare.end).getTimezoneOffset() * 60000)).toISOString();
-                    fetch('https://tidytime.onrender.com/google/events/insert', {
+                    fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/google/events/insert`, {
                         method: 'POST',
                         headers: {
                         'Content-Type': 'application/json',
@@ -311,7 +311,7 @@ export function useGoogleHandler() {
                         // format date to google format
                         const ISOStartDate = new Date(new Date(eventToUpdate.start).getTime() - (new Date(eventToUpdate.start).getTimezoneOffset() * 60000)).toISOString();
                         const ISOEndDate = new Date(new Date(eventToUpdate.end).getTime() - (new Date(eventToUpdate.end).getTimezoneOffset() * 60000)).toISOString();
-                        fetch('https://tidytime.onrender.com/google/events/update', {
+                        fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/google/events/update`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -352,7 +352,7 @@ export function useGoogleHandler() {
 
     const isAuthenticatedUser = async (emailParam:string) => {
         try {
-            const fetchResponse = await fetch('https://tidytime.onrender.com/google/auth/email', {
+            const fetchResponse = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/google/auth/email`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

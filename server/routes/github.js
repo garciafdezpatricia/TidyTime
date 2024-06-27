@@ -53,15 +53,14 @@ router.get("/github/auth/callback", async function (req, res) {
         res.cookie('access_token', encryptedToken, {
           secure: true,
           httpOnly: true,
-          domain: '.onrender.com',
-          sameSite: "Strict"
+          sameSite: "none"
         })
-        res.redirect(`https://tidytime-wh88.onrender.com/list?status=success`);
+        res.redirect(`${process.env.FRONT_URL}/list?status=success`);
       } else {
-        res.redirect(`https://tidytime-wh88.onrender.com/list?status=failure`)
+        res.redirect(`${process.env.FRONT_URL}/list?status=failure`)
       }
     } catch(error) {
-        res.redirect(`https://tidytime-wh88.onrender.com/list?status=failure`)
+        res.redirect(`${process.env.FRONT_URL}/list?status=failure`)
     };
 });
 
