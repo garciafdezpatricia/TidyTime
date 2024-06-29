@@ -27,6 +27,10 @@
     -webkit-transition: .3s;
     transition: .3s;
   }
+
+  body.dark-mode .slider {
+    background-color: $background-dark-0;
+  }
   
   .slider:before {
     position: absolute;
@@ -43,9 +47,17 @@
   input:checked + .slider {
     background-color: $toggle-green;
   }
+
+  body.dark-mode input:checked + .slider {
+    background-color: $toggle-green;
+  }
   
   input:focus + .slider {
     box-shadow: 0 0 1px $toggle-green;
+  }
+
+  body.dark-mode input:focus + .slider {
+    box-shadow: 0 0 1px $hover-green;
   }
 
   input:checked + .slider:before {

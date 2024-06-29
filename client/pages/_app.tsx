@@ -11,6 +11,7 @@ import { SessionProvider } from "@/src/components/Context/SolidContext";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loader from "@/src/components/Loading/Loading";
+import '../i18n';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
 

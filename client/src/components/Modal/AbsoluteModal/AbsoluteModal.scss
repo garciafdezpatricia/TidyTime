@@ -25,6 +25,18 @@
     }
 }
 
+body.dark-mode .move-task {
+    background-color: $background-dark-2;
+    color: $white;
+
+    button {
+        color: $white;
+        &:hover {
+            color: $black;
+        }
+    }
+}
+
 .move-button {
     display: flex;
     align-items: center;

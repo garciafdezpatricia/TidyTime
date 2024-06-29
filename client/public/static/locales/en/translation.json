@@ -1,0 +1,132 @@
+{
+    "loginPage": {
+        "title": "Welcome to TidyTime!",
+        "desc": "TidyTime works with Solid PODs, ensuring your data is only controlled by you. Log in to your Inrupt Solid POD and start using the app!",
+        "loginButton": "LOG IN",
+        "learnMore": "Learn more about ",
+        "inruptESS": "Inrupt's ESS",
+        "solidProject": "Solid Project"
+    },
+    "sidemenu": {
+        "list": "List",
+        "board": "Board",
+        "calendar": "Calendar",
+        "tidier": "Tidier",
+        "settings": "Preferences"
+    },
+    "deletePanel": {
+        "title": "Are you sure you want to delete it? This action can't be undone",
+        "cancel": "Cancel",
+        "delete": "Delete"
+    },
+    "home": {
+        "welcome": "Welcome back",
+        "loggedIn": "Currenlty logged in as",
+        "logoutButton": "Log out",
+        "upcomingEvents": {
+            "title": "Upcoming events",
+            "today": "Today",
+            "dayLeft": "day left",
+            "daysLeft": "days left",
+            "emptyEvents": "No upcoming events!"
+        },
+        "taskStat": "Completed tasks"
+    },
+    "list": {
+        "search": "Search",
+        "github": "Connect to GitHub",
+        "addList": "Add new list",
+        "filterPanel": {
+            "done": "done",
+            "todo": "to do",
+            "filter": "Filter...",
+            "dueDateSorting": "Sort by due date",
+            "difficultySorting": "Sort by difficulty"
+        },
+        "showDoneTask": "Show ",
+        "hideDoneTasks": "Hide ",
+        "doneTasks": "done tasks",
+        "syncIssues": "Sync issues",
+        "syncIssuesTitle": "Connect to GitHub and sync your issues",
+        "newTask": "New task...",
+        "emptyLists": "Add task lists!",
+        "editTaskPanel": {
+            "todo": "To do",
+            "done": "Done",
+            "urgent": "Urgent:",
+            "desc": "Add a description...",
+            "difficulty": "Difficulty:",
+            "endDate": "End-date:",
+            "labels": "Labels:",
+            "selectLabels": "Select options",
+            "delete": "Delete",
+            "reset": "Reset",
+            "save": "Save"
+        }
+    },
+    "board": {
+        "newColumn": "Add new column",
+        "emptyBoard": "No columns yet... add a new one",
+        "movePanel": "Move to:",
+        "editColumnPanel": {
+            "title": "What do you want to do with this column?",
+            "rename": "Rename",
+            "remove": "Remove"
+        }
+    },
+    "calendar": {
+        "connectGoogle": "Connect to Google",
+        "calendarMenu": {
+            "addEvent": {
+                "title": "Add event",
+                "desc": "Create a new event and add it to your calendar.",
+                "newEventButton": "New event",
+                "createButton": "Create",
+                "addTitle": "Add a title...",
+                "addNotes": "Notes...",
+                "from": "From:",
+                "to": "To:",
+                "color": "Color:"
+            },
+            "googleCalendar": {
+                "title": "Google Calendar",
+                "desc": "Import your calendars and sync them to import their events.",
+                "importButton": "Import calendars"
+            }
+        }
+    },
+    "tidier": {
+        "title": "What shall get done today...",
+        "tasksToGetDone": "Tasks to get done:",
+        "noLists": "No lists to show",
+        "dueDatePrior": "Prioritize due date",
+        "difficultyPrior": "Prioritize difficulty",
+        "availableTime": "Available time:"
+    },
+    "preferences": {
+        "savePreferences": "Save preferences",
+        "list": {
+            "title": "List preferences",
+            "desc": "Create, delete, and customize tags for your tasks.",
+            "showTasks": "Show tasks with due date in the calendar?",
+            "showYes": "Yes",
+            "showNo": "No"
+        },
+        "board": {
+            "title": "Board preferences",
+            "desc": "Modify, delete, or adapt the columns of the board to better suit your needs."
+        },
+        "calendar": {
+            "title": "Calendar preferences",
+            "desc": "Adjust the starting day of the week and choose the default calendar view.",
+            "weekDay": "Starting day of week:",
+            "calendarView": "Default calendar view:"
+        },
+        "applications": {
+            "title": "Connect to applications",
+            "desc": "TidyTime is interoperable with the following applications, allowing you to log in and access the information you need from them.",
+            "google": "Connect to Google to manage your events and calendars.",
+            "github": "Connect to GitHub to manage your issues."
+        }
+    }
+}

@@ -6,6 +6,7 @@ import PromptModal from "../Modal/PromptModal/PromptModal";
 import {v4 as uuid} from 'uuid';
 import Card from "./Card";
 import { useInruptHandler } from "@/pages/api/inrupt";
+import { useTranslation } from "react-i18next";
 
 export interface ColumnProps {
     sectionWidth: number,
@@ -17,7 +18,7 @@ export interface ColumnProps {
 }
 
 export default function Column({sectionWidth, content, index, name, handleMoveTask, handleCardClick} : ColumnProps) {
-
+    const { t } = useTranslation();
     const {listNames, setBoardColumns, boardColumns, tasks, setTasks} = useTaskContext();
     const {storeBoardColumns} = useInruptHandler();
 
@@ -86,7 +87,7 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
                     />{" "}
                     {managingListIndex === index && (
                         <EditListModal
-                            title="What do you want to do with this column?"
+                            title={t('board.editColumnPanel.title')}
                             onDeleteAction={() => setConfirmationDeleteModalOpen(true)}
                             onRenameAction={renameList}
                             onInputChange={handleInputChange}
@@ -116,10 +117,10 @@ export default function Column({sectionWidth, content, index, name, handleMoveTa
             </div>
             {isConfirmationDeleteModalOpen && (
 				<PromptModal
-					title="Are you sure you want to delete this list? This action can't be undone"
+					title={t('deletePanel.title')}
 					onPrimaryAction={async () => await deleteColumn()}
-					primaryActionText='Delete'
-					secondaryActionText='Cancel'
+					primaryActionText={t('deletePanel.delete')}
+					secondaryActionText={t('deletePanel.cancel')}
 					onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}
 					variant='confirmation-modal'
 					backdrop

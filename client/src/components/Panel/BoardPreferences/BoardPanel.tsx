@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useTaskContext } from "../../Context/TaskContext"
 import { LuListPlus } from "react-icons/lu";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import { useTranslation } from 'react-i18next';
 
 export default function BoardPanel() {
-
+    const { t } = useTranslation();
     const [columns, setColumns] = useState<string[] | undefined>(undefined);
     const { boardColumns, setBoardColumns } = useTaskContext();
 
@@ -47,9 +48,9 @@ export default function BoardPanel() {
 
     return (
         <article className="board-preferences">
-            <h3>Board preferences</h3>
+            <h3>{t('preferences.board.title')}</h3>
             <hr></hr>
-            <p>Modify, delete, or adapt the columns of the board to better suit your needs.</p>
+            <p>{t('preferences.board.desc')}</p>
             <section className="default-columns">
                 {
                     columns !== undefined

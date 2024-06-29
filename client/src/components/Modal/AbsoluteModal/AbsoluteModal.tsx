@@ -1,5 +1,6 @@
 import { useClickAway } from "@uidotdev/usehooks";
-import { MutableRefObject, useState } from "react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { TbArrowMoveRight } from "react-icons/tb";
 import { uuid } from "uuidv4";
 
@@ -13,7 +14,7 @@ export interface Props {
 
 
 export default function MoveModal({options, onClick, columnIndex, cardIndex, onClose} : Props) {
-
+    const { t } = useTranslation();
     const [iconClass, setIconClass] = useState("move-icon-not-visible");
     const [buttonHovered, setButtonHovered] = useState(-1);
 
@@ -34,7 +35,7 @@ export default function MoveModal({options, onClick, columnIndex, cardIndex, onC
     return (
         // @ts-ignore
         <div ref={ref} className="move-task">
-            {options.length > 1 ? <p>Move task to:</p> : <p>Add columns to move your tasks!</p>}
+            {options.length > 1 ? <p>{t('board.movePanel')}</p> : <p>{t('board.emptyBoard')}</p>}
             {
                 options.map((option, index) => {
                     if (index !== columnIndex) {

@@ -7,6 +7,7 @@ import { FaRegCircle, FaCheckCircle } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { Label, Task } from "@/src/model/Scheme";
 import CheckableComboBox from "../ComboBox/CheckableComboBox";
+import { useTranslation } from "react-i18next";
 
 export interface Props {
     handleCheck: (arg?:any, arg2?:any) => void | any;
@@ -21,7 +22,7 @@ export interface FilterSectionProps {
 }
 
 export function FilterSection({handleFilter, sortByDate, sortByDifficulty} : FilterSectionProps) {
-
+    const { t } = useTranslation();
     const { tasks, selectedListId } = useTaskContext();
     const [tasksToFilter, setTasksToFilter] = useState<Task[]>([]);
     const [doneTasksCounter, setDoneTasksCounter] = useState(0);
@@ -52,25 +53,25 @@ export function FilterSection({handleFilter, sortByDate, sortByDifficulty} : Fil
     return (
         <section className="filter-section">
             <div className="task-counter">
-                <p>{doneTasksCounter} done</p>
-                <p>{undoneTasksCounter} to do</p>
+                <p>{doneTasksCounter} {t('list.filterPanel.done')}</p>
+                <p>{undoneTasksCounter} {t('list.filterPanel.todo')}</p>
             </div>
             <div className="task-filters">
                 <CheckableComboBox 
                     variant="filter"
-                    text={"Filter..."} 
+                    text={t('list.filterPanel.filter')} 
                     checkedLabels={[]} 
                     onChange={handleFilter}  
                 />
-                <button className="sort-date" onClick={sortByDate}>Sort by due date</button>
-                <button className="sort-difficulty" onClick={sortByDifficulty}>Sort by difficulty</button>
+                <button className="sort-date" onClick={sortByDate}>{t('list.filterPanel.dueDateSorting')}</button>
+                <button className="sort-difficulty" onClick={sortByDifficulty}>{t('list.filterPanel.difficultySorting')}</button>
             </div>
         </section>
     )
 }
 
 export default function TabContent({ handleCheck, handleEditModal, seeDone} : Props ) {
-
+    const { t } = useTranslation();
     const {tasks, selectedListId, selectedTaskId} = useTaskContext();
     const [tasksToShow, setTasksToShow] = useState(tasks);
     const [filterApplied, setFilterApplied] = useState<Label[]>([]);
@@ -154,7 +155,7 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
             {
                 tasks && tasks.length > 0 
                 ? <FilterSection handleFilter={handleFilter} sortByDate={sortByDate} sortByDifficulty={sortByDifficulty}/>
-                : <p className="empty-tab-title">Add task lists!</p>
+                : <p className="empty-tab-title">{t('list.emptyLists')}</p>
             }
 				{tasksToShow && tasksToShow.map((content, index) => (
 					<ul className={tasksToShow.findIndex((list) => list.key === selectedListId) === index ? "active-content" : "content"} key={index}>

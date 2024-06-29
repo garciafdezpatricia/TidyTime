@@ -12,9 +12,11 @@ import { IoMenu } from "react-icons/io5";
 import { useGoogleHandler } from "@/pages/api/google";
 import { useInruptHandler } from "@/pages/api/inrupt";
 import { Event } from "@/src/model/Scheme";
+import { useTranslation } from "react-i18next";
 
 export default function CalendarMenu() {
     // event context utils
+    const { t } = useTranslation();
     const { setEvents } = useEventContext()
     const { calendars } = useGoogleContext();
     const { getCalendars } = useGoogleHandler();
@@ -121,15 +123,15 @@ export default function CalendarMenu() {
                 // @ts-ignore
                 <article className="calendar-menu-popup">
                     <section className="calendar-menu-events">
-                        <h3>Add event</h3>
+                        <h3>{t('calendar.calendarMenu.addEvent.title')}</h3>
                         <hr/>
-                        <p>Create a new event and add it to your calendar.</p>
+                        <p>{t('calendar.calendarMenu.addEvent.desc')}</p>
                         <section className="calendar-menu-buttons">
                             <button onClick={() => setCreateNewEvent(!createNewEvent)} className="create-new-event">
                                 <BsCalendarEventFill size={".9rem"}/>
-                                New event
+                                {t('calendar.calendarMenu.addEvent.newEventButton')}
                             </button>
-                            { createNewEvent && <button className="confirm-btn" onClick={() => handleCreateEvent()} >Create</button>}
+                            { createNewEvent && <button className="confirm-btn" onClick={() => handleCreateEvent()} >{t('calendar.calendarMenu.addEvent.createButton')}</button>}
                         </section>
                         {
                             createNewEvent && 
@@ -145,14 +147,14 @@ export default function CalendarMenu() {
                     <section className="calendar-menu-google">
                         <header className="calendar-menu-google-header">
                             <Icon src={"./google-calendar.svg"} alt={"Google Calendar Icon"} />
-                            <h3>Google Calendar</h3>
+                            <h3>{t('calendar.calendarMenu.googleCalendar.title')}</h3>
                         </header>
                         <hr />
-                        <p>Import your calendars and sync them to import their events.</p>
+                        <p>{t('calendar.calendarMenu.googleCalendar.desc')}</p>
                         <button className="import-google-btn" onClick={getGoogleCalendars}>
                             {importingCalendars && <div className="loader"></div>}
                             <BsFillCalendarPlusFill />
-                            Import calendars
+                            {t('calendar.calendarMenu.googleCalendar.importButton')}
                         </button>
                         <ul className="calendar-menu-google-calendars">
                         {

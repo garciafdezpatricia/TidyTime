@@ -21,6 +21,11 @@
     }
 }
 
+body.dark-mode .list-combobox {
+    background-color: $background-dark-1;
+    color: $white;
+}
+
 .list-combobox, .list-combobox-open {
     width: 12rem;
     padding-inline: .4rem;
@@ -51,6 +56,24 @@
 
 .list-drop-down-hidden {
     display: none;
+}
+
+body.dark-mode .list-drop-down-visible {
+    background-color: $background-dark-1;
+    color: $white;
+
+    label.selected-list {
+        background-color: $light-grey;
+        &:hover {
+            color: $white;
+        }
+    }
+
+    label {
+        &:hover {
+            color: $background-dark-0;
+        }
+    }
 }
 
 .list-drop-down-visible {
@@ -89,6 +112,11 @@
 
 }
 
+body.dark-mode .selected-list-tasks, body.dark-mode .selected-list-tasks-empty {
+    background-color: $background-dark-2;
+    color: $white;
+}
+
 .selected-list-tasks, .selected-list-tasks-empty {
     grid-column: 1/1;
     grid-row: 3/3;
@@ -116,6 +144,11 @@
     justify-content: center; // necessary when there are no tasks to show
     align-items: center;
     box-shadow: inset 0px 0px 22px rgba(0,0,0,0.20);
+}
+
+body.dark-mode .selected-list-tasks-item {
+    color: $background-dark-0;
+    background-color: $primary-grey;
 }
 
 .selected-list-tasks-item, .selected-list-tasks-item-selected {
@@ -163,8 +196,19 @@
     border-bottom: 0rem solid $light-grey;
 }
 
+body.dark-mode .selected-list-tasks-item-selected {
+    color: $background-dark-0;
+    background-color: $white;
+}
+
 .selected-list-tasks-item-selected {
     background-color: $hover-green;
+}
+
+body.dark-mode .tasks-preview {
+    .task-container {
+        background-color: $white;
+    }
 }
 
 .tasks-preview {

@@ -24,6 +24,17 @@
     }
 }
 
+.dark-light-mode {
+    background-color: transparent;
+    border: none;
+    color: var.$white;
+}
+
+body.dark-mode .sidebar-menu {
+    background-color: var.$background-dark-1;
+    color: var.$white;
+}
+
 .sidebar-menu-features {
     display: flex;
     flex-direction: column;
@@ -65,9 +76,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     width: 100%;
-    gap: .8em;
     grid-row: 3/-1;
+    margin-bottom: 3rem;
     
     @media screen and (min-width: 320px) and (max-width: 768px) {
         display: none;
@@ -122,8 +134,19 @@
     }
 }
 
+body.dark-mode .menu-button {
+    background-color: var.$background-dark-1;
+    color: var.$white;
+}
+
 .menu-button-text {
     @media screen and (min-width: 320px) and (max-width: 768px) {
         display: none;
     }
+}
+
+.switch-language, .dark-light-mode {
+    display: flex;
+    gap: .3rem;
+    font-size: 1rem;
 }

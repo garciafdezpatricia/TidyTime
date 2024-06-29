@@ -10,6 +10,10 @@
     background-color: $primary-grey;
 }
 
+body.dark-mode .combobox-select {
+    color: $black;
+}
+
 .dropdown-header {
     display: flex;
     gap: .4rem;
@@ -62,6 +66,10 @@
     @media screen and (min-width: 769px) and (max-width: 1200px) {
         font-size: .7rem;
     }
+}
+
+body.dark-mode .dropdown-content {
+    background-color: $primary-grey;
 }
 
 .dropdown-option {

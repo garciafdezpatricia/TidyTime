@@ -70,6 +70,11 @@
     background-color: $primary-grey;
 }
 
+body.dark-mode .task-done {
+    background-color: $background-dark-0;
+    color: $white;
+}
+
 .task-content {
     grid-column: 2/2;
     display: flex;
@@ -89,6 +94,12 @@
 
 .selected-task {
     background-color: $hover-green;
+}
+
+body.dark-mode .selected-task {
+    background-color: $primary-grey;
+    color: $black;
+    border-color: $white;
 }
 
 .task-properties {
@@ -238,5 +249,13 @@
                 font-size: .7rem;
             }
         }
+    }
+}
+
+body.dark-mode .filter-section {
+    color: $black;
+
+    .sort-date, .sort-difficulty {
+        color: $black;
     }
 }

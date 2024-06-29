@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
 import { useEventContext } from "../../Context/EventContext";
-import toast from "react-hot-toast";
+import { useTranslation } from 'react-i18next';
 
 
 
 export default function CalendarPanel() {
+    const { t } = useTranslation();
     const {weekStart, setWeekStart, eventView, setEventView} = useEventContext();
 
     const weekDays= [{dim: "M", day: "Monday"}, {dim: "Tue", day: "Tuesday"}, {dim: "W", day: "Wednesday"}, 
@@ -14,11 +14,11 @@ export default function CalendarPanel() {
 
     return (
         <article className="calendar-settings">
-            <h3>Calendar preferences</h3>
+            <h3>{t('preferences.calendar.title')}</h3>
             <hr></hr>
-            <p>Adjust the starting day of the week and choose the default calendar view.</p>
+            <p>{t('preferences.calendar.desc')}</p>
             <section className="week-start">
-                <p style={{fontWeight: "bold"}}>Starting day of week:</p>
+                <p>{t('preferences.calendar.weekDay')}</p>
                 <div className="week-days-buttons">
                     {
                         weekDays.map((day, index) => {
@@ -37,7 +37,7 @@ export default function CalendarPanel() {
                 </div>
             </section>
             <section className="event-view">
-                <p style={{fontWeight: "bold"}}>Default calendar view:</p>
+                <p>{t('preferences.calendar.calendarView')}</p>
                 <div className="event-view-buttons">
                     {
                         views.map((view, index) => {

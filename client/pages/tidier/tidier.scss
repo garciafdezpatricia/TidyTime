@@ -11,6 +11,11 @@
     overflow-y: auto;
 }
 
+body.dark-mode .tidier-container {
+    background-color: $background-dark-3;
+    color: $white;
+}
+
 .tidier-header {
     margin-left: 1rem;
     grid-column: 1/-1;
@@ -35,6 +40,13 @@
 
     @media screen and (min-width: 320px) and (max-width: 1023px) {
         grid-column: 1/-1;
+    }
+}
+
+body.dark-mode .tidier-generate {
+    button {
+        background-color: $background-dark-0;
+        border-color: $medium-grey;
     }
 }
 
@@ -125,6 +137,10 @@
     }
 }
 
+body.dark-mode .line, body.dark-mode .circle {
+    background-color: $white;
+}
+
 .line {
     position: absolute;
     width: .3rem; /* Grosor de la línea */
@@ -145,6 +161,12 @@
     left: -2.45rem; /* Ajusta para centrar el círculo en la línea */
     top: 50%;
     transform: translateY(-50%);
+}
+
+body.dark-mode .available-time {
+    .input-container .clock-from {
+        color: $background-dark-0;
+    }
 }
 
 .available-time {

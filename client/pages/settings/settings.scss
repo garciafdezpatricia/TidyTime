@@ -11,13 +11,29 @@
     overflow-y: auto;
 }
 
+body.dark-mode .settings-container {
+    background-color: $background-dark-3;
+    color: $white;
+}
+
+body.dark-mode .save-preferences-button {
+    background-color: $background-dark-0;
+    color: $white;
+    &:hover {
+        color: $background-dark-0;
+        background-color: $hover-green;
+    }
+}
+
 .save-preferences-button {
+    min-height: 3rem;
     display: flex;
     justify-content: center;
     outline: none;
     border: none;
-    background-color: $light-blue;
+    background-color: $hover-green;
     color: $black;
+    margin-top: 2rem;
     &:hover {
         background-color: $medium-green;
     }

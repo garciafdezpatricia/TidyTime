@@ -13,8 +13,10 @@ import { useSessionContext } from "@/src/components/Context/SolidContext";
 import { useRouter } from "next/router";
 import { useInruptHandler } from "../api/inrupt";
 import Loader from "@/src/components/Loading/Loading";
+import { useTranslation } from "react-i18next";
 
 export default function List() {
+	const { t } = useTranslation();
 	const [reRender, setRerender] = useState(Math.random());
 	const [firstRender, setFirstRender] = useState(true);
 	const [isEditingTaskModalOpen, setIsEditingTaskModalOpen] = useState(false);
@@ -150,12 +152,12 @@ export default function List() {
 				<Tab handleEditModal={handleEditModal}></Tab>
 				<div className="list-footer-section">
 					<button 
-						title="Connect to GitHub and sync your issues" 
+						title={t('list.syncIssuesTitle')}
 						onClick={syncIssues}
 						disabled={githubLoggedIn ? false : true}
 						className="import-button">
 							{isSyncingIssues && <div className="loader"></div>}
-							Sync issues
+							{t('list.syncIssues')}
 					</button>
 					{tasks && tasks.length > 0 && <NewTaskForm />}
 				</div>

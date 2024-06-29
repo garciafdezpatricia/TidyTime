@@ -1,5 +1,5 @@
 import { Label } from "@/src/model/Scheme";
-import { ReactNode, useContext, useState } from "react";
+import { ReactNode, useState } from "react";
 import { useTaskContext } from "../Context/TaskContext";
 import { useClickAway } from "@uidotdev/usehooks";
 
@@ -11,7 +11,6 @@ export interface Props{
 }
 
 export default function CheckableComboBox({checkedLabels, onChange, text, variant} : Props) {
-
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState<Label[]>(checkedLabels);
     const {labels} = useTaskContext();

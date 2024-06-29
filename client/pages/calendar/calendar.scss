@@ -7,7 +7,11 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    height: calc(100% - 2*var.$view-padding);
+}
+
+body.dark-mode .calendar-container {
+    background-color: var.$background-dark-3;
+    color: var.$white;
 }
 
 .calendar-menu {
@@ -21,6 +25,14 @@
     background-color: var.$white;
     padding: .2rem;
     border: none;
+    &:hover {
+        background-color: var.$hover-green;
+    }
+}
+
+body.dark-mode .calendar-menu-icon {
+    background-color: var.$background-dark-3;
+    color: var.$white;
     &:hover {
         background-color: var.$hover-green;
     }
@@ -44,6 +56,14 @@
     }
 }
 
+body.dark-mode .rbc-toolbar span button {
+    &:hover {
+        color: var.$black;
+        border: 1px solid var.$primary-green;
+        background-color: var.$primary-grey;
+    }
+}
+
 .rbc-toolbar span button.rbc-active {
     background-color: var.$primary-green;
     color: var.$white;
@@ -54,6 +74,11 @@
     }
 }
 
+body.dark-mode .rbc-toolbar span button.rbc-active {
+    background-color: var.$background-dark-1;
+    color: var.$white;
+}
+
 .rbc-time-slot span.rbc-label {
     font-size: 1em;
 }
@@ -61,6 +86,11 @@
 div.rbc-today {
     background-color: var.$hover-green;
     border-color: var.$white;
+}
+
+body.dark-mode div.rbc-today {
+    background-color: var.$background-dark-1;
+    color: var.$white;
 }
 
 .rbc-agenda-table {
@@ -86,4 +116,9 @@ div.rbc-event.rbc-selected {
         color: var.$black;
         background-color: transparent;
     }
+}
+
+body.dark-mode div.rbc-day-bg.rbc-off-range-bg {
+    background-color: var.$light-grey;
+    color: var.$white;
 }

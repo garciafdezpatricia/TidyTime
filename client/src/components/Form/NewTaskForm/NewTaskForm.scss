@@ -32,3 +32,16 @@
         gap: .3rem;
     }
 }
+
+.create-task-form-icon {
+    color: $primary-green;
+}
+
+body.dark-mode .create-task-form input {
+    background-color: $background-dark-1;
+    color: $white;
+}
+
+body.dark-mode .create-task-form-icon {
+    color: $white;
+}

@@ -1,5 +1,9 @@
 @use "./../../../styles/variables" as *;
 
+body.dark-mode .calendar-menu-popup {
+    background-color: $background-dark-1;
+    color: $white;
+}
 
 .calendar-menu-popup {
     font-size: .9rem;

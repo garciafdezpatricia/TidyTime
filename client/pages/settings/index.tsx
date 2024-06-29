@@ -11,9 +11,10 @@ import { useRouter } from "next/router";
 import { useSessionContext } from "@/src/components/Context/SolidContext";
 import { useInruptHandler } from "../api/inrupt";
 import Loader from "@/src/components/Loading/Loading";
+import { useTranslation } from 'react-i18next';
 
 export default function Settings() {
-
+    const { t } = useTranslation();
     const { checkAuthentication } = useGoogleHandler();
     const { getUserData } = useGithubHandler();
     const { githubLoggedIn, userData } = useGithubContext();
@@ -83,11 +84,15 @@ export default function Settings() {
         :
         solidSession?.info.isLoggedIn &&
         <div className="settings-container">
-            <button className="save-preferences-button" onClick={savePreferences}>Save preferences</button>
+            <ApplicationPanel />    
             <ListPanel />
             <BoardPanel />
             <CalendarPanel />
-            <ApplicationPanel />
+            <button 
+                className="save-preferences-button" 
+                onClick={savePreferences}>
+                {t('preferences.savePreferences')}
+            </button>
         </div>
     )
 }

@@ -1,9 +1,14 @@
-@use "../../styles/variables" as var;
+@use "../../styles/variables" as *;
 
 .board-container {
-    width: var.$view-width;
+    width: $view-width;
     height: 100%;
-    padding: var.$view-padding;
+    padding: $view-padding;
     box-sizing: border-box;
     width: 100%;
+}
+
+body.dark-mode .board-container {
+    background-color: $background-dark-3;
+    color: $white;
 }

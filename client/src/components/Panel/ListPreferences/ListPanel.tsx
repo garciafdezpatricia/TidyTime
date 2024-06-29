@@ -1,10 +1,11 @@
 import { LuListPlus } from "react-icons/lu"
 import { RiDeleteBin5Fill } from "react-icons/ri"
 import { useTaskContext } from "../../Context/TaskContext"
+import { useTranslation } from 'react-i18next';
 
 
 export default function ListPanel() {
-
+    const { t } = useTranslation();
     const { labels, setLabels, showTasksInCalendar, setshowTasksInCalendar } = useTaskContext();
 
 
@@ -45,9 +46,9 @@ export default function ListPanel() {
 
     return (
         <article className="list-preferences">
-            <h3>List preferences</h3>
+            <h3>{t('preferences.list.title')}</h3>
             <hr></hr>
-            <p>Create, delete, and customize tags for your tasks.</p>
+            <p>{t('preferences.list.desc')}</p>
             <section className="default-labels">
                 {
                     labels !== undefined 
@@ -92,17 +93,17 @@ export default function ListPanel() {
                 </button>
             </section>
             <section className="show-tasks-in-calendar">
-                <p style={{fontWeight: "bold"}}>Show tasks with due date in the calendar?</p>
+                <p>{t('preferences.list.showTasks')}</p>
                 <div className="show-buttons">
                     <button
                         className={showTasksInCalendar ? "active-button" : ""}
                         onClick={() => setshowTasksInCalendar(true)}>
-                        Yes
+                        {t('preferences.list.showYes')}
                     </button>
                     <button 
                         className={showTasksInCalendar ? "" : "active-button"}
                         onClick={() => setshowTasksInCalendar(false)}>
-                        No
+                        {t('preferences.list.showNo')}
                     </button>
                 </div>
             </section>

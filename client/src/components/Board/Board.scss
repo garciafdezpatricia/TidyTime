@@ -1,5 +1,22 @@
 @use "../../../styles/variables" as *;
 
+body.dark-mode .board-section {
+    .board-button-section {
+        background-color: $background-dark-3;
+        color: $white;
+    }
+
+    .add-column-button {
+        background-color: $background-dark-1;
+        color: $white;
+
+        &:hover {
+            background-color: $primary-grey;
+            color: $background-dark-0
+        }
+    }
+}
+
 .board-section {
     display: flex;
     flex-direction: column;
@@ -22,10 +39,6 @@
             height: fit-content;
             font-size: .8rem;
             gap: .5rem;
-        }
-
-        p {
-            text-decoration: underline;
         }
 
         .add-column-button {
