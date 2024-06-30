@@ -30,6 +30,16 @@
 
 body.dark-mode .edit-modal {
     color: $background-dark-0;
+
+    .edit-modal-header button {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        color: $light-grey;
+        &:hover {
+            color: $black;
+        }
+    }
 }
 
 .edit-modal-header {

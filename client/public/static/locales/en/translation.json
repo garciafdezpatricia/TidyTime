@@ -62,6 +62,11 @@
             "delete": "Delete",
             "reset": "Reset",
             "save": "Save"
+        },
+        "editListPanel": {
+            "title": "What do you want to do with this list?",
+            "rename": "Rename",
+            "remove": "Remove"
         }
     },
     "board": {
@@ -93,6 +98,66 @@
                 "desc": "Import your calendars and sync them to import their events.",
                 "importButton": "Import calendars"
             }
+        },
+        "messages": {
+            "allDay": "All day",
+            "previous": "Previous",
+            "next": "Next",
+            "today": "Today",
+            "month": "Month",
+            "week": "Week",
+            "day": "Day",
+            "agenda": "Agenda",
+            "date": "Date",
+            "time": "Time",
+            "event": "Event",
+            "noEventsInRange": "No events"
+        },
+        "weekDays": {
+            "monday": {
+                "day": "Monday",
+                "dim": "M"
+            },
+            "tuesday": {
+                "day": "Tuesday",
+                "dim": "Tue"
+            },
+            "wednesday": {
+                "day": "Wednesday",
+                "dim": "W"
+            },
+            "thursday": {
+                "day": "Thursday",
+                "dim": "Th"
+            },
+            "friday": {
+                "day": "Friday",
+                "dim": "F"
+            },
+            "saturday": {
+                "day": "Saturday",
+                "dim": "Sat"
+            },
+            "sunday": {
+                "day": "Sunday",
+                "dim": "Sun"
+            }
+        },
+        "newEventPanel": {
+            "title": "New event",
+            "cancel": "Cancel",
+            "create": "Create"
+        },
+        "eventPanel": {
+            "buttons": {
+                "google": "See in Google",
+                "save": "Save",
+                "delete": "Delete",
+                "share": "Share"
+            },
+            "title": "New title...",
+            "notes": "Add notes...",
+            "color": "Color:"
         }
     },
     "tidier": {

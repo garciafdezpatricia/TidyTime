@@ -11,7 +11,7 @@ export default function DonutChart({ total, value }: {total:any, value:any}) {
         cx="60"
         cy="60"
         r={radius}
-        stroke="#d3d3d3"
+        stroke="#d8d8d8"
         strokeWidth="10"
         fill="transparent"
       />
@@ -19,7 +19,7 @@ export default function DonutChart({ total, value }: {total:any, value:any}) {
         cx="60"
         cy="60"
         r={radius}
-        stroke="#879C89"
+        stroke="#000000"
         strokeWidth="10"
         fill="transparent"
         strokeDasharray={circumference}

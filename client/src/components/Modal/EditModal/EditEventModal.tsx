@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { GrShareOption } from "react-icons/gr";
 import ComboBox from "@/src/components/ComboBox/ComboBox";
 import { IoMdClose } from "react-icons/io";
 import { MdOutlineDone } from "react-icons/md";
@@ -14,12 +13,15 @@ import ShareModal from "../ShareModal/ShareEventModal";
 import PromptModal from "../PromptModal/PromptModal";
 import { useGoogleHandler } from "@/pages/api/google";
 import { useInruptHandler } from "@/pages/api/inrupt";
+import { useTranslation } from "react-i18next";
+
 
 export interface Props {
     onClose: (arg?:any) => void | any;
 }
 
 export default function EditEventModal({onClose} : Props) {
+    const { t } = useTranslation();
     // event context utils
     const {setEvents, events, selectedEventId } = useEventContext();
     const { updateEvent, deleteEvent } = useInruptHandler();
@@ -214,14 +216,14 @@ export default function EditEventModal({onClose} : Props) {
         <article ref={ref} className="edit-event-article">
             <section className="edit-event-header">
                 {isGoogleEvent && 
-                    <a className="edit-event-header-button" title="See in Google" href={googleHtml} target="_blank" rel="noopener noreferrer">
+                    <a className="edit-event-header-button" title={t('calendar.eventPanel.buttons.google')} href={googleHtml} target="_blank" rel="noopener noreferrer">
                         <TbEyeShare color="#363535" size={"1.2rem"} />
                     </a>
                 }
-                <button className="edit-event-header-button" title="Save" onClick={() => onSave()}>
+                <button className="edit-event-header-button" title={t('calendar.eventPanel.buttons.save')} onClick={() => onSave()}>
                     <MdOutlineDone color="#363535" size={"1.2rem"} />
                 </button>
-                <button className="edit-event-header-button" title="Delete" onClick={() => setConfirmationDeleteModalOpen(true)}>
+                <button className="edit-event-header-button" title={t('calendar.eventPanel.buttons.delete')}onClick={() => setConfirmationDeleteModalOpen(true)}>
                     <RiDeleteBin6Line color="#363535" size={"1.1rem"} />
                 </button>
                 { !isGoogleEvent &&
@@ -232,14 +234,14 @@ export default function EditEventModal({onClose} : Props) {
                 </button>
             </section>
             <input 
-                placeholder="New title..." 
+                placeholder={t('calendar.eventPanel.title')}
                 className="edit-event-title" 
                 type="text" 
                 value={newTitle} 
                 onChange={(e) => setNewTitle(e.target.value)} 
             />
             <textarea 
-                placeholder="Add notes..." 
+                placeholder={t('calendar.eventPanel.notes')}
                 className="edit-event-info" 
                 value={newDesc}
                 onChange={(e) => setNewDesc(e.target.value)} 
@@ -259,17 +261,17 @@ export default function EditEventModal({onClose} : Props) {
             <div className="edit-event-color">
                 <ComboBox
                     onOptionChange={handleColorChange}
-                    text={"Color:"} 
+                    text={t('calendar.eventPanel.color')} 
                     colors={["#e13535", "#d37373", "#ffa500", "#3E5B41", "#3bb4ff"]}
                     checkedOption={ color !== "" ? color : "#3E5B41"} 
                 />
             </div>
             {isConfirmationDeleteModalOpen && (
 				<PromptModal
-					title="Are you sure you want to delete this event? This action can't be undone"
+					title={t('deletePanel.title')}
 					onPrimaryAction={() => onDelete()}
-					primaryActionText='Delete'
-					secondaryActionText='Cancel'
+					primaryActionText={t('deletePanel.delete')}
+					secondaryActionText={t('deletePanel.cancel')}
 					onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}
 					variant='confirmation-modal'
 					backdrop

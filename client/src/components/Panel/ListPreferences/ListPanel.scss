@@ -94,6 +94,7 @@ body.dark-mode .labels-input {
     .show-buttons {
         display: flex;
         gap: .5rem;
+        align-items: center;
 
         button {
             background-color: $background-button;

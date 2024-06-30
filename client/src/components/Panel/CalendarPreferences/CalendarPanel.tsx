@@ -7,10 +7,22 @@ export default function CalendarPanel() {
     const { t } = useTranslation();
     const {weekStart, setWeekStart, eventView, setEventView} = useEventContext();
 
-    const weekDays= [{dim: "M", day: "Monday"}, {dim: "Tue", day: "Tuesday"}, {dim: "W", day: "Wednesday"}, 
-        {dim: "Th", day: "Thursday"}, {dim: "F", day: "Friday"}, {dim: "Sat", day: "Saturday"}, {dim: "Sun", day: "Sunday"}];
+    const weekDays= [
+        {dim: t('calendar.weekDays.monday.dim'), day: t('calendar.weekDays.monday.day')}, 
+        {dim: t('calendar.weekDays.tuesday.dim'), day: t('calendar.weekDays.tuesday.day')},
+        {dim: t('calendar.weekDays.wednesday.dim'), day: t('calendar.weekDays.wednesday.day')},
+        {dim: t('calendar.weekDays.thursday.dim'), day: t('calendar.weekDays.thursday.day')},
+        {dim: t('calendar.weekDays.friday.dim'), day: t('calendar.weekDays.friday.day')},
+        {dim: t('calendar.weekDays.saturday.dim'), day: t('calendar.weekDays.saturday.day')},
+        {dim: t('calendar.weekDays.sunday.dim'), day: t('calendar.weekDays.sunday.day')}
+    ];
     
-    const views = [{view:"Month" , value: "month"}, {view:"Week" , value: "week"}, {view:"Day" , value: "day"}, {view:"Agenda" , value: "agenda"}];
+    const views = [
+        {view: t('calendar.messages.month') , value: t('calendar.messages.month')},
+        {view:t('calendar.messages.week') , value: t('calendar.messages.week')}, 
+        {view:t('calendar.messages.day') , value: t('calendar.messages.day')}, 
+        {view:t('calendar.messages.agenda') , value: t('calendar.messages.agenda')}
+    ];
 
     return (
         <article className="calendar-settings">
@@ -27,7 +39,7 @@ export default function CalendarPanel() {
                                     key={index} 
                                     className={weekStart === (index + 1) ? "selected-day" : ""}
                                     onClick={() => setWeekStart(index + 1)}
-                                    title={`Set to ${day.day}`}
+                                    title={day.day}
                                 >
                                     {day.dim}
                                 </button>
@@ -46,7 +58,7 @@ export default function CalendarPanel() {
                                     key={index}
                                     className={eventView === (view.value) ? "selected-view" : ""}
                                     onClick={() => setEventView(view.value)}
-                                    title={`Set to ${view.view}`}
+                                    title={view.view}
                                 >
                                     {view.view}
                                 </button>

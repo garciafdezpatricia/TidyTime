@@ -1,13 +1,12 @@
 import CalendarComponent from "../../src/components/Calendar/Calendar"
 import LoginGoogleCalendar from "../../src/components/Login/GoogleCalendarLogin"
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import CalendarMenu from "../../src/components/Menu/CalendarMenu";
 import { useGoogleHandler } from "../api/google";
 import { useSessionContext } from "@/src/components/Context/SolidContext";
 import { useRouter } from "next/router";
 import { useInruptHandler } from "../api/inrupt";
 import Loader from "@/src/components/Loading/Loading";
-
 
 export default function Calendar() {
 

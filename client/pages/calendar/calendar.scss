@@ -7,6 +7,7 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    height: calc(100% - 2*var.$view-padding);
 }
 
 body.dark-mode .calendar-container {
@@ -89,8 +90,8 @@ div.rbc-today {
 }
 
 body.dark-mode div.rbc-today {
-    background-color: var.$background-dark-1;
-    color: var.$white;
+    background-color: var.$medium-green;
+    color: var.$background-dark-1;
 }
 
 .rbc-agenda-table {

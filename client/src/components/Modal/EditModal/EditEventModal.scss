@@ -8,7 +8,7 @@
 	box-sizing: border-box;
     z-index: 10;
     top: 50%;
-	left: 30%;
+	left: 50%;
 	bottom: 50%;
 	padding: 1rem 2rem;
 	width: 35rem;
@@ -19,6 +19,12 @@
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto repeat(3, 1fr);
     font-size: .8rem;
+
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        width: 80%;
+        grid-template-rows: auto auto repeat(3, 1fr) 2fr;
+        height: 60vh;
+    }
 
     .edit-event-header {
         grid-row: 1/1;
@@ -68,6 +74,10 @@
             text-decoration: underline;
             text-decoration-color: $primary-green;
         }
+
+        @media screen and (min-width: 320px) and (max-width: 768px) {
+            grid-column: 1/-1;
+        }
     }
 
     .edit-event-info {
@@ -83,6 +93,12 @@
         &:active, &:focus {
             border: none;
             outline: none;
+        }
+
+        @media screen and (min-width: 320px) and (max-width: 768px) {
+            grid-row: 6/-1;
+            grid-column: 1/-1;
+            
         }
     }
 
@@ -102,10 +118,18 @@
         padding-inline: .4rem;
         justify-self: self-start;
         width: 60%;
+
+        @media screen and (min-width: 320px) and (max-width: 768px) {
+            grid-column: 1/-1;
+        }
     }
 
     .edit-event-color {
         grid-row: 5/-1;
         grid-column: 1/1;
+
+        @media screen and (min-width: 320px) and (max-width: 768px) {
+            grid-column: 1/-1;
+        }
     }
 }

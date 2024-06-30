@@ -22,9 +22,17 @@
             font-size: 1.1rem;
         }
     }
-
-
 }
+
+body.dark-mode {
+    .index-container .welcome {
+        color: $white;
+    }
+
+    .inrupt-info {
+        background-color: $primary-grey;
+    }
+} 
 
 .inrupt-info {
     display: flex;

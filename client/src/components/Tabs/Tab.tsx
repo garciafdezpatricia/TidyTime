@@ -194,7 +194,7 @@ export default function Tab({handleEditModal} : Props) {
 				</section>
 				{managingList && (
 					<EditListModal
-						title="What do you want to do with this list?"
+						title={t('list.editListPanel.title')}
 						onDeleteAction={() => setConfirmationDeleteModalOpen(true)}
 						onRenameAction={renameTab}
 						onInputChange={handleInputChange}

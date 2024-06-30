@@ -116,3 +116,16 @@
         }
     }
 }
+
+body.dark-mode .inrupt-container {
+    background-color: $background-dark-4;
+
+    .inrupt-login {
+    background-color: $primary-grey;
+    color: $black;
+
+        .inrupt-logo svg {
+            color: $white;
+        }
+    }
+}

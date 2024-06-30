@@ -10,3 +10,7 @@
         flex-direction: column;
     }
 }
+
+body.dark-mode .layout {
+    background-color: var.$background-dark-3;
+}

@@ -11,7 +11,6 @@ export function MenuSideBar() {
     const { solidSession } = useSessionContext();
     const router = useRouter();
     const [isDark, setIsDark] = useState(true);
-    const [language, setLanguage] = useState("en");
     const [showLanguagePanel, setShowLanguagePanel] = useState(false);
 
     const languages: Record<string, string> = {
@@ -21,12 +20,11 @@ export function MenuSideBar() {
      
     const changeLanguage = (lng:any) => {
         i18n.changeLanguage(lng);
-        setLanguage(lng);
         setShowLanguagePanel(false);
     };
 
     const handleChangeLanguage = () => {
-        if (language == "es") {
+        if (i18n.language == "es") {
             changeLanguage("en");
         } else {
             changeLanguage("es");
@@ -42,6 +40,18 @@ export function MenuSideBar() {
             <div className="menu-title">
                 <button className="menu-button" onClick={() => {router.push('/')}}>
                     <h1 className="sidebar-menu-title">TidyTime</h1>
+                </button>
+                <button className="menu-button dark-light-mode-mobile"
+                    onClick={() => setIsDark(!isDark)}>
+                    {   isDark 
+                        ? <MdOutlineLightMode size={"1.2rem"} />
+                        : <MdOutlineDarkMode size={"1.2rem"} />
+                    }
+                </button>
+                <button
+                    className="menu-button switch-language-mobile"
+                    onClick={() => handleChangeLanguage()}>
+                    <SlGlobe /> {i18n.language}
                 </button>
             </div>
             <section className="sidebar-menu-features">
@@ -104,7 +114,7 @@ export function MenuSideBar() {
                 <button
                     className="menu-button switch-language"
                     onClick={() => handleChangeLanguage()}>
-                    <SlGlobe /> {languages[language]}
+                    <SlGlobe /> {languages[i18n.language]}
                 </button>
                 <button className="menu-button" 
                     onClick={() => { 

@@ -53,7 +53,6 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
                 <div className="edit-modal">
                 <header className="edit-modal-header">
                     <button 
-                        title="Close"
                         onClick={onClose} 
                         className="close-button">
                             <ImCross size={".7rem"} />

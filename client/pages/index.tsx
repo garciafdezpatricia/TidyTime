@@ -31,7 +31,6 @@ export default function MainPage() {
         }
         const podWasInitialized = await getAllConfiguration();
         if (!podWasInitialized) { // if the pod was initialized, there are no lists/events to fetch
-          // TODO: fetch events
           await getApplicationData();
         }
         setLoading(false);

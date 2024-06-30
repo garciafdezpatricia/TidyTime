@@ -10,6 +10,7 @@ import CheckableTaskList, { TasksPreview } from "@/src/components/List/Checkable
 import { earliestDeadlineFirst, mostDifficultyFirst } from "../../src/algorithms/tidier";
 import { Icon } from "../../src/components/Icon/Icon";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 
 export default function Tidier() {
     const { t } = useTranslation();
@@ -68,6 +69,10 @@ export default function Tidier() {
     };
 
     const handleGeneratePlan = ({ variant = 'dueDate' } : {variant: 'dueDate' | 'difficulty'}) => {
+        if (availableTime === "") {
+            toast.error("Provide your available time");
+            return;
+        }
         const [hoursStr, minutesStr] = availableTime.split(':');
         const hours = parseInt(hoursStr, 10);
         const minutes = parseInt(minutesStr, 10);

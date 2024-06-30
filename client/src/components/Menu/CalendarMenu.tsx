@@ -116,7 +116,7 @@ export default function CalendarMenu() {
         // @ts-ignore
        <div ref={ref}>
             <button className="calendar-menu-icon" onClick={() => setMenuOpened(!menuOpened)} >
-                <IoMenu size={"1.4rem"} style={{color: "#3E5B41", backgroundColor: "transparent", borderRadius: "0.4rem"}}/>
+                <IoMenu size={"1.4rem"} style={{color: "#000000", backgroundColor: "transparent", borderRadius: "0.4rem"}}/>
             </button>
             {
                 menuOpened &&

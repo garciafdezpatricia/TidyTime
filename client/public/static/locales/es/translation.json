@@ -1,7 +1,7 @@
 {
     "loginPage": {
         "title": "¡Bienvenido a TidyTime!",
-        "desc": "TidyTime funciona con Solid PODs, asegurando que tus datos sean controlados únicamente por ti. ¡Inicia sesión en tu Solid POD de Inrupt y comienza a usar la aplicación.",
+        "desc": "TidyTime funciona con Solid PODs, asegurando que tus datos sean controlados únicamente por ti. ¡Inicia sesión en tu cuenta de Inrupt y comienza a usar la aplicación!",
         "loginButton": "INICIAR SESIÓN",
         "learnMore": "Saber más sobre  ",
         "inruptESS": "ESS de Inrupt",
@@ -62,6 +62,11 @@
             "delete": "Eliminar",
             "reset": "Reestablecer",
             "save": "Guardar"
+        },
+        "editListPanel": {
+            "title": "¿Qué quieres hacer con esta lista?",
+            "rename": "Renombrar",
+            "remove": "Eliminar"
         }
     },
     "board": {
@@ -76,6 +81,11 @@
     },
     "calendar": {
         "connectGoogle": "Conectar con Google",
+        "calendarModal": {
+            "title": "Nuevo evento",
+            "cancel": "Cancelar",
+            "create": "Crear"
+        },
         "calendarMenu": {
             "addEvent": {
                 "title": "Añadir evento",
@@ -93,6 +103,66 @@
                 "desc": "Importa tus calendarios y sincronízalos para importar sus eventos.",
                 "importButton": "Importar calendarios"
             }
+        },
+        "messages": {
+            "allDay": "Todo el día",
+            "previous": "Anterior",
+            "next": "Siguiente",
+            "today": "Hoy",
+            "month": "Mes",
+            "week": "Semana",
+            "day": "Día",
+            "agenda": "Agenda",
+            "date": "Fecha",
+            "time": "Hora",
+            "event": "Evento",
+            "noEventsInRange": "Sin eventos"
+        },
+        "weekDays": {
+            "monday": {
+                "day": "Lunes",
+                "dim": "L"
+            },
+            "tuesday": {
+                "day": "Martes",
+                "dim": "M"
+            },
+            "wednesday": {
+                "day": "Miércoles",
+                "dim": "X"
+            },
+            "thursday": {
+                "day": "Jueves",
+                "dim": "J"
+            },
+            "friday": {
+                "day": "Viernes",
+                "dim": "V"
+            },
+            "saturday": {
+                "day": "Sábado",
+                "dim": "S"
+            },
+            "sunday": {
+                "day": "Domingo",
+                "dim": "D"
+            }
+        },
+        "newEventPanel": {
+            "title": "Nuevo evento",
+            "cancel": "Cancelar",
+            "create": "Crear"
+        },
+        "eventPanel": {
+            "buttons": {
+                "google": "Ver en Google",
+                "save": "Guardar",
+                "delete": "Eliminar",
+                "share": "Compartir"
+            },
+            "title": "Nuevo título...",
+            "notes": "Añadir notas...",
+            "color": "Color:"
         }
     },
     "tidier": {

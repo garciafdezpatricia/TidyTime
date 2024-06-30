@@ -96,6 +96,10 @@ body.dark-mode .sidebar-menu {
 
 .menu-title {
     @media screen and (min-width: 320px) and (max-width: 768px) {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        width: 100%;
+        justify-content: center;
         grid-column: 1/-1;
         grid-row: 1/1;
     }
@@ -131,6 +135,8 @@ body.dark-mode .sidebar-menu {
 
     @media screen and (min-width: 320px) and (max-width: 768px) {
         width: fit-content;
+        grid-column: 2/2;
+        justify-self: center;
     }
 }
 
@@ -145,8 +151,34 @@ body.dark-mode .menu-button {
     }
 }
 
-.switch-language, .dark-light-mode {
+.switch-language, .dark-light-mode, .switch-language-mobile, .dark-light-mode-mobile {
     display: flex;
     gap: .3rem;
     font-size: 1rem;
+}
+
+.dark-light-mode-mobile {
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        grid-column: 3/-1;
+        grid-row: 1/1;
+        margin-right: 1rem;
+        margin-left: auto;
+    }
+
+    @media screen and (min-width: 769px) {
+        display: none;
+    }
+}
+
+.switch-language-mobile {
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        grid-column: 1/1;
+        grid-row: 1/1;
+        margin-right: auto;
+        margin-left: 1rem;
+    }
+
+    @media screen and (min-width: 769px) {
+        display: none;
+    }
 }
