@@ -5,10 +5,11 @@ import { useGoogleHandler } from "@/pages/api/google";
 import { useGithubContext } from "../../Context/GithubContext";
 import { useGithubHandler } from "@/pages/api/github";
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 
 export default function ApplicationPanel() {
-
+    const { t } = useTranslation();
     const { loggedIn, authUrl } = useGoogleContext();
     const { githubLoggedIn } = useGithubContext();
     const { handleLogout, handleLogin } = useGoogleHandler();
@@ -39,15 +40,15 @@ export default function ApplicationPanel() {
 
     return (
         <article className="applications-panel">
-            <h3>Connect to applications</h3>
+            <h3>{t('preferences.applications.title')}</h3>
             <hr></hr>
-            <p>TidyTime is interoperable with the following applications, allowing you to log in and access the information you need from them.</p>
+            <p>{t('preferences.applications.desc')}</p>
             <div className="panel-content">
                 <Application 
                     appImg={"./google.svg"} 
                     appAlt={"Google icon"} 
                     appName={"Google Calendar"} 
-                    appDesc={"Connect to Google to manage your events, calendars and tasks."}
+                    appDesc={t('preferences.applications.google')}
                     checked={loggedIn}
                     onChange={googleSwitch}
                 />
@@ -55,7 +56,7 @@ export default function ApplicationPanel() {
                     appImg={"./github.svg"} 
                     appAlt={"GitHub icon"} 
                     appName={"GitHub"} 
-                    appDesc={"Connect to GitHub to manage your issues."}
+                    appDesc={t('preferences.applications.github')}
                     checked={githubLoggedIn}
                     onChange={githubSwitch}
                 />

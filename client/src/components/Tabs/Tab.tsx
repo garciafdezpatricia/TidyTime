@@ -10,6 +10,7 @@ import TabContent from "./TabContent";
 import { useGithubHandler } from "@/pages/api/github";
 import { useInruptHandler } from "@/pages/api/inrupt";
 import { uuid } from "uuidv4";
+import { useTranslation } from "react-i18next";
 
 
 export interface Props {
@@ -17,6 +18,7 @@ export interface Props {
 }
 
 export default function Tab({handleEditModal} : Props) {
+	const { t } = useTranslation();
 	// const to see or unsee done tasks
 	const [seeDone, setSeeDone] = useState(false);
 	// const to open modals based on the action taking place
@@ -192,7 +194,7 @@ export default function Tab({handleEditModal} : Props) {
 				</section>
 				{managingList && (
 					<EditListModal
-						title="What do you want to do with this list?"
+						title={t('list.editListPanel.title')}
 						onDeleteAction={() => setConfirmationDeleteModalOpen(true)}
 						onRenameAction={renameTab}
 						onInputChange={handleInputChange}
@@ -204,22 +206,22 @@ export default function Tab({handleEditModal} : Props) {
 				onClick={addNewTab}
 			>
                 <BiAddToQueue />
-				Add New List
+				{t('list.addList')}
 			</button>
 			<TabContent seeDone={seeDone}  handleCheck={handleCheck} handleEditModal={handleEditModal}/>
 			{
 				tasks && tasks.length > 0 &&
 				<button className='see-done-task' onClick={() => setSeeDone(!seeDone)}>
 					{seeDone ? <AiFillEyeInvisible /> : <AiFillEye /> }
-					{seeDone ? "Hide" : "Show"} done tasks
+					{seeDone ? `${t('list.hideDoneTasks')} ${t('list.doneTasks')}` : `${t('list.showDoneTask')} ${t('list.doneTasks')}`} 
 				</button>
 			}
 			{isConfirmationDeleteModalOpen && (
 				<PromptModal
-					title="Are you sure you want to delete this list? This action can't be undone"
+					title={t('deletePanel.title')}
 					onPrimaryAction={() => deleteTab()}
-					primaryActionText='Delete'
-					secondaryActionText='Cancel'
+					primaryActionText={t('deletePanel.delete')}
+					secondaryActionText={t('deletePanel.cancel')}
 					onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}
 					variant='confirmation-modal'
 					backdrop

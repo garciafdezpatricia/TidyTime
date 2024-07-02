@@ -20,3 +20,7 @@
         font-size: .7rem;
     }
 }
+
+body.dark-mode .auth-button {
+    border-color: $white;
+}

@@ -2,7 +2,8 @@ import { Calendar, View, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import dayjs from "dayjs";
 import enLocale from 'dayjs/locale/en';
-import { useRef, useState } from "react";
+import esLocale from 'dayjs/locale/es';
+import { useEffect, useRef, useState } from "react";
 import PromptModal from "../Modal/PromptModal/PromptModal";
 import NewEventForm from "../Event/NewEventForm";
 import {v4 as uuid} from 'uuid';
@@ -11,6 +12,7 @@ import { useEventContext } from "../Context/EventContext";
 import { Event } from "@/src/model/Scheme";
 import SeeTaskModal from "../Modal/EditModal/SeeTaskModal";
 import { useInruptHandler } from "@/pages/api/inrupt";
+import { useTranslation } from "react-i18next";
 
 // custom event for calendar (all views)
 const components = {
@@ -36,11 +38,14 @@ const eventStyleGetter = (event:any, view:any) => {
 };
 
 export default function CalendarComponent() {
+  const { t, i18n } = useTranslation();
   const { events, setEvents, setSelectedEventId, weekStart, eventView } = useEventContext();
   const { createEvent } = useInruptHandler();
+  const [languageLocalizer, setLanguageLocalizer] = useState(enLocale);
+  
   
   dayjs.locale('en-custom', {
-    ...enLocale, 
+    ...languageLocalizer, 
     weekStart: weekStart
   });
   const localizer = dayjsLocalizer(dayjs);
@@ -51,6 +56,7 @@ export default function CalendarComponent() {
   const [isOpenEditEventModal, setOpenEditEventModal] = useState(false);
   const [isOpenSeeTaskModal, setOpenSeeTaskModal] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
+  const [creatingEvent, setIsCreatingEvent] = useState(false);
 
   const titleRef = useRef(null);
   const infoRef = useRef(null);
@@ -104,9 +110,11 @@ export default function CalendarComponent() {
   }
 
   const handleCreateEvent = async () => {
+    setIsCreatingEvent(true);
     if (await createNewEvent()) {
       setOpenNewEventModal(false);
     }
+    setIsCreatingEvent(false);
   }
 
   const handleColorChange = (color:string) => {
@@ -127,21 +135,28 @@ export default function CalendarComponent() {
     return false;
   }
 
-/* Para poner los botones de la cabecera en español, pasar el const messages como prop de Calendar
-    const messages = {
-    allDay: "Todo el día",
-    previous: "Anterior",
-    next: "Siguiente",
-    today: "Hoy",
-    month: "Mes",
-    week: "Semana",
-    day: "Día",
-    agenda: "Agenda",
-    date: "Fecha",
-    time: "Hora",
-    event: "Evento",
-    noEventsInRange: "Sin eventos",
-  }; */
+  useEffect(() => {
+    if (i18n.language === 'es') {
+      setLanguageLocalizer(esLocale);
+    } else if (i18n.language === 'en') {
+      setLanguageLocalizer(enLocale);
+    }
+  }, [i18n.language])
+
+  const messages = {
+    allDay: `${t('calendar.messages.allDay')}`,
+    previous: `${t('calendar.messages.previous')}`,
+    next: `${t('calendar.messages.next')}`,
+    today: `${t('calendar.messages.today')}`,
+    month: `${t('calendar.messages.month')}`,
+    week: `${t('calendar.messages.week')}`,
+    day: `${t('calendar.messages.day')}`,
+    agenda: `${t('calendar.messages.agenda')}`,
+    date: `${t('calendar.messages.date')}`,
+    time: `${t('calendar.messages.time')}`,
+    event: `${t('calendar.messages.event')}`,
+    noEventsInRange: `${t('calendar.messages.noEventsInRange')}`,
+  };
 
   return (
     <>
@@ -154,13 +169,14 @@ export default function CalendarComponent() {
         onSelectEvent={(data) => handleSelectEvent(data)}
         selectable
         defaultView={eventView as View}
+        messages={messages}
       ></Calendar>
     {
       isOpenNewEventModal && (
         <PromptModal 
-            title="New event"
-            primaryActionText="Create"
-            secondaryActionText="Cancel"
+            title={t('calendar.newEventPanel.title')}
+            primaryActionText={creatingEvent ? t('calendar.newEventPanel.creating') : t('calendar.newEventPanel.create')}
+            secondaryActionText={t('calendar.newEventPanel.cancel')}
             onPrimaryAction={async () => await handleCreateEvent()}
             onSecondaryAction={() => setOpenNewEventModal(false)} 
             backdrop={false} 

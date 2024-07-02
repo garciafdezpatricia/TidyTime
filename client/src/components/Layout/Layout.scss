@@ -1,12 +1,18 @@
-@use "../../../styles/variables" as var;
+@use "../../../styles/variables" as *;
 
 .layout {
     display: flex;
     // flex-direction: row; default value
-    color: #000000;
+    color: $black;
+    background-color: $white;
     height: 100vh;
 
     @media screen and (min-width: 320px) and (max-width: 768px) {
         flex-direction: column;
     }
+}
+
+body.dark-mode .layout {
+    background-color: $background-dark-3;
+    color: $white;
 }

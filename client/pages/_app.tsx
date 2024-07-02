@@ -11,6 +11,9 @@ import { SessionProvider } from "@/src/components/Context/SolidContext";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loader from "@/src/components/Loading/Loading";
+import '../i18n';
+import { ErrorBoundary } from "react-error-boundary";
+import Fallback from "@/src/components/Error/Error";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
 
@@ -33,26 +36,28 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [router]);
 
   return (
-    <SessionProvider>
-      <TaskProvider>
-        <EventProvider>
-          <GoogleProvider>
-            <GithubProvider>
+    <ErrorBoundary FallbackComponent={Fallback} onReset={() => (location.href = '/')}>
+      <SessionProvider>
+        <TaskProvider>
+          <EventProvider>
+            <GoogleProvider>
+              <GithubProvider>
 
-                <SideMenu>
-                  <MenuSideBar />
-                  {loading ?
-                    <Loader />
-                    :
-                    <Component {...pageProps} />
-                  }
-                </SideMenu>
-              <Toaster />
-              
-            </GithubProvider>
-          </GoogleProvider>
-        </EventProvider>
-      </TaskProvider>
-    </SessionProvider>
+                  <SideMenu>
+                    <MenuSideBar />
+                    {loading ?
+                      <Loader />
+                      :
+                      <Component {...pageProps} />
+                    }
+                  </SideMenu>
+                <Toaster />
+                
+              </GithubProvider>
+            </GoogleProvider>
+          </EventProvider>
+        </TaskProvider>
+      </SessionProvider>
+    </ErrorBoundary>
   );
 }

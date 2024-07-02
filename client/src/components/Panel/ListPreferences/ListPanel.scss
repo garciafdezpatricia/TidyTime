@@ -18,6 +18,16 @@
     margin-top: .6rem;
 }
 
+body.dark-mode .labels-input {
+    background-color: $light-grey;
+    color: $white;
+
+    input[type="text"] {
+        background-color: $primary-grey;
+        color: $background-dark-0;
+    }
+}
+
 .labels-input {
     display: flex;
     flex-direction: column;
@@ -84,6 +94,7 @@
     .show-buttons {
         display: flex;
         gap: .5rem;
+        align-items: center;
 
         button {
             background-color: $background-button;

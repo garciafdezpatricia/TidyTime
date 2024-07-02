@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useGoogleContext } from "../../Context/GoogleContext";
 import { Icon } from "../../Icon/Icon";
-import { useEventContext } from "../../Context/EventContext";
-import toast from "react-hot-toast";
 import { GrShareOption } from "react-icons/gr";
 import { useGoogleHandler } from "@/pages/api/google";
+import { useTranslation } from "react-i18next";
 
 
 export interface Props {
@@ -13,7 +12,6 @@ export interface Props {
 }
 
 export function ShareEventOption({onClick, text} : Props) {
-
     const { loggedIn } = useGoogleContext();
     const [exportingEvent, setExportingEvent] = useState(false);
 
@@ -37,7 +35,7 @@ export interface ShareModalProps {
 }
 
 export default function ShareModal({selectedIndex} : ShareModalProps) {
-
+    const { t } = useTranslation();
     const { exportEvent } = useGoogleHandler();
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -48,12 +46,15 @@ export default function ShareModal({selectedIndex} : ShareModalProps) {
 
     return (
         <div className="button-share">
-            <button className="edit-event-header-button" title="Share" onClick={() => setIsShareModalOpen(!isShareModalOpen)}>
+            <button className="edit-event-header-button" 
+                title={t('calendar.eventPanel.buttons.share')} onClick={() => setIsShareModalOpen(!isShareModalOpen)}>
                 <GrShareOption color="#363535" size={"1.1rem"} />
             </button>
             { isShareModalOpen && 
                 <article className="share-options">
-                    <ShareEventOption onClick={exportToGoogle} text={"Export to Google"} />
+                    <ShareEventOption 
+                        onClick={exportToGoogle} 
+                        text={"Google"} />
                 </article>
             }
         </div>

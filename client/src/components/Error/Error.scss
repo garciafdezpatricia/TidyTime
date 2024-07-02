@@ -1,0 +1,29 @@
+@use "../../../styles/variables" as *;
+
+.alert {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-color: $hover-green;
+}
+
+.error-img {
+    background-image: url("../../../public/error.svg");
+    height: 20rem;
+    width: 20rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.error-p {
+    width: 80%;
+    text-align: center;
+}
+
+.refresh-page {
+    display: flex;
+    padding-inline: .5rem;
+    border: .1rem solid $primary-grey;
+}

@@ -1,17 +1,57 @@
 import { useRouter } from "next/router";
 import { Icon } from "../Icon/Icon";
 import { useSessionContext } from "../Context/SolidContext";
+import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from "react";
+import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
+import { SlGlobe } from "react-icons/sl";
 
 export function MenuSideBar() {
-
+    const { t, i18n } = useTranslation();
     const { solidSession } = useSessionContext();
     const router = useRouter();
+    const [isDark, setIsDark] = useState(false);
+    const [showLanguagePanel, setShowLanguagePanel] = useState(false);
+
+    const languages: Record<string, string> = {
+        "en": "English",
+        "es": "Español"
+    }
+     
+    const changeLanguage = (lng:any) => {
+        i18n.changeLanguage(lng);
+        setShowLanguagePanel(false);
+    };
+
+    const handleChangeLanguage = () => {
+        if (i18n.language == "es") {
+            changeLanguage("en");
+        } else {
+            changeLanguage("es");
+        }
+    }
+
+    useEffect(() => {
+        document.body.classList.toggle('dark-mode', isDark);
+    }, [isDark]);
 
     return (
         <section className="sidebar-menu">
             <div className="menu-title">
                 <button className="menu-button" onClick={() => {router.push('/')}}>
                     <h1 className="sidebar-menu-title">TidyTime</h1>
+                </button>
+                <button className="menu-button dark-light-mode-mobile"
+                    onClick={() => setIsDark(!isDark)}>
+                    {   isDark 
+                        ? <MdOutlineLightMode size={"1.2rem"} />
+                        : <MdOutlineDarkMode size={"1.2rem"} />
+                    }
+                </button>
+                <button
+                    className="menu-button switch-language-mobile"
+                    onClick={() => handleChangeLanguage()}>
+                    <SlGlobe /> {i18n.language}
                 </button>
             </div>
             <section className="sidebar-menu-features">
@@ -22,7 +62,7 @@ export function MenuSideBar() {
                         }
                     }}>
                     <Icon src="menu/todo-list.svg" alt="TO-DO List"/>
-                    <p className="menu-button-text">List</p>
+                    <p className="menu-button-text">{t('sidemenu.list')}</p>
                 </button>
                 <button className="menu-button" 
                     onClick={() => { 
@@ -31,7 +71,7 @@ export function MenuSideBar() {
                         }
                     }}>
                     <Icon src="menu/board.svg" alt="Board" />
-                    <p className="menu-button-text">Board</p>
+                    <p className="menu-button-text">{t('sidemenu.board')}</p>
                 </button>
                 <button className="menu-button" 
                     onClick={() => { 
@@ -40,7 +80,7 @@ export function MenuSideBar() {
                         }
                     }}>
                     <Icon src="menu/calendar.svg" alt="Calendar" />
-                    <p className="menu-button-text">Calendar</p>
+                    <p className="menu-button-text">{t('sidemenu.calendar')}</p>
                 </button>
                 <button className="menu-button" 
                     onClick={() => { 
@@ -64,6 +104,18 @@ export function MenuSideBar() {
             </section>
             </section>
             <section className="sidebar-menu-settings">
+                <button className="menu-button dark-light-mode"
+                    onClick={() => setIsDark(!isDark)}>
+                    {   isDark 
+                        ? <MdOutlineLightMode size={"1.2rem"} />
+                        : <MdOutlineDarkMode size={"1.2rem"} />
+                    }
+                </button>
+                <button
+                    className="menu-button switch-language"
+                    onClick={() => handleChangeLanguage()}>
+                    <SlGlobe /> {languages[i18n.language]}
+                </button>
                 <button className="menu-button" 
                     onClick={() => { 
                         if (solidSession?.info.isLoggedIn) {
@@ -71,7 +123,7 @@ export function MenuSideBar() {
                         }
                     }}>
                     <Icon src="menu/settings.svg" alt="Settings" />
-                    <p className="menu-button-text">Preferences</p>
+                    <p className="menu-button-text">{t('sidemenu.settings')}</p>
                 </button>
             </section>
         </section>

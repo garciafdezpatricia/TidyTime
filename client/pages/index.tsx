@@ -5,9 +5,10 @@ import Inrupt from "@/src/components/Login/InruptLogin";
 import StatisticsPanel from "@/src/components/Panel/StatisticsPanel/StatisticsPanel";
 import Loader from "@/src/components/Loading/Loading";
 import LogoutInrupt from "@/src/components/Login/LogoutInruptBtn";
+import { useTranslation } from 'react-i18next';
 
 export default function MainPage() {
-
+  const { t } = useTranslation();
   const { getSession, getProfile, getAllConfiguration, getApplicationData } = useInruptHandler();
   const { solidSession, userName } = useSessionContext();
 
@@ -30,7 +31,6 @@ export default function MainPage() {
         }
         const podWasInitialized = await getAllConfiguration();
         if (!podWasInitialized) { // if the pod was initialized, there are no lists/events to fetch
-          // TODO: fetch events
           await getApplicationData();
         }
         setLoading(false);
@@ -52,9 +52,9 @@ export default function MainPage() {
     solidSession?.info.isLoggedIn 
     ?
     <section className='index-container'>
-      <h2 className="welcome">{userName && userName !== 'No user name' ? `Welcome back, ${userName}!` : 'Welcome back!' }</h2>
+      <h2 className="welcome">{userName && userName !== 'No user name' ? `${t('home.welcome')}, ${userName}!` : `${t('home.welcome')}!` }</h2>
       <article className="inrupt-info">
-          <p>Currenlty logged in as {solidSession.info.webId}</p>
+          <p>{t('home.loggedIn')} {solidSession.info.webId}</p>
           <LogoutInrupt />
       </article>
       <StatisticsPanel />

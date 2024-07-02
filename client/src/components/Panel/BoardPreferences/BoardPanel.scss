@@ -18,6 +18,16 @@
     flex-direction: column;
 }
 
+body.dark-mode .columns-input {
+    background-color: $light-grey;
+    color: $white;
+
+    input[type="text"] {
+        background-color: $primary-grey;
+        color: $background-dark-0;
+    }
+}
+
 .columns-input {
     display: flex;
     flex-direction: column;

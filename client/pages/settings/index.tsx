@@ -11,9 +11,10 @@ import { useRouter } from "next/router";
 import { useSessionContext } from "@/src/components/Context/SolidContext";
 import { useInruptHandler } from "../api/inrupt";
 import Loader from "@/src/components/Loading/Loading";
+import { useTranslation } from 'react-i18next';
 
 export default function Settings() {
-
+    const { t } = useTranslation();
     const { checkAuthentication } = useGoogleHandler();
     const { getUserData } = useGithubHandler();
     const { githubLoggedIn, userData } = useGithubContext();
@@ -41,10 +42,10 @@ export default function Settings() {
             }
         } catch (error:any) {
             if (error.message === "Failed to fetch") {
-                toast.error("Error when connecting to the server");
+                toast.error(t('toast.serverError'));
             } else {
                 if (error.message.includes('access not found') && githubLoggedIn) {
-                    toast.error("Please reconnect to GitHub");
+                    toast.error(t('toast.reconnectGitHub'));
                 }
             }
         }
@@ -83,11 +84,15 @@ export default function Settings() {
         :
         solidSession?.info.isLoggedIn &&
         <div className="settings-container">
-            <button className="save-preferences-button" onClick={savePreferences}>Save preferences</button>
+            <ApplicationPanel />    
             <ListPanel />
             <BoardPanel />
             <CalendarPanel />
-            <ApplicationPanel />
+            <button 
+                className="save-preferences-button" 
+                onClick={savePreferences}>
+                {t('preferences.savePreferences')}
+            </button>
         </div>
     )
 }

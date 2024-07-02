@@ -3,6 +3,7 @@ import { useTaskContext } from "@/src/components/Context/TaskContext";
 import { Task } from "@/src/model/Scheme";
 import Difficulty from "../../../src/components/DifficultyRate/Difficulty";
 import { IoIosArrowDropdownCircle, IoMdClose } from "react-icons/io";
+import { useTranslation } from "react-i18next";
 
 export interface Props {
     selectedTasks: Task[],
@@ -11,7 +12,7 @@ export interface Props {
 
 
 export default function CheckableTaskList({ selectedTasks, handleTaskCheck} : Props) {
-
+    const { t } = useTranslation();
     const { tasks, listNames } = useTaskContext();
    
     const [flatTasks, setFlatTasks] = useState<Task[]>([]);
@@ -52,7 +53,7 @@ export default function CheckableTaskList({ selectedTasks, handleTaskCheck} : Pr
     return (
         <>
             <div className="get-done-tasks">
-                <p className="get-done-p">Tasks to get done:</p>
+                <p className="get-done-p">{t('tidier.tasksToGetDone')}</p>
                 <section>
                     <div className="list-combobox">
                         <div onClick={() => setOpenLists(!isOpenLists)}>
@@ -72,7 +73,7 @@ export default function CheckableTaskList({ selectedTasks, handleTaskCheck} : Pr
                                     {list}
                                 </label>
                             )) 
-                            : <p>No lists to show</p>
+                            : <p>{t('tidier.noLists')}</p>
                         )}
                     </div> 
                 </section>

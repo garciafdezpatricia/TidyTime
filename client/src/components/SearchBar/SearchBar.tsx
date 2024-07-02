@@ -1,9 +1,10 @@
 import { Task } from "@/src/model/Scheme";
 import { useTaskContext } from "../Context/TaskContext";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 export default function SearchBar() {
-
+    const { t } = useTranslation();
     const { tasks, setSelectedListId, setSelectedTaskId } = useTaskContext();
 
     const [result, setResult] = useState<Task[]>([]);
@@ -80,7 +81,7 @@ export default function SearchBar() {
         <div className="search-bar-container">
             <input
                 type="search"
-                placeholder="Search"
+                placeholder={t('list.search')}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={handleKeyDown}
             >

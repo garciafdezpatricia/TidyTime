@@ -12,10 +12,6 @@
         outline: none;
         border: 2px solid #7c7c7c;
         border-radius: 4px;
-        &:active, &:focus {
-            outline: none;
-            border: 2px solid $primary-green;
-        }
 
         @media screen and (min-width: 320px) and (max-width: 768px) {
             font-size: .7rem;
@@ -31,4 +27,9 @@
         flex-direction: row-reverse;
         gap: .3rem;
     }
+}
+
+body.dark-mode .create-task-form input {
+    background-color: $background-dark-1;
+    color: $white;
 }

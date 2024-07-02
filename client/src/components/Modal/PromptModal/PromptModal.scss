@@ -111,6 +111,10 @@
 	}
 }
 
+body.dark-mode .confirmation-modal, body.dark-mode .shadow-modal {
+    color: var.$background-dark-0;
+}
+
 .rename-list-modal {
 	top: 15%;
 	left: 40%;

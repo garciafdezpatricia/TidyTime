@@ -9,11 +9,11 @@ import { RxClock } from "react-icons/rx";
 import CheckableTaskList, { TasksPreview } from "@/src/components/List/CheckableTaskList";
 import { earliestDeadlineFirst, mostDifficultyFirst } from "../../src/algorithms/tidier";
 import { Icon } from "../../src/components/Icon/Icon";
-import { GiFlatPlatform } from "react-icons/gi";
-import { GrFormNext } from "react-icons/gr";
+import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 
 export default function Tidier() {
-
+    const { t } = useTranslation();
     const { solidSession } = useSessionContext();
     const { getSession, getTasks } = useInruptHandler();
     const { tasks, listNames } = useTaskContext();
@@ -69,6 +69,10 @@ export default function Tidier() {
     };
 
     const handleGeneratePlan = ({ variant = 'dueDate' } : {variant: 'dueDate' | 'difficulty'}) => {
+        if (availableTime === "") {
+            toast.error(t('toast.availableTime'));
+            return;
+        }
         const [hoursStr, minutesStr] = availableTime.split(':');
         const hours = parseInt(hoursStr, 10);
         const minutes = parseInt(minutesStr, 10);
@@ -93,11 +97,11 @@ export default function Tidier() {
         <div className="tidier-container">
             <section className="tidier-setup">
                 <article className="tidier-header">
-                    <h2>What shall get done today...</h2>
+                    <h2>{t('tidier.title')}</h2>
                 </article>
                 <CheckableTaskList selectedTasks={selectedTasks} handleTaskCheck={handleTaskCheck} />
                 <section className="available-time">
-                    <p>Available time:</p>
+                    <p>{t('tidier.availableTime')}</p>
                     <div className="from-hour">
                         <div className="input-container">
                             <input type="time" className="input-from" value={availableTime} onChange={handleFromHourChange}/>
@@ -110,11 +114,11 @@ export default function Tidier() {
             <section className="tidier-plan">
                 <section className="tidier-generate">
                     <button onClick={() => handleGeneratePlan({variant: 'dueDate'})}>
-                        Prioritize due date 
+                        {t('tidier.dueDatePrior')}
                         <RxClock />
                     </button>
                     <button onClick={() => handleGeneratePlan({variant: 'difficulty'})}>
-                        Prioritize difficulty
+                        {t('tidier.difficultyPrior')}
                         <Icon src="menu/tidier.svg" alt="Brain icon" />
                     </button>
                 </section>

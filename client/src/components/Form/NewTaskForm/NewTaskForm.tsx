@@ -4,9 +4,10 @@ import { useTaskContext } from "../../Context/TaskContext";
 import { uuid } from "uuidv4";
 import { Task } from "@/src/model/Scheme";
 import { useInruptHandler } from "@/pages/api/inrupt";
+import { useTranslation } from "react-i18next";
 
 export default function NewTaskForm() {
-
+    const { i18n, t } = useTranslation();
     // use a reference instead of state: we don't want to rerender everytime we type in the input
     const newTask = useRef(null);
     const {tasks, selectedListId, setTasks} = useTaskContext();
@@ -52,11 +53,11 @@ export default function NewTaskForm() {
         <form className="create-task-form" >
             <IoIosAddCircle 
                 size={"1.5rem"} 
-                color={"#3E5B41"}
                 cursor={"pointer"}
+                color={"#000000"}
                 onClick={createNewTask}/>
             <input 
-                placeholder="New task..."
+                placeholder={t('list.newTask')}
                 ref={newTask} 
                 type="text"
                 onKeyDown={handleKeyPress}

@@ -1,9 +1,10 @@
 import { Icon } from "../Icon/Icon";
 import { useGithubHandler } from "@/pages/api/github";
 import { useGithubContext } from "../Context/GithubContext";
+import { useTranslation } from "react-i18next";
 
 export default function GitHubAuthButton() {
-
+  const { t } = useTranslation();
   const { getUserData, loginWithGithub, logoutGithub } = useGithubHandler();
   const { githubLoggedIn, userData } = useGithubContext();
 
@@ -30,14 +31,14 @@ export default function GitHubAuthButton() {
         className="auth-button"
         onClick={handleLogin}>
             <Icon className="btn-icon" src="./github.svg" alt="" />
-        Connect with Github
+        {t('list.github')}
     </button>
     : 
       <button 
         className="auth-button"
         onClick={handleLogout}>
             <Icon className="btn-icon" src="./github.svg" alt="" />
-        Logout
+        {t('home.logoutButton')}
       </button>
   )
 }

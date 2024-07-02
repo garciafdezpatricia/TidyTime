@@ -25,6 +25,10 @@
     }
 }
 
+body.dark-mode .move-task {
+    color: $black;
+}
+
 .move-button {
     display: flex;
     align-items: center;

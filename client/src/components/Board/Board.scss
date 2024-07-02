@@ -1,5 +1,22 @@
 @use "../../../styles/variables" as *;
 
+body.dark-mode .board-section {
+    .board-button-section {
+        background-color: $background-dark-3;
+        color: $white;
+    }
+
+    .add-column-button {
+        background-color: $background-dark-1;
+        color: $white;
+
+        &:hover {
+            background-color: $primary-grey;
+            color: $background-dark-0
+        }
+    }
+}
+
 .board-section {
     display: flex;
     flex-direction: column;
@@ -24,10 +41,6 @@
             gap: .5rem;
         }
 
-        p {
-            text-decoration: underline;
-        }
-
         .add-column-button {
             display: flex;
             gap: .5rem;
@@ -41,7 +54,7 @@
             }
 
             @media screen and (min-width: 320px) and (max-width: 768px) {
-                justify-content: flex-end;
+                justify-content: center;
             }
         }
     }

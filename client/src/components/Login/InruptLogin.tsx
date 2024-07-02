@@ -1,7 +1,10 @@
 import { useInruptHandler } from "@/pages/api/inrupt";
 import { useSessionContext } from "../Context/SolidContext";
-export default function Inrupt() {
+import { useTranslation } from "react-i18next";
 
+
+export default function Inrupt() {
+    const { t } = useTranslation();
     const { loginInrupt } = useInruptHandler();
     const { solidSession } = useSessionContext();
 
@@ -14,13 +17,13 @@ export default function Inrupt() {
                     <div className="inrupt-logo"></div>
                 </section>
                 <section className="inrupt-login-body">
-                    <h2>Welcome to TidyTime!</h2>
-                    <p>TidyTime works with Solid PODs, ensuring your data is only controlled by you. Log in to your Inrupt Solid POD and start using the app!</p>
-                    <button onClick={loginInrupt}>LOGIN</button>
+                    <h2>{t('loginPage.title')}</h2>
+                    <p>{t('loginPage.desc')}</p>
+                    <button onClick={loginInrupt}>{t('loginPage.loginButton')}</button>
                 </section>
                 <section className="inrupt-login-footer">
-                    <p>Learn more about <a href="https://www.inrupt.com/products/enterprise-solid-server">Inrupt&apos;s ESS</a>
-                    <br />Learn more about the <a href="https://solidproject.org/">Solid Project</a>
+                    <p>{t('loginPage.learnMore')} <a href="https://www.inrupt.com/products/enterprise-solid-server">{t('loginPage.inruptESS')}</a>
+                    <br />{t('loginPage.learnMore')}<a href="https://solidproject.org/">{t('loginPage.solidProject')}</a>
                     </p>
                 </section>
             </article>

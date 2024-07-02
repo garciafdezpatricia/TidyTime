@@ -3,9 +3,10 @@ import { useEventContext } from "../../Context/EventContext";
 import { useTaskContext } from "../../Context/TaskContext";
 import DonutChart from "../../DonutChart/DonutChart"
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 export default function StatisticsPanel() {
-
+    const { t } = useTranslation();
     const { tasks } = useTaskContext();
     const { events } = useEventContext();
 
@@ -51,11 +52,11 @@ export default function StatisticsPanel() {
     return (
     <article className="statistics">
         <article className="task-progress">
-          <h2>Completed tasks</h2>
+          <h2>{t('home.taskStat')}</h2>
           <DonutChart total={totalTasks} value={doneTasks} />
         </article>
         <article className="upcoming-events">
-          <h2>Upcoming events</h2>
+          <h2>{t('home.upcomingEvents.title')}</h2>
           <div className="event-list">
               {
                 eventsToShow.length > 0 
@@ -64,12 +65,18 @@ export default function StatisticsPanel() {
                     return (
                       <section className="event" key={index}>
                           <p className="event-title">{event.title.toUpperCase()}</p>
-                          <p style={{textDecoration: 'underline'}}>{days === 0 ? "Today" : days >= 2 ? `${days} days left` : `${days} day left`}</p>
+                          <p style={{textDecoration: 'underline'}}>
+                            {days === 0 
+                            ? t('home.upcomingEvents.today') 
+                            : days >= 2 
+                              ? `${days} ${t('home.upcomingEvents.daysLeft')}` 
+                              : `${days} ${t('home.upcomingEvents.dayLeft')}`}
+                          </p>
                           <p>{event.start.toLocaleDateString()} - {event.end.toLocaleDateString()}</p>
                       </section>
                     )
                   })
-                  : <p className="empty-events">No upcoming events!</p>
+                  : <p className="empty-events">{t('home.upcomingEvents.emptyEvents')}</p>
               }
           </div>
         </article>

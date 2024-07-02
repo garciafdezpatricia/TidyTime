@@ -5,6 +5,7 @@ import MoveModal from "../Modal/AbsoluteModal/AbsoluteModal";
 import { BiAddToQueue } from "react-icons/bi";
 import { Task } from "@/src/model/Scheme";
 import { useInruptHandler } from "@/pages/api/inrupt";
+import { useTranslation } from "react-i18next";
 
 
 export interface Props {
@@ -12,7 +13,7 @@ export interface Props {
 }
 
 export default function Board({handleCardClick} : Props) {
-
+    const { t } = useTranslation();
     const {tasks, boardColumns, setBoardColumns, setTasks, selectedListId, selectedTaskId} = useTaskContext();
     const {updateTaskStatus, storeBoardColumns} = useInruptHandler();
 
@@ -79,14 +80,12 @@ export default function Board({handleCardClick} : Props) {
     return (
         <article className="board-section">
             <section className="board-button-section">
-                <p>See your progress using the board!
-                </p>
                 <button 
                     className="add-column-button"
                     onClick={handleCreateNewColumn}
                 >
                     <BiAddToQueue />
-                    Add new column
+                    {t('board.newColumn')}
                 </button>
             </section>
             <section className={boardColumns && boardColumns.length > 0 ? "board-board" : "board-board-empty"}>
@@ -106,7 +105,7 @@ export default function Board({handleCardClick} : Props) {
                         )
                     })
                     :
-                    <p className="empty-board">No columns yet... add a new one</p>
+                    <p className="empty-board">{t('board.emptyBoard')}</p>
                 }
             </section>
             { isMovingTask && 

@@ -31,7 +31,7 @@ export default function ComboBox({text, options, colors, checkedOption, onOption
                     ? <label className="combobox-selected-color" style={{backgroundColor: selectedOption}}></label>
                     : text
                 }
-                <IoIosArrowDropdownCircle cursor="pointer" />
+                <IoIosArrowDropdownCircle color="#000000" cursor="pointer" />
             </div>
         {isOpen && colors &&  ( // color combobox
             <div className="combobox-content">

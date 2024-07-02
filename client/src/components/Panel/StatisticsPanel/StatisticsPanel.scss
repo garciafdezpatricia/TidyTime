@@ -104,3 +104,19 @@
     align-items: center;
     justify-content: center;
 }
+
+body.dark-mode {
+    .statistics {
+        .upcoming-events {
+            background-color: $light-grey;
+            .event {
+                background-color: $background-dark-2;
+                color: $white;
+            }
+        }
+
+        .task-progress {
+            background-color: $light-grey;
+        }
+    }
+} 

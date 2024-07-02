@@ -3,6 +3,7 @@ import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { FaCheck } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
+import { useTranslation } from "react-i18next";
 
 export interface Props {
     title?: string
@@ -14,7 +15,7 @@ export interface Props {
 }
 
 export default function EditListModal({onRenameAction, onDeleteAction, onInputChange, onClose, dontShowDelete, title} : Props) {
-
+    const { t } = useTranslation();
     const [showInput, setShowInput] = useState(false);
     const [isButtonDisabled, setDisabled] = useState(false);
     const [newName, setNewName] = useState("")
@@ -52,7 +53,6 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
                 <div className="edit-modal">
                 <header className="edit-modal-header">
                     <button 
-                        title="Close"
                         onClick={onClose} 
                         className="close-button">
                             <ImCross size={".7rem"} />
@@ -65,7 +65,7 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
                             className="rename-button"
                         >
                             <MdOutlineDriveFileRenameOutline />
-                            Rename
+                            {t('board.editColumnPanel.rename')}
                         </button>
                         {
                             showInput && (
@@ -90,7 +90,7 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
                             className="remove-button"
                         >
                             <RiDeleteBin5Fill color="#b13838"/>
-                            Remove
+                            {t('board.editColumnPanel.remove')}
                         </button>
                     }
                 </div>

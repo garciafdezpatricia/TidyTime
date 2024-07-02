@@ -11,6 +11,7 @@ import { TbEyeShare } from "react-icons/tb";
 import { useGithubHandler } from "@/pages/api/github";
 import { FaCheckCircle, FaRegCircle } from "react-icons/fa";
 import { useInruptHandler } from "@/pages/api/inrupt";
+import { useTranslation } from "react-i18next";
 
 export interface Props {
     onClose: (arg?:any) => void | any;
@@ -18,7 +19,7 @@ export interface Props {
 }
 
 export default function EditTaskModal({onClose, isOpen} : Props) {
-
+    const { t } = useTranslation();
     const {tasks, selectedListId, setTasks, labels, selectedTaskId, setSelectedTaskId} = useTaskContext();
 
     const [newTitle, setNewTitle] = useState("");
@@ -29,8 +30,10 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
     const [newLabels, setLabels] = useState<Label[]>([]);
     const [newStatus, setNewStatus] = useState(false);
     const [taskToEdit, setTaskToEdit] = useState<any>(null);
+    const [loadSaving, setLoaderSaving] = useState(false);
     
     const [isDeleting, setConfirmationDeleteModalOpen] = useState(false);
+    const [isDeletingTask, setIsDeletingTask] = useState(false);
 
     const {updateIssue, openIssue, closeIssue} = useGithubHandler();
     const { updateTask, deleteTask } = useInruptHandler();
@@ -68,6 +71,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
     }
 
     const saveAndClose = async () => {
+        setLoaderSaving(true);
         if (tasks && taskToEdit) {
             const updatedToDo = [...tasks];
             const updatedTask = {...taskToEdit};
@@ -95,6 +99,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
             setSelectedTaskId('');
             onClose();
         }
+        setLoaderSaving(false);
     }
 
     const updateStatus = async () => {
@@ -116,6 +121,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
     }
 
     const handleDeleteTask = async () => {
+        setIsDeletingTask(true);
         if (tasks) {
             const updatedToDo = [...tasks];
             const listIndex = tasks.findIndex((list) => list.key === selectedListId);
@@ -131,6 +137,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
             setSelectedTaskId('');
             onClose();
         }
+        setIsDeletingTask(false);
     }
 
     const handleCloseTab = () => {
@@ -153,7 +160,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                     <button 
                         onClick={updateStatus}
                         className="done-undone">
-                        {!newStatus ? (<><FaRegCircle />To do</>) : (<><FaCheckCircle />Done</>)}
+                        {!newStatus ? (<><FaRegCircle />{t('list.editTaskPanel.todo')}</>) : (<><FaCheckCircle />{t('list.editTaskPanel.done')}</>)}
                     </button>
                     <button 
                         title="Close"
@@ -164,7 +171,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                 </header>
                 <section className="edit-task-modal-body">
                     <section className="important">
-                        <label>Urgent: </label>
+                        <label>{t('list.editTaskPanel.urgent')}</label>
                         <Toggle isChecked={important} onChange={(e) => setImportant(e)}/>
                     </section>
                     <section className="main-info">
@@ -176,7 +183,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                             suppressContentEditableWarning={true}
                         />
                         <textarea 
-                            placeholder="Add a description..." 
+                            placeholder={t('list.editTaskPanel.desc')}
                             value={newDesc}
                             onChange={(e) => setNewDesc(e.target.value)}
                             contentEditable
@@ -185,7 +192,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                     </section>
                     <section className="additional-info">
                         <section className="difficulty">
-                            <label>Difficulty:</label>
+                            <label>{t('list.editTaskPanel.difficulty')}</label>
                             <DifficultyRate 
                                 key={newDifficulty}
                                 onChange={(e) => setNewDifficulty(e)} 
@@ -194,7 +201,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                         </section>
                         <hr />
                         <section className="date-picker">
-                            <label>End-date:</label>
+                            <label>{t('list.editTaskPanel.endDate')}</label>
                             <input 
                                 type="date" 
                                 value={newDate}
@@ -203,8 +210,8 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                         </section>
                         <hr />
                         <section className="label-picker">
-                            <label>Labels:</label>
-                            <CheckableComboBox checkedLabels={taskToEdit.labels ?? []} onChange={handleLabels} text={"Select options:"}/>
+                            <label>{t('list.editTaskPanel.labels')}</label>
+                            <CheckableComboBox checkedLabels={taskToEdit.labels ?? []} onChange={handleLabels} text={t('list.editTaskPanel.selectLabels')}/>
                         </section>
                         <section className="labels">
                         {
@@ -222,26 +229,27 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                         onClick={() => setConfirmationDeleteModalOpen(true)}
                         className="delete-task">
                         <MdDelete />
-                        Delete
+                        {t('list.editTaskPanel.delete')}
                     </button>
                     <button 
                         className="cancel"
                         onClick={onCancel}>
-                        Reset
+                        {t('list.editTaskPanel.reset')}
                     </button>
                     <button
                         className="save"
                         onClick={saveAndClose}>
-                        Save
+                        {loadSaving && <div className="loader"></div>}
+                        {t('list.editTaskPanel.save')}
                     </button>
                 </section>
                 {
                     isDeleting && 
                     <PromptModal
-                        title="Are you sure you want to delete this task? This action can't be undone"
+                        title={t('deletePanel.title')}
                         onPrimaryAction={() => handleDeleteTask()}
-                        primaryActionText='Delete'
-                        secondaryActionText='Cancel'
+                        primaryActionText={isDeletingTask ? t('deletePanel.deleting') : t('deletePanel.delete')}
+                        secondaryActionText={t('deletePanel.cancel')}
                         onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}
                         variant='confirmation-modal'
                         backdrop

@@ -31,6 +31,7 @@
         grid-column: 1/-1;
         margin-left: 0rem;
         min-height: 2rem;
+        margin-top: 1.2rem;
     }
 
 }
@@ -79,6 +80,11 @@
     background-color: $hover-green;
     padding-left: .8rem;
     padding-right: .4rem;
+}
+
+body.dark-mode .active-tab {
+    border-color: $white;
+    background-color: $white;
 }
 
 .edit-dropdown {
@@ -174,4 +180,8 @@
         font-size: .7rem;
         grid-column: 1/-1;
     }
+}
+
+body.dark-mode .see-done-task {
+    border-color: $white;
 }
