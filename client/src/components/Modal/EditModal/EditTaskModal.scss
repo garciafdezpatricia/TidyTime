@@ -185,6 +185,8 @@ body.dark-mode .edit-task-modal-body {
     }
 
     .save {
+        display: flex;
+        gap: .3rem;
         padding: .3rem .8rem;
         color: $white;
         background-color: $primary-green;

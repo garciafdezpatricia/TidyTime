@@ -75,10 +75,10 @@ export default function List() {
 			}
 		} catch (error:any) {
 			if (error.message === "Failed to fetch") {
-				toast.error("Error when connecting to the server");
+				toast.error(t('toast.serverError'));
 			} else {
 				if (error.message.includes('access not found') && githubLoggedIn) {
-					toast.error("Please reconnect to GitHub");
+					toast.error(t('toast.reconnectGitHub'));
 				}
 			}
 		}

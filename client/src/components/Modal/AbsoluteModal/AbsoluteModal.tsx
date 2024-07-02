@@ -17,6 +17,7 @@ export default function MoveModal({options, onClick, columnIndex, cardIndex, onC
     const { t } = useTranslation();
     const [iconClass, setIconClass] = useState("move-icon-not-visible");
     const [buttonHovered, setButtonHovered] = useState(-1);
+    const [loading, setLoading] = useState(-1);
 
     const ref = useClickAway(() => {
         onClose();
@@ -32,6 +33,12 @@ export default function MoveModal({options, onClick, columnIndex, cardIndex, onC
         setButtonHovered(-1);
     }
 
+    const moving = async (index:number) => {
+        setLoading(index);
+        await onClick(index);
+        setLoading(-1);
+    }
+
     return (
         // @ts-ignore
         <div ref={ref} className="move-task">
@@ -42,9 +49,11 @@ export default function MoveModal({options, onClick, columnIndex, cardIndex, onC
                         return (
                             <div key={uuid()} className="move-button">
                                 <button 
-                                    onClick={async () => await onClick(index)} 
+                                    onClick={async () => await moving(index)} 
                                     onMouseOver={() => handleHoverOn(index)}
                                     onMouseOut={() => handleHoverOff()}>
+                                    {index === loading && <div className="loader"></div>}
+                                    {index === loading && <span>&nbsp;</span>}
                                     {option}
                                 </button>
                                 <TbArrowMoveRight className={buttonHovered === index ? iconClass : "move-icon-not-visible"} size={"1.2rem"} />

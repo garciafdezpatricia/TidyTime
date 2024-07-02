@@ -56,6 +56,7 @@ export default function CalendarComponent() {
   const [isOpenEditEventModal, setOpenEditEventModal] = useState(false);
   const [isOpenSeeTaskModal, setOpenSeeTaskModal] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
+  const [creatingEvent, setIsCreatingEvent] = useState(false);
 
   const titleRef = useRef(null);
   const infoRef = useRef(null);
@@ -109,9 +110,11 @@ export default function CalendarComponent() {
   }
 
   const handleCreateEvent = async () => {
+    setIsCreatingEvent(true);
     if (await createNewEvent()) {
       setOpenNewEventModal(false);
     }
+    setIsCreatingEvent(false);
   }
 
   const handleColorChange = (color:string) => {
@@ -172,7 +175,7 @@ export default function CalendarComponent() {
       isOpenNewEventModal && (
         <PromptModal 
             title={t('calendar.newEventPanel.title')}
-            primaryActionText={t('calendar.newEventPanel.create')}
+            primaryActionText={creatingEvent ? t('calendar.newEventPanel.creating') : t('calendar.newEventPanel.create')}
             secondaryActionText={t('calendar.newEventPanel.cancel')}
             onPrimaryAction={async () => await handleCreateEvent()}
             onSecondaryAction={() => setOpenNewEventModal(false)} 

@@ -10,7 +10,7 @@ export function MenuSideBar() {
     const { t, i18n } = useTranslation();
     const { solidSession } = useSessionContext();
     const router = useRouter();
-    const [isDark, setIsDark] = useState(true);
+    const [isDark, setIsDark] = useState(false);
     const [showLanguagePanel, setShowLanguagePanel] = useState(false);
 
     const languages: Record<string, string> = {

@@ -70,7 +70,7 @@ export default function Tidier() {
 
     const handleGeneratePlan = ({ variant = 'dueDate' } : {variant: 'dueDate' | 'difficulty'}) => {
         if (availableTime === "") {
-            toast.error("Provide your available time");
+            toast.error(t('toast.availableTime'));
             return;
         }
         const [hoursStr, minutesStr] = availableTime.split(':');

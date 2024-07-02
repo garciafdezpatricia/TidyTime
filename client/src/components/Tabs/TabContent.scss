@@ -80,15 +80,15 @@ body.dark-mode .task-done {
     display: flex;
     align-items: center;
     gap: 2rem;
-    max-width: 15rem;
+    width: 100%;
     h4 {
         text-overflow: ellipsis;
         overflow-x: hidden;
         white-space: nowrap;
     }
 
-    @media screen and (min-width: 320px) and (max-width: 1200px) {
-        width: 7rem;
+    @media screen and (min-width: 320px) and (max-width: 768px) {
+        width: 13rem;
     }
 }
 

@@ -2,9 +2,10 @@ import toast from "react-hot-toast";
 import { useGoogleContext } from "../../src/components/Context/GoogleContext";
 import { useEventContext } from "../../src/components/Context/EventContext";
 import { CalendarItem, Event } from "../../src/model/Scheme";
+import { useTranslation } from "react-i18next";
 
 export function useGoogleHandler() {
-
+    const { t } = useTranslation();
     const { setCalendars, setSelectedCalendarId, setLoggedIn, setAuthUrl, loggedIn } = useGoogleContext();
     const { events, setEvents } = useEventContext();
 
@@ -44,12 +45,12 @@ export function useGoogleHandler() {
                         }
                         setCalendars([]);
                         setSelectedCalendarId("");
-                        toast.success("Logged out!", {
+                        toast.success(t('toast.loggedOut'), {
                             position: "top-center"
                         })
                         setLoggedIn(false);
                     } else {
-                        toast.error("Failed to log out!", {
+                        toast.error(t('toast.loggedOutError'), {
                             position: "top-center"
                         })
                     }
@@ -57,7 +58,7 @@ export function useGoogleHandler() {
                     console.error('Error when logging out');
                 });      
             } else {
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         })
     }
@@ -82,7 +83,7 @@ export function useGoogleHandler() {
                     console.error('Error al obtener la URL de autorización', error);
                 })
             } else {
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         })
     }
@@ -101,7 +102,7 @@ export function useGoogleHandler() {
                     setLoggedIn(false);
                 }
             } catch (error) {
-                toast.error("There has been an error in the authentication. Please, try again.")
+                toast.error(t('toast.errorAuthn'))
                 setLoggedIn(false);
             }
         }
@@ -114,7 +115,7 @@ export function useGoogleHandler() {
                     localStorage.removeItem('googleLoggedIn');
                 }    
             } catch (error) {
-                toast.error("There has been an error in the authentication. Please, try again.")
+                toast.error(t('toast.errorAuthn'))
                 localStorage.removeItem('googleLoggedIn');
                 setLoggedIn(false);
             }
@@ -142,7 +143,7 @@ export function useGoogleHandler() {
                                 setCalendars(calendars);
                                 resolve(true);
                             } else {
-                                toast.error("Couldn't import the calendars.\nPlease log in with your Google account and try again.", {
+                                toast.error(t('toast.errorGoogle'), {
                                     position: "top-center",
                                     duration: 6000,
                                     icon: "",
@@ -154,13 +155,13 @@ export function useGoogleHandler() {
                             }
                         })  
                         .catch(error => {
-                            toast.error(`Error when fetching the calendars`);
+                            toast.error(t('toast.errorRetrieving'));
                             resolve(false);
                         });
                     })
             }
             else {
-                toast.error("Server appears to be down");
+                toast.error(t('toast.serverDown'));
                 return Promise.resolve(false);
             }
         });
@@ -195,7 +196,7 @@ export function useGoogleHandler() {
                         });
                 });
             } else {
-                toast.error("Server appears to be down");
+                toast.error(t('toast.serverDown'));
                 return Promise.resolve(false);
             }
         });
@@ -238,7 +239,7 @@ export function useGoogleHandler() {
                     return [...existingEvents, ...updatedEvents, ...newEvents];
                 });
             } else {
-                toast.error("Server appears to be down");
+                toast.error(t('toast.serverDown'));
             }
         })
     }
@@ -268,7 +269,7 @@ export function useGoogleHandler() {
                     .then(response => response.json())
                     .then(data => {
                         addGoogleInformation(data.googleId, data.googleHTML, selectedIndex);
-                        toast.success('Event exported to Google Calendar!', {position: "bottom-center"});
+                        toast.success(t('toast.exported'));
                         resolve();
                     })
                     .catch(error => {
@@ -277,7 +278,7 @@ export function useGoogleHandler() {
                     });
                 });
             } else {
-                toast.error("Server appears to be down");
+                toast.error(t('toast.serverDown'));
             }
         })
         return Promise.resolve(false);
@@ -343,7 +344,7 @@ export function useGoogleHandler() {
                             reject(error); // Reject with any error occurred
                         });
                     } else {
-                        toast.error("Server appears to be down");
+                        toast.error(t('toast.serverDown'));
                         reject(new Error("Server appears to be down"));
                     }
                 })

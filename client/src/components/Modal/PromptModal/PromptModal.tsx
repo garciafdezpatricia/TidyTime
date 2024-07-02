@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useClickAway } from "@uidotdev/usehooks";
 
 export interface Props {
@@ -30,6 +30,12 @@ export default function PromptModal({
         }
     })
 
+    const handleOnPrimaryAction = () => {
+        if (onPrimaryAction) {
+            onPrimaryAction();
+        }
+    }
+
     return (
         <>
             { backdrop && <div className="backdrop"></div>}
@@ -49,7 +55,7 @@ export default function PromptModal({
                     }
                     <button
                         className="primary-button"
-                        onClick={onPrimaryAction}
+                        onClick={() => handleOnPrimaryAction()}
                     >
                         {primaryActionText}
                     </button>

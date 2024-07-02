@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 
 export default function Fallback({error, resetErrorBoundary}: {error: Error, resetErrorBoundary: any}) {
-    const [showTrace, setShowTrace] = useState(false);
+
+  const { t } = useTranslation();
   
     return (
       <div className="alert">
         <div className="error-img"></div>
-        <h1>Oops... something went wrong</h1>
-        <p className="error-p">Try refreshing the page to reload the application. If the error persists, feel free to open an issue in{" "}
-            <a href="https://github.com/garciafdezpatricia/TidyTime/issues">TidyTime</a>
+        <h1>{t('errorPage.title')}</h1>
+        <p className="error-p">{t('errorPage.desc')}
+            <a href="https://github.com/garciafdezpatricia/TidyTime/issues">{t('errorPage.link')}</a>
         </p>
-        <button className="refresh-page" onClick={resetErrorBoundary}>Refresh page</button>
+        <button className="refresh-page" onClick={resetErrorBoundary}>{t('errorPage.refreshButton')}</button>
       </div>
     );
   }

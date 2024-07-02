@@ -4,10 +4,11 @@ import { useTaskContext } from "@/src/components/Context/TaskContext";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { Event, Task, TaskList } from "@/src/model/Scheme";
+import { useTranslation } from "react-i18next";
 
 
 export function useInruptHandler() {
-
+    const { t } = useTranslation();
     const router = useRouter();
     const { setSolidSession, setUserName } = useSessionContext();
     const { setListNames, setLabels, setBoardColumns, setshowTasksInCalendar, setTasks } = useTaskContext();
@@ -35,7 +36,7 @@ export function useInruptHandler() {
             if (response) {
                 window.location.assign(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/login`);
             } else {
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         })
     }
@@ -58,11 +59,11 @@ export function useInruptHandler() {
                 if (window.location.pathname !== "/") {
                     router.push("/");
                 }
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         } catch (error) {
             console.error(error);
-            toast.error('There has been a problem fetching your session!');
+            toast.error(t('toast.errorSession'));
         }
     }
 
@@ -83,7 +84,7 @@ export function useInruptHandler() {
                 })
             } else {
                 setSolidSession(null)
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         })
     }
@@ -106,7 +107,7 @@ export function useInruptHandler() {
                 console.error(data.data);
             }
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -119,10 +120,10 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json()
             if (!data.status) {
-                toast.error('Could not check the configuration');    
+                toast.error(t('toast.errorRetrieving'));    
             }
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -143,11 +144,11 @@ export function useInruptHandler() {
                 setEventView(data.config.calendarView);
                 return false;
             } else if (data.status === "created") {
-                toast.success("Your POD has been initialized!");
+                toast.success(t('toast.podInit'));
                 return true;
             }
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
         return true; // the server is not up so we dont want to get any data from the pod
     }
@@ -172,13 +173,13 @@ export function useInruptHandler() {
                 }).then((response) => response.json())
                 .then((data) => {
                     if (data.status) {
-                        toast.success("Preferences saved in your POD!");
+                        toast.success(t('toast.updated'));
                     } else {
-                        toast.error("Preferences could not be saved in your POD");
+                        toast.error(t('toast.errorUpdating'));
                     }
                 });
             } else {
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         })
     }
@@ -201,10 +202,10 @@ export function useInruptHandler() {
                     await getTasks();
                 }
             } else {
-                toast.error('There has been a problem fetching your data');
+                toast.error(t('toast.errorRetrieving'));
             }
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -246,10 +247,10 @@ export function useInruptHandler() {
                 setTasks([]);
                 setListNames([]);
             } else {
-                toast.error('There has been a problem fetching your data :(');
+                toast.error(t('toast.errorRetrieving'));
             }
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -273,11 +274,11 @@ export function useInruptHandler() {
             } else if (data.status === "empty") {
                 ;
             } else {
-                toast.error('There has been a problem fetching your data :(');
+                toast.error(t('toast.errorRetrieving'));
             }
             setEvents(events);
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -294,10 +295,10 @@ export function useInruptHandler() {
                 setBoardColumns(data.data.boardColumns ? data.data.boardColumns : []);
                 
             } else {
-                toast.error('There has been a problem fetching your columns :(');
+                toast.error(t('toast.errorRetrieving'));
             }
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -315,10 +316,10 @@ export function useInruptHandler() {
             } else if (data.status === "empty") {
                 setLabels([]);
             } else {
-                toast.error('There has been a problem fetching your labels :(');
+                toast.error(t('toast.errorRetrieving'));
             }
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -338,9 +339,9 @@ export function useInruptHandler() {
         }).then((response) => response.json())
         .then((data) => {
             if (data.status) {
-                toast.success("Data correctly stored in your pod");
+                toast.success(t('toast.updated'));
             } else {
-                toast.error("There has been a problem while storing data in your pod");
+                toast.error(t('toast.errorUpdating'));
             }
         })
     }
@@ -362,9 +363,9 @@ export function useInruptHandler() {
         }).then((response) => response.json())
         .then((data) => {
             if (data.status) {
-                toast.success("List correctly deleted");
+                toast.success(t('toast.deleted'));
             } else {
-                toast.error("There has been a problem while deleting the list");
+                toast.error(t('toast.errorDeleting'));
             }
         })
     }
@@ -412,16 +413,16 @@ export function useInruptHandler() {
                         });
                     }
                 } else if (data.status === "empty"){
-                    toast.success("There's no data to fetch!");
+                    toast.success(t('toast.noDataToFetch'));
                 } else {
                     ;
-                    toast.error("There has been a problem fetching the data in your pod");
+                    toast.error(t('toast.errorRetrieving'));
                 }
                 setListNames(names);
                 setTasks(taskLists);
                 setEvents(events);
             } else {
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         } catch (error) {
             console.error(error);
@@ -443,10 +444,10 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json();
             data.status
-            ? toast.success('Pod updated!')
-            :toast.error('There has been a problem storing your data :(');
+            ? toast.success(t('toast.updated'))
+            :toast.error(t('toast.errorUpdating'));
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -465,10 +466,10 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json();
             data.status
-            ? toast.success('Pod updated!')
-            : toast.error('There has been a problem storing your data :(');
+            ? toast.success(t('toast.updated'))
+            : toast.error(t('toast.errorUpdating'));
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -487,10 +488,10 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json();
             data.status
-            ? toast.success('Task updated!')
-            :toast.error('There has been a problem fetching your data :(');
+            ? toast.success(t('toast.updated'))
+            :toast.error(t('toast.errorUpdating'));
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -509,10 +510,10 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json();
             data.status
-            ? toast.success('Task updated!')
-            :toast.error('There has been a problem updating your data :(');
+            ? toast.success(t('toast.updated'))
+            :toast.error(t('toast.errorUpdating'));
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -531,10 +532,10 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json();
             data.status
-            ? toast.success('Event updated!')
-            : toast.error('There has been a problem updating your data :(');
+            ? toast.success(t('toast.updated'))
+            : toast.error(t('toast.errorUpdating'));
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -553,10 +554,10 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json();
             data.status
-            ? toast.success('Task updated!')
-            :toast.error('There has been a problem updating your data :(');
+            ? toast.success(t('toast.updated'))
+            :toast.error(t('toast.errorUpdating'));
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -575,10 +576,10 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json();
             data.status
-            ? toast.success('Task deleted!')
-            :toast.error('There has been a problem deleting your data :(');
+            ? toast.success(t('toast.deleted'))
+            :toast.error(t('toast.errorDeleting'));
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -597,10 +598,10 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json();
             data.status
-            ? toast.success('Event deleted!')
-            : toast.error('There has been a problem deleting your data :(');
+            ? toast.success(t('toast.deleted'))
+            : toast.error(t('toast.errorDeleting'));
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     }
 
@@ -619,10 +620,10 @@ export function useInruptHandler() {
             })
             const data = await fetchResponse.json();
             data.status
-            ? toast.success('Columns updated!')
-            :toast.error('There has been a problem updating your data :(');
+            ? toast.success(t('toast.updated'))
+            :toast.error(t('toast.errorUpdating'));
         } else {
-            toast.error('Server appears to be down');
+            toast.error(t('toast.serverDown'));
         }
     };
 

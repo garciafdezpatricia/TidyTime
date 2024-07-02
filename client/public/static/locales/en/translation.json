@@ -17,7 +17,8 @@
     "deletePanel": {
         "title": "Are you sure you want to delete it? This action can't be undone",
         "cancel": "Cancel",
-        "delete": "Delete"
+        "delete": "Delete",
+        "deleting": "Deleting..."
     },
     "home": {
         "welcome": "Welcome back",
@@ -146,7 +147,8 @@
         "newEventPanel": {
             "title": "New event",
             "cancel": "Cancel",
-            "create": "Create"
+            "create": "Create",
+            "creating": "Creating..."
         },
         "eventPanel": {
             "buttons": {
@@ -193,5 +195,33 @@
             "google": "Connect to Google to manage your events and calendars.",
             "github": "Connect to GitHub to manage your issues."
         }
+    },
+    "errorPage": {
+        "title": "Oops.. something went wrong",
+        "desc": "Try refreshing the page to reload the application. If the error persists, feel free to open an issue in ",
+        "link": "TidyTime",
+        "refreshButton": "Refresh page"
+    },
+    "toast": {
+        "loggedOut": "Logged out!",
+        "loggedOutError": "Error when logging out",
+        "deleting": "Deleting...",
+        "deleted": "Data succesfully deleted!",
+        "updating": "Saving...",
+        "updated": "Data successfully saved!",
+        "exported": "Data succesfully exported!",
+        "googleSays": "Google says: '",
+        "availableTime": "Enter your available time",
+        "serverError": "Error when connecting to the server",
+        "reconnectGitHub": "Please, connect to Github",
+        "serverDown": "Server appears to be down",
+        "errorUpdating": "Error when saving",
+        "errorDeleting": "Error when deleting",
+        "errorRetrieving": "Data could not be retrieved",
+        "errorSession": "Session could not be restored",
+        "errorAuthn": "Error in the authentication. Please, try again",
+        "podInit": "Your POD has been initialized!",
+        "noDataToFetch": "No data to retrieve!",
+        "errorGoogle": "Data could not be fetched. Please, connect to Google"
     }
 }

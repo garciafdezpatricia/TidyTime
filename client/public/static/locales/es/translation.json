@@ -17,7 +17,8 @@
     "deletePanel": {
         "title": "¿Estás seguro de que deseas eliminarlo? Esta acción no se puede deshacer",
         "cancel": "Cancelar",
-        "delete": "Eliminar"
+        "delete": "Eliminar",
+        "deleting": "Eliminando..."
     },
     "home": {
         "welcome": "¡Hola de nuevo",
@@ -151,7 +152,8 @@
         "newEventPanel": {
             "title": "Nuevo evento",
             "cancel": "Cancelar",
-            "create": "Crear"
+            "create": "Crear",
+            "creating": "Creando..."
         },
         "eventPanel": {
             "buttons": {
@@ -198,5 +200,33 @@
             "google": "Conéctate a Google para gestionar tus eventos y calendarios.",
             "github": "Conéctate a GitHub para gestionar tus issues."
         }
+    },
+    "errorPage": {
+        "title": "Oops.. algo ha ido mal",
+        "desc": "Prueba a recargar la página para volver a cargar la aplicación. Si el error persiste, abre una incidencia en ",
+        "link": "TidyTime",
+        "refreshButton": "Recargar"
+    },
+    "toast": {
+        "loggedOut": "¡Se ha cerrado la sesión!",
+        "loggedOutError": "Error al cerrar la sesión",
+        "deleting": "Eliminando...",
+        "deleted": "¡Datos eliminados!",
+        "updating": "Guardando...",
+        "updated": "¡Guardado!",
+        "exported": "¡Datos exportados!",
+        "googleSays": "Google dice: '",
+        "availableTime": "Introduce tu tiempo disponible",
+        "serverError": "Error al conectar con el servidor",
+        "reconnectGitHub": "Por favor, conéctate a GitHub",
+        "serverDown": "El servidor parece estar caído",
+        "errorUpdating": "Error al guardar",
+        "errorDeleting": "Error al eliminar",
+        "errorRetrieving": "No se pudieron cargar los datos",
+        "errorSession": "No se pudo cargar la sesión",
+        "errorAuthn": "No se pudo autenticar. Por favor, prueba otra vez",
+        "podInit": "¡Tu POD ha sido inicializado!",
+        "noDataToFetch": "¡No hay datos a cargar!",
+        "errorGoogle": "No se pudieron cargar los datos. Por favor, inicia sesión en Google"
     }
 }

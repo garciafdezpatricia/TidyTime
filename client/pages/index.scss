@@ -25,6 +25,10 @@
 }
 
 body.dark-mode {
+    .index-container {
+        background-color: $background-dark-3;
+    }
+
     .index-container .welcome {
         color: $white;
     }
@@ -40,6 +44,7 @@ body.dark-mode {
     padding: 1rem 2rem;
     box-shadow: 0px 4px 20px 0px rgba(0,0,0,0.4);
     border-radius: .4rem;
+    color: $black;
 
     @media screen and (min-width: 320px) and (max-width: 768px) {
         padding: 1rem;

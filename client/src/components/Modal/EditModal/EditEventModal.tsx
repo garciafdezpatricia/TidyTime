@@ -38,6 +38,8 @@ export default function EditEventModal({onClose} : Props) {
     const [googleHtml, setGoogleHtml] = useState("");
 
     const [isConfirmationDeleteModalOpen, setConfirmationDeleteModalOpen] = useState(false);
+    const [isSavingEvent, setIsSavingEvent] = useState(false);
+    const [deletingEvent, setDeletingEvent] = useState(false);
 
     const ref = useClickAway(() => {
         onClose();
@@ -147,6 +149,7 @@ export default function EditEventModal({onClose} : Props) {
      * Save changes made to the event.
      */
     const onSave = async () => {
+        setIsSavingEvent(true);
         // get event to be saved
         let updatedEvents = [...events];
         const eventToUpdate = events[selectedIndex];
@@ -167,9 +170,9 @@ export default function EditEventModal({onClose} : Props) {
                 if (needToUpdateGoogle(changedValues)) {
                     const promise = updateEventOnGoogle(eventToUpdate);
                     toast.promise(promise, {
-                        loading: "Updating event...",
-                        success: "Google is updated!", 
-                        error: (err) => "Google says '" + err + "'"
+                        loading: t('toast.updating'),
+                        success: t('toast.updated'), 
+                        error: (err) => t('toast.googleSays') + err + "'"
                     }, {
                         position: "bottom-center",
                         error: {
@@ -181,6 +184,7 @@ export default function EditEventModal({onClose} : Props) {
         }
         // close edit modal
         onClose();
+        setIsSavingEvent(false);
     }
 
     /**
@@ -195,6 +199,7 @@ export default function EditEventModal({onClose} : Props) {
      * Deletes the event from the set of events.
      */
     const onDelete = async () => {
+        setDeletingEvent(true);
         const eventToUpdate = events[selectedIndex];
         await deleteEvent(eventToUpdate);
         setEvents((prevEvents) => {
@@ -202,13 +207,7 @@ export default function EditEventModal({onClose} : Props) {
 		});
         // close edit modal
         onClose();
-    }
-
-    /**
-     * Exports event to Google Calendar.
-     */
-    const onShare = () => {
-        
+        setDeletingEvent(false);
     }
 
     return (
@@ -221,7 +220,8 @@ export default function EditEventModal({onClose} : Props) {
                     </a>
                 }
                 <button className="edit-event-header-button" title={t('calendar.eventPanel.buttons.save')} onClick={() => onSave()}>
-                    <MdOutlineDone color="#363535" size={"1.2rem"} />
+                    {!isSavingEvent && <MdOutlineDone color="#363535" size={"1.2rem"} />}
+                    {isSavingEvent && <div className="loader"></div>}
                 </button>
                 <button className="edit-event-header-button" title={t('calendar.eventPanel.buttons.delete')}onClick={() => setConfirmationDeleteModalOpen(true)}>
                     <RiDeleteBin6Line color="#363535" size={"1.1rem"} />
@@ -270,7 +270,7 @@ export default function EditEventModal({onClose} : Props) {
 				<PromptModal
 					title={t('deletePanel.title')}
 					onPrimaryAction={() => onDelete()}
-					primaryActionText={t('deletePanel.delete')}
+					primaryActionText={deletingEvent ? t('deletePanel.deleting') : t('deletePanel.delete')}
 					secondaryActionText={t('deletePanel.cancel')}
 					onSecondaryAction={() => setConfirmationDeleteModalOpen(false)}
 					variant='confirmation-modal'

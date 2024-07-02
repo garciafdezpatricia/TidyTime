@@ -26,6 +26,7 @@ export default function CalendarMenu() {
     const [selectedColor, setSelectedColor] = useState("");
     const [menuOpened, setMenuOpened] = useState(false);
     const [importingCalendars, setImportingCalendars] = useState(false);
+    const [creatingEvent, setCreatingEvent] = useState(false);
 
     const titleRef = useRef(null);
     const infoRef = useRef(null);
@@ -66,9 +67,11 @@ export default function CalendarMenu() {
      * Handler for the creation of the event. If the event is correctly created, the creation of the event modal is closed
      */
     const handleCreateEvent = async () => {
+        setCreatingEvent(true);
         if (await constructEvent()) {
             setMenuOpened(false);
         }
+        setCreatingEvent(false);
     }
 
     /**
@@ -131,7 +134,11 @@ export default function CalendarMenu() {
                                 <BsCalendarEventFill size={".9rem"}/>
                                 {t('calendar.calendarMenu.addEvent.newEventButton')}
                             </button>
-                            { createNewEvent && <button className="confirm-btn" onClick={() => handleCreateEvent()} >{t('calendar.calendarMenu.addEvent.createButton')}</button>}
+                            { createNewEvent && <button className="confirm-btn" onClick={() => handleCreateEvent()} >
+                                {creatingEvent && <div className="loader"></div>}
+                                {creatingEvent && <span>&nbsp;</span>}
+                                {t('calendar.calendarMenu.addEvent.createButton')}
+                            </button>}
                         </section>
                         {
                             createNewEvent && 

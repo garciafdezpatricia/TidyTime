@@ -26,10 +26,10 @@ export function useGithubHandler() {
             if (response) {
                 window.location.assign(`${process.env.NEXT_PUBLIC_BACK_URL}/github/auth`);
             } else {
-                toast.error('Server appears to be down');    
+                toast.error(t('toast.serverDown'));    
             }
         } catch (error) {
-            toast.error('Error when connecting to the server');
+            toast.error(t('toast.serverError'));
         }
     }
 
@@ -50,10 +50,10 @@ export function useGithubHandler() {
                 localStorage.removeItem('githubLoggedIn');
                 toast.success(data.data);
             } else {
-                toast.error('Server appears to be down');    
+                toast.error(t('toast.serverDown'));    
             }
         } catch (error) {
-            toast.error('Error when logging out');
+            toast.error(t('toast.loggedOutError'));
         }
     }
 
@@ -76,7 +76,7 @@ export function useGithubHandler() {
                     throw Error(data.data);
                 }
             } else {
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         } catch (error:any) {
             console.error(error.message);
@@ -97,7 +97,7 @@ export function useGithubHandler() {
                 const data = await issues.json();
                 return data.data;
             } else {
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         } catch (error) {
             console.error(error);
@@ -121,12 +121,12 @@ export function useGithubHandler() {
                 });
                 const data = await issues.json();
                 if (data.data.state === "closed") {
-                    toast.success("Updated issue on GitHub!");
+                    toast.success(t('toast.updated'));
                 } else {
-                    toast.error("There has been a problem updating the issue on GitHub");
+                    toast.error(t('toast.errorUpdating'));
                 }
             } else {
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         } catch (error) {
             console.error(error);
@@ -150,12 +150,12 @@ export function useGithubHandler() {
                 });
                 const data = await issues.json();
                 if (data.data.state === "open") {
-                    toast.success("Updated issue on GitHub!");
+                    toast.success(t('toast.updated'));
                 } else {
-                    toast.error("There has been a problem updating the issue on GitHub");
+                    toast.error(t('toast.errorUpdating'));
                 }
             } else {
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         } catch (error) {
             console.error(error);
@@ -181,12 +181,12 @@ export function useGithubHandler() {
                 });
                 const data = await issues.json();
                 if (data.data.title === title && data.data.body === body) {
-                    toast.success("Updated issue on GitHub!");
+                    toast.success(t('toast.updated'));
                 } else {
-                    toast.error("There has been a problem updating the issue on GitHub");
+                    toast.error(t('toast.errorUpdating'));
                 }
             } else {
-                toast.error('Server appears to be down');
+                toast.error(t('toast.serverDown'));
             }
         } catch (error) {
             console.error(error);
