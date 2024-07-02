@@ -1,10 +1,11 @@
 import { useGithubContext } from "@/src/components/Context/GithubContext";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 
 
 export function useGithubHandler() {
-
+    const { t } = useTranslation();
     const {setGithubLoggedIn, setUserData} = useGithubContext();
 
     const serverCheck = async () => {
