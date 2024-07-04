@@ -28,6 +28,7 @@ export default function DonutChart({ total, value }: {total:any, value:any}) {
         style={{ transition: 'stroke-dashoffset 0.3s ease-out' }}
       />
       <text
+        data-testid='total-tasks-donut'
         x="60"
         y="60"
         textAnchor="middle"

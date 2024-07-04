@@ -151,7 +151,9 @@ export default function TabContent({ handleCheck, handleEditModal, seeDone} : Pr
     }, [tasks]);
 
     return (
-        <section className={tasks && tasks.length > 0 ? 'tab-content-container': 'tab-content-empty'}>
+        <section 
+            data-testid={tasks && tasks.length > 0 ? '' : 'tab-content-empty'} 
+            className={tasks && tasks.length > 0 ? 'tab-content-container': 'tab-content-empty'}>
             {
                 tasks && tasks.length > 0 
                 ? <FilterSection handleFilter={handleFilter} sortByDate={sortByDate} sortByDifficulty={sortByDifficulty}/>

@@ -12,14 +12,14 @@ export default function Inrupt() {
         <section className="inrupt-container">
         {
             !solidSession?.info.isLoggedIn && 
-            <article className="inrupt-login">
+            <article data-testid="inrupt-login-article" className="inrupt-login">
                 <section className="inrupt-login-header">
                     <div className="inrupt-logo"></div>
                 </section>
                 <section className="inrupt-login-body">
                     <h2>{t('loginPage.title')}</h2>
                     <p>{t('loginPage.desc')}</p>
-                    <button onClick={loginInrupt}>{t('loginPage.loginButton')}</button>
+                    <button data-testid="inrupt-login-button" onClick={loginInrupt}>{t('loginPage.loginButton')}</button>
                 </section>
                 <section className="inrupt-login-footer">
                     <p>{t('loginPage.learnMore')} <a href="https://www.inrupt.com/products/enterprise-solid-server">{t('loginPage.inruptESS')}</a>

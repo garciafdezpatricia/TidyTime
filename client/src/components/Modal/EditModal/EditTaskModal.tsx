@@ -149,7 +149,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
         <>
         <div className="backdrop"></div>
         {isOpen && taskToEdit &&
-            <article className="edit-task-modal">
+            <article data-testid='edit-task-modal' className="edit-task-modal">
                 <header className="edit-task-modal-header">
                     {
                         taskToEdit.githubHtml &&
@@ -175,7 +175,8 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                         <Toggle isChecked={important} onChange={(e) => setImportant(e)}/>
                     </section>
                     <section className="main-info">
-                        <input 
+                        <input
+                            data-testid="task-title" 
                             className="task-title" 
                             value={newTitle}
                             onChange={(e) => setNewTitle(e.target.value)}
@@ -227,6 +228,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                 <section className="edit-task-modal-footer">
                     <button
                         onClick={() => setConfirmationDeleteModalOpen(true)}
+                        data-testid="delete-task"
                         className="delete-task">
                         <MdDelete />
                         {t('list.editTaskPanel.delete')}
@@ -237,6 +239,7 @@ export default function EditTaskModal({onClose, isOpen} : Props) {
                         {t('list.editTaskPanel.reset')}
                     </button>
                     <button
+                        data-testid="save-task"
                         className="save"
                         onClick={saveAndClose}>
                         {loadSaving && <div className="loader"></div>}

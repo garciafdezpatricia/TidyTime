@@ -19,7 +19,7 @@ i18n
       escapeValue: false,
     },
     backend: {
-      loadPath: `${process.env.NEXT_PUBLIC_FRONT_URL}/static/locales/{{lng}}/translation.json`,
+      loadPath: `${process.env.CI ? "http://localhost:3000" : process.env.NEXT_PUBLIC_FRONT_URL}/static/locales/{{lng}}/translation.json`,
     },
   });
 

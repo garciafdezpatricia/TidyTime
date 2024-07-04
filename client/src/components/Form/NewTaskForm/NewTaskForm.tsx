@@ -52,6 +52,7 @@ export default function NewTaskForm() {
     return (
         <form className="create-task-form" >
             <IoIosAddCircle 
+                data-testid='create-task-button'
                 size={"1.5rem"} 
                 cursor={"pointer"}
                 color={"#000000"}

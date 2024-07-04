@@ -51,8 +51,8 @@ export default function MainPage() {
     <Loader /> :
     solidSession?.info.isLoggedIn 
     ?
-    <section className='index-container'>
-      <h2 className="welcome">{userName && userName !== 'No user name' ? `${t('home.welcome')}, ${userName}!` : `${t('home.welcome')}!` }</h2>
+    <section data-testid='index-container' className='index-container'>
+      <h2 data-testid="welcome-back" className="welcome">{userName && userName !== 'No user name' ? `${t('home.welcome')}, ${userName}!` : `${t('home.welcome')}!` }</h2>
       <article className="inrupt-info">
           <p>{t('home.loggedIn')} {solidSession.info.webId}</p>
           <LogoutInrupt />
