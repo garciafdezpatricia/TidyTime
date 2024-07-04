@@ -1,0 +1,153 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditEventModal matches snapshot 1`] = `
+<DocumentFragment>
+  <article
+    class="edit-event-article"
+  >
+    <section
+      class="edit-event-header"
+    >
+      <button
+        class="edit-event-header-button"
+        title="calendar.eventPanel.buttons.save"
+      >
+        <svg
+          color="#363535"
+          fill="currentColor"
+          height="1.2rem"
+          stroke="currentColor"
+          stroke-width="0"
+          style="color: rgb(54, 53, 53);"
+          viewBox="0 0 24 24"
+          width="1.2rem"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0 0h24v24H0V0z"
+            fill="none"
+          />
+          <path
+            d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+          />
+        </svg>
+      </button>
+      <button
+        class="edit-event-header-button"
+        title="calendar.eventPanel.buttons.delete"
+      >
+        <svg
+          color="#363535"
+          fill="currentColor"
+          height="1.1rem"
+          stroke="currentColor"
+          stroke-width="0"
+          style="color: rgb(54, 53, 53);"
+          viewBox="0 0 24 24"
+          width="1.1rem"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7 4V2H17V4H22V6H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V6H2V4H7ZM6 6V20H18V6H6ZM9 9H11V17H9V9ZM13 9H15V17H13V9Z"
+          />
+        </svg>
+      </button>
+      <div
+        class="button-share"
+      >
+        <button
+          class="edit-event-header-button"
+          title="calendar.eventPanel.buttons.share"
+        >
+          <svg
+            color="#363535"
+            fill="currentColor"
+            height="1.1rem"
+            stroke="currentColor"
+            stroke-width="0"
+            style="color: rgb(54, 53, 53);"
+            viewBox="0 0 24 24"
+            width="1.1rem"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18,8 C19.6568542,8 21,6.65685425 21,5 C21,3.34314575 19.6568542,2 18,2 C16.3431458,2 15,3.34314575 15,5 C15,6.65685425 16.3431458,8 18,8 Z M6,15 C7.65685425,15 9,13.6568542 9,12 C9,10.3431458 7.65685425,9 6,9 C4.34314575,9 3,10.3431458 3,12 C3,13.6568542 4.34314575,15 6,15 Z M18,22 C19.6568542,22 21,20.6568542 21,19 C21,17.3431458 19.6568542,16 18,16 C16.3431458,16 15,17.3431458 15,19 C15,20.6568542 16.3431458,22 18,22 Z M16,18 L8,13 M16,6 L8,11"
+              fill="none"
+              stroke-width="2"
+            />
+          </svg>
+        </button>
+      </div>
+      <button
+        class="edit-event-close-btn"
+      >
+        <svg
+          fill="currentColor"
+          height="1.2rem"
+          stroke="currentColor"
+          stroke-width="0"
+          viewBox="0 0 512 512"
+          width="1.2rem"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M405 136.798L375.202 107 256 226.202 136.798 107 107 136.798 226.202 256 107 375.202 136.798 405 256 285.798 375.202 405 405 375.202 285.798 256z"
+          />
+        </svg>
+      </button>
+    </section>
+    <input
+      class="edit-event-title"
+      placeholder="calendar.eventPanel.title"
+      type="text"
+      value=""
+    />
+    <textarea
+      class="edit-event-info"
+      placeholder="calendar.eventPanel.notes"
+    />
+    <input
+      class="edit-event-start-date"
+      type="datetime-local"
+      value=""
+    />
+    <input
+      class="edit-event-end-date"
+      type="datetime-local"
+      value=""
+    />
+    <div
+      class="edit-event-color"
+    >
+      <div
+        class="combobox"
+      >
+        <div
+          class="combobox-header"
+        >
+          <label
+            class="combobox-selected-color"
+            style="background-color: rgb(62, 91, 65);"
+          />
+          <svg
+            color="#000000"
+            cursor="pointer"
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            stroke-width="0"
+            style="color: rgb(0, 0, 0);"
+            viewBox="0 0 512 512"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M48 256c0 114.9 93.1 208 208 208s208-93.1 208-208S370.9 48 256 48 48 141.1 48 256zm289.1-43.4c7.5-7.5 19.8-7.5 27.3 0 3.8 3.8 5.6 8.7 5.6 13.6s-1.9 9.9-5.7 13.7l-94.3 94c-7.6 6.9-19.3 6.7-26.6-.6l-95.7-95.4c-7.5-7.5-7.6-19.7 0-27.3 7.5-7.5 19.7-7.6 27.3 0l81.1 81.9 81-79.9z"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </article>
+</DocumentFragment>
+`;

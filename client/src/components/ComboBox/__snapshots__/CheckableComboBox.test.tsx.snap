@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CheckableComboBox matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="combobox-select"
+  >
+    <div
+      class="dropdown-header"
+    />
+  </div>
+</DocumentFragment>
+`;

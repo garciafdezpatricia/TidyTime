@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AbsoluteModal matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="move-task"
+  >
+    <p>
+      board.emptyBoard
+    </p>
+  </div>
+</DocumentFragment>
+`;

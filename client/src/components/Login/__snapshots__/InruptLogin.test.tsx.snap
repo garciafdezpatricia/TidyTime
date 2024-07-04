@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InruptLogin matches snapshot 1`] = `
+<DocumentFragment>
+  <section
+    class="inrupt-container"
+  >
+    <article
+      class="inrupt-login"
+      data-testid="inrupt-login-article"
+    >
+      <section
+        class="inrupt-login-header"
+      >
+        <div
+          class="inrupt-logo"
+        />
+      </section>
+      <section
+        class="inrupt-login-body"
+      >
+        <h2>
+          loginPage.title
+        </h2>
+        <p>
+          loginPage.desc
+        </p>
+        <button
+          data-testid="inrupt-login-button"
+        >
+          loginPage.loginButton
+        </button>
+      </section>
+      <section
+        class="inrupt-login-footer"
+      >
+        <p>
+          loginPage.learnMore 
+          <a
+            href="https://www.inrupt.com/products/enterprise-solid-server"
+          >
+            loginPage.inruptESS
+          </a>
+          <br />
+          loginPage.learnMore
+          <a
+            href="https://solidproject.org/"
+          >
+            loginPage.solidProject
+          </a>
+        </p>
+      </section>
+    </article>
+  </section>
+</DocumentFragment>
+`;

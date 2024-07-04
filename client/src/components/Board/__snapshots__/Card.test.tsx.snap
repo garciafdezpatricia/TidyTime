@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Card matches snapshot 1`] = `
+<DocumentFragment>
+  <article
+    class="board-column-content-item"
+  >
+    <div
+      class="item-header"
+    >
+      <p>
+        #
+      </p>
+      <div
+        class="move-to-icon"
+      >
+        <svg
+          class="move-to-icon-icon"
+          cursor="pointer"
+          fill="none"
+          height="1.2rem"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1.2rem"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>
+            Move task
+          </title>
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+            stroke="none"
+          />
+          <path
+            d="M11 12h10"
+          />
+          <path
+            d="M18 9l3 3l-3 3"
+          />
+          <path
+            d="M7 12a2 2 0 1 1 -4 0a2 2 0 0 1 4 0z"
+          />
+        </svg>
+      </div>
+    </div>
+    <p
+      class="item-content"
+    />
+  </article>
+</DocumentFragment>
+`;

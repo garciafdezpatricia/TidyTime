@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SeeTaskModal matches snapshot 1`] = `
+<DocumentFragment>
+  <article
+    class="see-task-article"
+  >
+    <section
+      class="see-task-header"
+    >
+      <p
+        class="see-task-header-title"
+      >
+        <svg
+          fill="currentColor"
+          height="1em"
+          stroke="currentColor"
+          stroke-width="0"
+          viewBox="0 0 512 512"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
+          />
+        </svg>
+         Task
+      </p>
+      <button
+        class="see-task-close-btn"
+      >
+        <svg
+          fill="currentColor"
+          height="1.2rem"
+          stroke="currentColor"
+          stroke-width="0"
+          viewBox="0 0 512 512"
+          width="1.2rem"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M405 136.798L375.202 107 256 226.202 136.798 107 107 136.798 226.202 256 107 375.202 136.798 405 256 285.798 375.202 405 405 375.202 285.798 256z"
+          />
+        </svg>
+      </button>
+    </section>
+    <input
+      class="see-task-title"
+      contenteditable="false"
+      placeholder="Title..."
+      type="text"
+      value=""
+    />
+    <textarea
+      class="see-task-info"
+      contenteditable="false"
+      placeholder="Description..."
+    />
+    <input
+      class="see-task-date"
+      contenteditable="false"
+      type="datetime-local"
+      value=""
+    />
+  </article>
+</DocumentFragment>
+`;

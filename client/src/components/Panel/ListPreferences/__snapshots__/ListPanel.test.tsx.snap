@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListPanel matches snapshot 1`] = `
+<DocumentFragment>
+  <article
+    class="list-preferences"
+  >
+    <h3>
+      preferences.list.title
+    </h3>
+    <hr />
+    <p>
+      preferences.list.desc
+    </p>
+    <section
+      class="default-labels"
+    >
+      <div
+        style="display: flex; align-items: center; gap: .5rem;"
+      >
+        <p>
+          Loading...
+        </p>
+        <div
+          class="loader"
+        />
+      </div>
+      <button
+        class="new-label"
+      >
+        <svg
+          fill="none"
+          height="1em"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M11 12H3"
+          />
+          <path
+            d="M16 6H3"
+          />
+          <path
+            d="M16 18H3"
+          />
+          <path
+            d="M18 9v6"
+          />
+          <path
+            d="M21 12h-6"
+          />
+        </svg>
+      </button>
+    </section>
+    <section
+      class="show-tasks-in-calendar"
+    >
+      <p>
+        preferences.list.showTasks
+      </p>
+      <div
+        class="show-buttons"
+      >
+        <button
+          class=""
+        >
+          preferences.list.showYes
+        </button>
+        <button
+          class="active-button"
+        >
+          preferences.list.showNo
+        </button>
+      </div>
+    </section>
+  </article>
+</DocumentFragment>
+`;

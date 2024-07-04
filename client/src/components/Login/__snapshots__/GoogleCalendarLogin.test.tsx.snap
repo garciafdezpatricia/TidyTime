@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GoogleCalendarLogin matches snapshot 1`] = `
+<DocumentFragment>
+  <button
+    class="google-login-button"
+  >
+    <img
+      alt="Connect to Google"
+      class="btn-icon"
+      src="./google.svg"
+    />
+    calendar.connectGoogle
+  </button>
+</DocumentFragment>
+`;

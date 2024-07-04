@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PromptModal with backdrop matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="backdrop"
+  />
+  <article
+    class="prompt-modal"
+  >
+    <p />
+    <div
+      class="prompt-modal-button-section"
+    >
+      <button
+        class="primary-button"
+        data-testid="primary-button"
+      />
+    </div>
+  </article>
+</DocumentFragment>
+`;
+
+exports[`PromptModal without backdrop matches snapshot 1`] = `
+<DocumentFragment>
+  <article
+    class="prompt-modal"
+  >
+    <p />
+    <div
+      class="prompt-modal-button-section"
+    >
+      <button
+        class="primary-button"
+        data-testid="primary-button"
+      />
+    </div>
+  </article>
+</DocumentFragment>
+`;

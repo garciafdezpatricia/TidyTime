@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BoardPanel matches snapshot 1`] = `
+<DocumentFragment>
+  <article
+    class="board-preferences"
+  >
+    <h3>
+      preferences.board.title
+    </h3>
+    <hr />
+    <p>
+      preferences.board.desc
+    </p>
+    <section
+      class="default-columns"
+    >
+      <div
+        style="display: flex; align-items: center; gap: .5rem;"
+      >
+        <p>
+          Loading...
+        </p>
+        <div
+          class="loader"
+        />
+      </div>
+      <button
+        class="new-column"
+      >
+        <svg
+          fill="none"
+          height="1em"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M11 12H3"
+          />
+          <path
+            d="M16 6H3"
+          />
+          <path
+            d="M16 18H3"
+          />
+          <path
+            d="M18 9v6"
+          />
+          <path
+            d="M21 12h-6"
+          />
+        </svg>
+      </button>
+    </section>
+  </article>
+</DocumentFragment>
+`;

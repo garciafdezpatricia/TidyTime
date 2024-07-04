@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Toggle matches snapshot 1`] = `
+<DocumentFragment>
+  <label
+    class="switch"
+  >
+    <input
+      type="checkbox"
+    />
+    <span
+      class="slider round"
+    />
+  </label>
+</DocumentFragment>
+`;

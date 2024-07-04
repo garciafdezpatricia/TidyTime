@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterSection matches snapshot 1`] = `
+<DocumentFragment>
+  <section
+    class="tab-content-empty"
+    data-testid="tab-content-empty"
+  >
+    <p
+      class="empty-tab-title"
+    >
+      list.emptyLists
+    </p>
+  </section>
+</DocumentFragment>
+`;
+
+exports[`TabContent matches snapshot 1`] = `
+<DocumentFragment>
+  <section
+    class="tab-content-empty"
+    data-testid="tab-content-empty"
+  >
+    <p
+      class="empty-tab-title"
+    >
+      list.emptyLists
+    </p>
+  </section>
+</DocumentFragment>
+`;

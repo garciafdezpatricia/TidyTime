@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Error matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="alert"
+  >
+    <div
+      class="error-img"
+    />
+    <h1>
+      errorPage.title
+    </h1>
+    <p
+      class="error-p"
+    >
+      errorPage.desc
+      <a
+        href="https://github.com/garciafdezpatricia/TidyTime/issues"
+      >
+        errorPage.link
+      </a>
+    </p>
+    <button
+      class="refresh-page"
+    >
+      errorPage.refreshButton
+    </button>
+  </div>
+</DocumentFragment>
+`;

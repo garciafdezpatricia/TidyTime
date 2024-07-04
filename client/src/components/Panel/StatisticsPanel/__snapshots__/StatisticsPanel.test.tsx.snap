@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatisticsPanel matches snapshot 1`] = `
+<DocumentFragment>
+  <article
+    class="statistics"
+  >
+    <article
+      class="task-progress"
+      data-testid="task-progress"
+    >
+      <h2>
+        home.taskStat
+      </h2>
+      <svg
+        height="20%"
+        viewBox="0 0 120 120"
+        width="20%"
+      >
+        <circle
+          cx="60"
+          cy="60"
+          fill="transparent"
+          r="50"
+          stroke="#d8d8d8"
+          stroke-width="10"
+        />
+        <circle
+          cx="60"
+          cy="60"
+          fill="transparent"
+          r="50"
+          stroke="#000000"
+          stroke-dasharray="314.1592653589793"
+          stroke-dashoffset="0"
+          stroke-width="10"
+          style="transition: stroke-dashoffset 0.3s ease-out;"
+          transform="rotate(-90 60 60)"
+        />
+        <text
+          data-testid="total-tasks-donut"
+          dy=".3em"
+          font-size="20"
+          text-anchor="middle"
+          x="60"
+          y="60"
+        >
+          0/0
+        </text>
+      </svg>
+    </article>
+    <article
+      class="upcoming-events"
+      data-testid="upcoming-events"
+    >
+      <h2>
+        home.upcomingEvents.title
+      </h2>
+      <div
+        class="event-list"
+      >
+        <p
+          class="empty-events"
+          data-testid="empty-events"
+        >
+          home.upcomingEvents.emptyEvents
+        </p>
+      </div>
+    </article>
+  </article>
+</DocumentFragment>
+`;

@@ -65,7 +65,7 @@ export default function ApplicationPanel() {
     )
 }
 
-function Application({appImg, appAlt, appName, appDesc, checked, onChange}:
+export function Application({appImg, appAlt, appName, appDesc, checked, onChange}:
     {
         appImg:string, 
         appAlt:string,

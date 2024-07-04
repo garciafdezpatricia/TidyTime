@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application matches snapshot 1`] = `
+<DocumentFragment>
+  <section
+    class="content-box"
+  >
+    <section
+      class="content-header"
+    >
+      <div
+        class="header-app"
+      >
+        <img
+          alt=""
+          class="app-icon"
+          src=""
+        />
+        <h4 />
+      </div>
+      <label
+        class="switch"
+      >
+        <input
+          type="checkbox"
+        />
+        <span
+          class="slider round"
+        />
+      </label>
+    </section>
+    <section
+      class="content-body"
+    >
+      <p />
+    </section>
+  </section>
+</DocumentFragment>
+`;

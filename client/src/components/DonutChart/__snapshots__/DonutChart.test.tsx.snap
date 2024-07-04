@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DonutChart matches snapshot 1`] = `
+<DocumentFragment>
+  <svg
+    height="20%"
+    viewBox="0 0 120 120"
+    width="20%"
+  >
+    <circle
+      cx="60"
+      cy="60"
+      fill="transparent"
+      r="50"
+      stroke="#d8d8d8"
+      stroke-width="10"
+    />
+    <circle
+      cx="60"
+      cy="60"
+      fill="transparent"
+      r="50"
+      stroke="#000000"
+      stroke-dasharray="314.1592653589793"
+      stroke-dashoffset="314.1592653589793"
+      stroke-width="10"
+      style="transition: stroke-dashoffset 0.3s ease-out;"
+      transform="rotate(-90 60 60)"
+    />
+    <text
+      data-testid="total-tasks-donut"
+      dy=".3em"
+      font-size="20"
+      text-anchor="middle"
+      x="60"
+      y="60"
+    >
+      0/2
+    </text>
+  </svg>
+</DocumentFragment>
+`;

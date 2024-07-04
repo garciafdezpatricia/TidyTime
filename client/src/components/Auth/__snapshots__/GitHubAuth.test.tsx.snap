@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GitHubAuthButton matches snapshot 1`] = `
+<DocumentFragment>
+  <button
+    class="auth-button"
+  >
+    <img
+      alt=""
+      class="btn-icon"
+      src="./github.svg"
+    />
+    list.github
+  </button>
+</DocumentFragment>
+`;

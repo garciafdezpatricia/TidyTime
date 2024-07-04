@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DonutChart matches snapshot 1`] = `
+<DocumentFragment>
+  <div>
+    <button
+      class="calendar-menu-icon"
+      data-testid="calendar-menu-icon"
+    >
+      <svg
+        fill="currentColor"
+        height="1.4rem"
+        stroke="currentColor"
+        stroke-width="0"
+        style="color: rgb(0, 0, 0); background-color: transparent; border-radius: 0.4rem;"
+        viewBox="0 0 512 512"
+        width="1.4rem"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M88 152h336M88 256h336M88 360h336"
+          fill="none"
+          stroke-linecap="round"
+          stroke-miterlimit="10"
+          stroke-width="48"
+        />
+      </svg>
+    </button>
+  </div>
+</DocumentFragment>
+`;
