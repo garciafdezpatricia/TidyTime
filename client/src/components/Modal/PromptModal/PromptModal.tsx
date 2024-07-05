@@ -54,6 +54,7 @@ export default function PromptModal({
                         </button>
                     }
                     <button
+                        data-testid='primary-button'
                         className="primary-button"
                         onClick={() => handleOnPrimaryAction()}
                     >

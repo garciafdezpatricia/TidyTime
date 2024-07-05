@@ -31,8 +31,12 @@ export default function NewEventForm({startDate, endDate, titleRef, infoRef, fro
         <article className="new-event-form">
             <input ref={titleRef} placeholder={t('calendar.calendarMenu.addEvent.addTitle')} type="text" />
             <textarea ref={infoRef} placeholder={t('calendar.calendarMenu.addEvent.addNotes')} />
-            <label>{t('calendar.calendarMenu.addEvent.from')}<input ref={fromDateRef} type="datetime-local" defaultValue={start} /> </label>
-            <label>{t('calendar.calendarMenu.addEvent.to')}<input ref={toDateRef} type="datetime-local" defaultValue={end} /> </label>
+            <label>{t('calendar.calendarMenu.addEvent.from')}
+                <input ref={fromDateRef} type="datetime-local" defaultValue={start} data-testid='from-date' /> 
+            </label>
+            <label>{t('calendar.calendarMenu.addEvent.to')}
+                <input ref={toDateRef} type="datetime-local" defaultValue={end} data-testid='to-date' /> 
+            </label>
             <ComboBox 
                 text={t('calendar.calendarMenu.addEvent.color')}
                 colors={["#e13535", "#d37373", "#ffa500", "#3E5B41", "#3bb4ff"]}

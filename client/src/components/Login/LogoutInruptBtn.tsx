@@ -7,7 +7,7 @@ export default function LogoutInrupt() {
     const { logoutInrupt } = useInruptHandler();
 
     return (
-        <button className="logout-inrupt-button" onClick={logoutInrupt}>
+        <button data-testid='inrupt-logout-button' className="logout-inrupt-button" onClick={logoutInrupt}>
             {t('home.logoutButton')}
         </button>
     )

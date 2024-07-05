@@ -11,7 +11,6 @@ export function MenuSideBar() {
     const { solidSession } = useSessionContext();
     const router = useRouter();
     const [isDark, setIsDark] = useState(false);
-    const [showLanguagePanel, setShowLanguagePanel] = useState(false);
 
     const languages: Record<string, string> = {
         "en": "English",
@@ -20,7 +19,6 @@ export function MenuSideBar() {
      
     const changeLanguage = (lng:any) => {
         i18n.changeLanguage(lng);
-        setShowLanguagePanel(false);
     };
 
     const handleChangeLanguage = () => {
@@ -41,7 +39,7 @@ export function MenuSideBar() {
                 <button className="menu-button" onClick={() => {router.push('/')}}>
                     <h1 className="sidebar-menu-title">TidyTime</h1>
                 </button>
-                <button className="menu-button dark-light-mode-mobile"
+                <button data-testid='menu-button-dark-light-mobile' className="menu-button dark-light-mode-mobile"
                     onClick={() => setIsDark(!isDark)}>
                     {   isDark 
                         ? <MdOutlineLightMode size={"1.2rem"} />
@@ -49,13 +47,14 @@ export function MenuSideBar() {
                     }
                 </button>
                 <button
+                    data-testid='menu-button-language-mobile'
                     className="menu-button switch-language-mobile"
                     onClick={() => handleChangeLanguage()}>
                     <SlGlobe /> {i18n.language}
                 </button>
             </div>
             <section className="sidebar-menu-features">
-                <button className="menu-button" 
+                <button data-testid='menu-button-list' className="menu-button" 
                     onClick={() => { 
                         if (solidSession?.info.isLoggedIn) {
                             router.push('/list')
@@ -64,7 +63,7 @@ export function MenuSideBar() {
                     <Icon src="menu/todo-list.svg" alt="TO-DO List"/>
                     <p className="menu-button-text">{t('sidemenu.list')}</p>
                 </button>
-                <button className="menu-button" 
+                <button data-testid='menu-button-board' className="menu-button" 
                     onClick={() => { 
                         if (solidSession?.info.isLoggedIn) {
                             router.push('/board')
@@ -73,7 +72,7 @@ export function MenuSideBar() {
                     <Icon src="menu/board.svg" alt="Board" />
                     <p className="menu-button-text">{t('sidemenu.board')}</p>
                 </button>
-                <button className="menu-button" 
+                <button data-testid='menu-button-calendar' className="menu-button" 
                     onClick={() => { 
                         if (solidSession?.info.isLoggedIn) {
                             router.push('/calendar')
@@ -82,7 +81,7 @@ export function MenuSideBar() {
                     <Icon src="menu/calendar.svg" alt="Calendar" />
                     <p className="menu-button-text">{t('sidemenu.calendar')}</p>
                 </button>
-                <button className="menu-button" 
+                <button data-testid='menu-button-tidier' className="menu-button" 
                     onClick={() => { 
                         if (solidSession?.info.isLoggedIn) {
                             router.push('/tidier')
@@ -92,19 +91,19 @@ export function MenuSideBar() {
                     <p className="menu-button-text">Tidier</p>
                 </button>
                 <section className="sidebar-menu-settings-mobile">
-                <button className="menu-button" 
-                    onClick={() => { 
-                        if (solidSession?.info.isLoggedIn) {
-                            router.push('/settings')
-                        }
-                    }}>
-                    <Icon src="menu/settings.svg" alt="Settings" />
-                    <p className="menu-button-text">Preferences</p>
-                </button>
-            </section>
+                    <button data-testid='menu-button-settings-mobile' className="menu-button" 
+                        onClick={() => { 
+                            if (solidSession?.info.isLoggedIn) {
+                                router.push('/settings')
+                            }
+                        }}>
+                        <Icon src="menu/settings.svg" alt="Settings" />
+                        <p className="menu-button-text">Preferences</p>
+                    </button>
+                </section>
             </section>
             <section className="sidebar-menu-settings">
-                <button className="menu-button dark-light-mode"
+                <button data-testid='menu-button-dark-light' className="menu-button dark-light-mode"
                     onClick={() => setIsDark(!isDark)}>
                     {   isDark 
                         ? <MdOutlineLightMode size={"1.2rem"} />
@@ -112,11 +111,12 @@ export function MenuSideBar() {
                     }
                 </button>
                 <button
+                    data-testid='menu-button-language'
                     className="menu-button switch-language"
                     onClick={() => handleChangeLanguage()}>
                     <SlGlobe /> {languages[i18n.language]}
                 </button>
-                <button className="menu-button" 
+                <button data-testid='menu-button-settings' className="menu-button" 
                     onClick={() => { 
                         if (solidSession?.info.isLoggedIn) {
                             router.push('/settings')

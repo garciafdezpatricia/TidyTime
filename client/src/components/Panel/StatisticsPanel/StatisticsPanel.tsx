@@ -51,11 +51,11 @@ export default function StatisticsPanel() {
 
     return (
     <article className="statistics">
-        <article className="task-progress">
+        <article data-testid='task-progress' className="task-progress">
           <h2>{t('home.taskStat')}</h2>
           <DonutChart total={totalTasks} value={doneTasks} />
         </article>
-        <article className="upcoming-events">
+        <article data-testid="upcoming-events" className="upcoming-events">
           <h2>{t('home.upcomingEvents.title')}</h2>
           <div className="event-list">
               {
@@ -76,7 +76,7 @@ export default function StatisticsPanel() {
                       </section>
                     )
                   })
-                  : <p className="empty-events">{t('home.upcomingEvents.emptyEvents')}</p>
+                  : <p data-testid='empty-events' className="empty-events">{t('home.upcomingEvents.emptyEvents')}</p>
               }
           </div>
         </article>

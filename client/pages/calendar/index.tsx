@@ -53,7 +53,7 @@ export default function Calendar() {
         <Loader />
         :
         (solidSession?.info.isLoggedIn &&
-        <div className="calendar-container">
+        <div data-testid="calendar-container" className="calendar-container">
             <article className="calendar-menu" >
                 <CalendarMenu />
                 <LoginGoogleCalendar />

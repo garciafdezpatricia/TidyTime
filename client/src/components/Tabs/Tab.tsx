@@ -202,6 +202,7 @@ export default function Tab({handleEditModal} : Props) {
 					/>
 				)}
 			<button
+				data-testid='tab-container-add-list'
 				className='tab-container add-list'
 				onClick={addNewTab}
 			>
@@ -211,7 +212,7 @@ export default function Tab({handleEditModal} : Props) {
 			<TabContent seeDone={seeDone}  handleCheck={handleCheck} handleEditModal={handleEditModal}/>
 			{
 				tasks && tasks.length > 0 &&
-				<button className='see-done-task' onClick={() => setSeeDone(!seeDone)}>
+				<button data-testid='see-done-task' className='see-done-task' onClick={() => setSeeDone(!seeDone)}>
 					{seeDone ? <AiFillEyeInvisible /> : <AiFillEye /> }
 					{seeDone ? `${t('list.hideDoneTasks')} ${t('list.doneTasks')}` : `${t('list.showDoneTask')} ${t('list.doneTasks')}`} 
 				</button>

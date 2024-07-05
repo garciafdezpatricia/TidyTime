@@ -50,7 +50,7 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
     return (
         <>
             <div className="backdrop">
-                <div className="edit-modal">
+                <div data-testid='edit-modal' className="edit-modal">
                 <header className="edit-modal-header">
                     <button 
                         onClick={onClose} 
@@ -63,6 +63,7 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
                         <button 
                             onClick={() => setShowInput(!showInput)} 
                             className="rename-button"
+                            data-testid='rename-button'
                         >
                             <MdOutlineDriveFileRenameOutline />
                             {t('board.editColumnPanel.rename')}
@@ -71,12 +72,13 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
                             showInput && (
                                 <section className="input-section">
                                     <input 
+                                        data-testid='rename-input'
                                         ref={nameInput}
                                         type="text" 
                                         onChange={(e) => handleInputChange(e)}
                                         onKeyDown={handleKeyDown}
                                     />
-                                    <button className="confirm-rename" onClick={handleRename} disabled={isButtonDisabled}>
+                                    <button data-testid='confirm-rename' className="confirm-rename" onClick={handleRename} disabled={isButtonDisabled}>
                                         <FaCheck />
                                     </button>
                                 </section>
@@ -86,6 +88,7 @@ export default function EditListModal({onRenameAction, onDeleteAction, onInputCh
                     {
                         !dontShowDelete && 
                         <button 
+                            data-testid='remove-button'
                             onClick={onDeleteAction} 
                             className="remove-button"
                         >

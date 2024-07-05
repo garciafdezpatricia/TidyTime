@@ -118,7 +118,7 @@ export default function CalendarMenu() {
     return (
         // @ts-ignore
        <div ref={ref}>
-            <button className="calendar-menu-icon" onClick={() => setMenuOpened(!menuOpened)} >
+            <button data-testid="calendar-menu-icon" className="calendar-menu-icon" onClick={() => setMenuOpened(!menuOpened)} >
                 <IoMenu size={"1.4rem"} style={{color: "#000000", backgroundColor: "transparent", borderRadius: "0.4rem"}}/>
             </button>
             {
@@ -130,7 +130,7 @@ export default function CalendarMenu() {
                         <hr/>
                         <p>{t('calendar.calendarMenu.addEvent.desc')}</p>
                         <section className="calendar-menu-buttons">
-                            <button onClick={() => setCreateNewEvent(!createNewEvent)} className="create-new-event">
+                            <button data-testid='trigger-create-event' onClick={() => setCreateNewEvent(!createNewEvent)} className="create-new-event">
                                 <BsCalendarEventFill size={".9rem"}/>
                                 {t('calendar.calendarMenu.addEvent.newEventButton')}
                             </button>
