@@ -188,15 +188,13 @@ export interface CalendarProps {
 function CalendarHandler({calendarId}: CalendarProps) {
 
     const { getCalendarEvents } = useGoogleHandler();
-
     const [syncingCalendar, setSyncingCalendar] = useState(false);
 
     // workaround for setter being async
     useEffect(() => {
         if (syncingCalendar) {
-            getCalendarEvents(calendarId).then((response) => {
-                setSyncingCalendar(false);
-            })
+            getCalendarEvents(calendarId);
+            setSyncingCalendar(false);
         }
     }, [syncingCalendar, calendarId, getCalendarEvents])
 

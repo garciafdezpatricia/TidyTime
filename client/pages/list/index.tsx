@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { useInruptHandler } from "../api/inrupt";
 import Loader from "@/src/components/Loading/Loading";
 import { useTranslation } from "react-i18next";
+import { uuid } from "uuidv4";
 
 export default function List() {
 	const { t } = useTranslation();
@@ -27,7 +28,7 @@ export default function List() {
 	const { getUserData, getIssuesOfUser } = useGithubHandler();
 	const { githubLoggedIn, userData } = useGithubContext();
 	const { solidSession } = useSessionContext();
-	const { getSession, getLabels, getTasks } = useInruptHandler();
+	const { getSession, getLabels, getTasks, updateListNames, createTask } = useInruptHandler();
 	const router = useRouter();
 
 	const getSessionWrapper = async () => {
@@ -103,34 +104,41 @@ export default function List() {
 				// create copy of the task list names and the task lists.
 				let lists = [...listNames];
 				let tasklists = [...tasks];
-				issues.items.map((issue:any, index:number) => {
-					// get the repo of the issue (new task list name)
+				for (let index = 0; index < issues.items.length; index++) {
+					const issue = issues.items[index];
 					const repo = issue.repository_url.substring(issue.repository_url.lastIndexOf("/") + 1);
-					// if the list names doesn't contain the repo, add it
+				
 					if (!lists.includes(repo)) {
 						lists = [...lists, repo];
 					}
-					// TODO:
-					// if there's no task list created for this list, add it
+				
 					const listIndex = lists.indexOf(repo);
+				
 					if (!tasklists[listIndex]) {
-						// TODO: this is not updated to new schema for tasklists
-						// @ts-ignore
-						tasklists[listIndex] = [];
+						tasklists[listIndex] = {key: uuid(), value: []};
+						await updateListNames(lists, tasklists);
 					}
-					const task:Task = {
-						title: issue.title,
-						desc: issue.body,
-						done: false,
-						githubHtml: issue.html_url,
-						githubUrl: issue.url,
-						// @ts-ignore
-						listIndex: listIndex,
-						status: 0,
-					};
-					// @ts-ignore
-					tasklists[listIndex].push(task); 
-				});
+
+					const repeatedIssue = tasklists[listIndex].value.some((task) => 
+						task.githubHtml !== undefined 
+						&& task.githubHtml === issue.html_url
+						&& task.title === issue.title
+					);
+					if (!repeatedIssue) {
+						const task:Task = {
+							id: uuid(),
+							title: issue.title,
+							desc: issue.body,
+							done: false,
+							githubHtml: issue.html_url,
+							githubUrl: issue.url,
+							listIndex: tasklists[listIndex].key,
+							status: 0,
+						};
+						await createTask(task);
+						tasklists[listIndex].value.push(task); 
+					}
+				}				
 				setListNames(lists);
 				setTasks(tasklists);
 			}

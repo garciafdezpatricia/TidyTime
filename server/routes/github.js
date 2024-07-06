@@ -96,6 +96,7 @@ router.get("/github/user/data", async function (req, res) {
 });
 
 router.get("/github/issues/get", async function (req, res) {
+  console.log("user", req.query.user)
   try {
     if (!req.cookies.access_token) {
       res.json({status: false, data: "Cookie access not found"});
@@ -112,7 +113,9 @@ router.get("/github/issues/get", async function (req, res) {
         },
       }
     );
+    console.log("response", response);
     const data = await response.json();
+    console.log("data", data);
     res.json({status: true, data: data});
   } catch (error) {
     res.json({status: false, data: "Error when fetching issues"});

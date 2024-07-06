@@ -327,7 +327,7 @@ export function useInruptHandler() {
         const listNamesAndIds = listNames.map((listname, index) => {
             return {name: listname, id: tasks[index].key};
         })
-        fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/listNames`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACK_URL}/solid/data/store/listNames`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -336,14 +336,14 @@ export function useInruptHandler() {
             body: JSON.stringify({
                 listNames: listNamesAndIds
             })
-        }).then((response) => response.json())
-        .then((data) => {
-            if (data.status) {
-                toast.success(t('toast.updated'));
-            } else {
-                toast.error(t('toast.errorUpdating'));
-            }
         })
+        const data = await response.json()
+        if (data.status) {
+            toast.success(t('toast.updated'));
+        } else {
+            toast.error(t('toast.errorUpdating'));
+        }
+        
     }
 
     const deleteList = async(listNames:string[], tasks: TaskList[], tasksIds: string[]) => {

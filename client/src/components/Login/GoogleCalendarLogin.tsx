@@ -17,8 +17,8 @@ export default function LoginGoogleCalendar() {
         }
     }, [authUrl, loggedIn]);
 
-    const onLogout = () => {
-        handleLogout();
+    const onLogout = async () => {
+        await handleLogout();
     }
 
     const onConnect = () => {
@@ -38,7 +38,7 @@ export default function LoginGoogleCalendar() {
                 {t('calendar.connectGoogle')}
             </button>
             :
-            <button className="google-logout-button" onClick={() => onLogout()}>
+            <button className="google-logout-button" onClick={onLogout}>
                 <Icon src={"./google.svg"} alt={"Log out of Google"} />
                 {t('home.logoutButton')}
             </button>

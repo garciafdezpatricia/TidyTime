@@ -94,3 +94,11 @@ body.dark-mode .list-container {
         font-size: .7rem;
     }
 }
+
+body.dark-mode .import-button {
+    color: $black;
+    background-color: $white;
+    &:not(:disabled):hover {
+        background-color: $primary-grey;
+    }
+}

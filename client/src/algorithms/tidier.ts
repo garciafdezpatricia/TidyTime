@@ -89,7 +89,7 @@ export function mostDifficultyFirst(tasks: Task[], availableHours: number, avail
     sortedTasks.forEach(currentTask => {
         // There's no more time available
         if (availableTime <= 0) return;
-        const difficulty = currentTask.difficulty ?? 1;
+        const difficulty = currentTask.difficulty && currentTask.difficulty !== 0 ? currentTask.difficulty : 1;
         let durationMinutes = Math.min(difficulty * 30, availableTime);
         // While there's time still, divide long tasks in 60 minutes blocks
         while (durationMinutes > 60 && availableTime > 0) {
