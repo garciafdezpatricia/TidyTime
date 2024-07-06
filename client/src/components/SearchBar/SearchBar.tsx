@@ -80,6 +80,7 @@ export default function SearchBar() {
     return (
         <div className="search-bar-container">
             <input
+                title={t('list.search')}
                 type="search"
                 placeholder={t('list.search')}
                 onChange={(e) => setSearch(e.target.value)}

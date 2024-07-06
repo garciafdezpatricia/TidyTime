@@ -119,6 +119,14 @@ div.rbc-event.rbc-selected {
     }
 }
 
+button.rbc-button-link {
+    color: var.$black;
+}
+
+body.dark-mode button.rbc-button-link {
+    color: var.$white;
+}
+
 body.dark-mode div.rbc-day-bg.rbc-off-range-bg {
     background-color: var.$light-grey;
     color: var.$white;

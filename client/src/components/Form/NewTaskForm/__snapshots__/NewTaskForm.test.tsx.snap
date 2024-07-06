@@ -24,6 +24,7 @@ exports[`NewTaskForm matches snapshot 1`] = `
     </svg>
     <input
       placeholder="list.newTask"
+      title="list.newTask"
       type="text"
     />
   </form>

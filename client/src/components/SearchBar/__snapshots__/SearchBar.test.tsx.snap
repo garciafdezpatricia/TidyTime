@@ -7,6 +7,7 @@ exports[`SearchBar matches snapshot 1`] = `
   >
     <input
       placeholder="list.search"
+      title="list.search"
       type="search"
     />
   </div>
