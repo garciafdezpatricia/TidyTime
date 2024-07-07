@@ -51,6 +51,9 @@ body.dark-mode .columns-input {
     }
 
     .delete-input-button {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
         border: none;
         border-radius: .4rem;
         background-color: transparent;
@@ -60,7 +63,7 @@ body.dark-mode .columns-input {
     }
 }
 
-button.new-column {
+div.new-column {
     margin-top: .3rem;
     display: flex;
     width: fit-content;

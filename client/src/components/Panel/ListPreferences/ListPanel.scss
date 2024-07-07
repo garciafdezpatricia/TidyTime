@@ -66,6 +66,7 @@ body.dark-mode .labels-input {
     border: none;
     border-radius: .4rem;
     background-color: transparent;
+    cursor: pointer;
     &:hover {
         color: $remove-red;
     }
@@ -77,6 +78,8 @@ body.dark-mode .labels-input {
     width: fit-content;
     padding: .3rem;
     border: .1rem solid transparent;
+    border-radius: .4rem;
+    cursor: pointer;
     background-color: transparent;
     font-size: 1rem;
     &:hover {

@@ -123,3 +123,11 @@ body.dark-mode div.rbc-day-bg.rbc-off-range-bg {
     background-color: var.$light-grey;
     color: var.$white;
 }
+
+.rbc-date-cell.rbc-off-range {
+    color: var.$black;
+}
+
+body.dark-mode .rbc-date-cell.rbc-off-range {
+    color: var.$white;
+}

@@ -81,6 +81,7 @@ export default function SearchBar() {
         <div className="search-bar-container">
             <input
                 type="search"
+                title={t('list.search')}
                 placeholder={t('list.search')}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={handleKeyDown}

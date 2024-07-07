@@ -20,7 +20,7 @@ export default function Toggle({isChecked, onChange} : Props) {
     };
 
     return (
-        <label className="switch">
+        <label title="switch" className="switch">
             <input type="checkbox" checked={checkedValue} onChange={handleToggleChange} suppressContentEditableWarning/>
             <span className="slider round"></span>
         </label>

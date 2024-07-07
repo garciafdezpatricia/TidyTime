@@ -62,15 +62,16 @@ export default function BoardPanel() {
                             return (
                                 <div key={index} className="individual-input">
                                     <input 
+                                        title={column ?? "column"}
                                         type="text" 
                                         defaultValue={column}
                                         onChange={(e) => handleColumnRename(e.target.value, index)}
                                     />
-                                    <button  
+                                    <div  
                                         onClick={() => handleColumnDeletion(index)}
                                         className="delete-input-button">
                                         <RiDeleteBin5Fill />
-                                    </button>
+                                    </div>
                                 </div>
                             )
                         })
@@ -83,11 +84,11 @@ export default function BoardPanel() {
                         <div className="loader"></div>
                     </div>
                 }
-                <button 
+                <div 
                     onClick={addNewInput}
                     className="new-column">
                     <LuListPlus />
-                </button>
+                </div>
             </section>
         </article>
     )

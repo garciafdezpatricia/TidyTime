@@ -14,6 +14,7 @@ import Loader from "@/src/components/Loading/Loading";
 import '../i18n';
 import { ErrorBoundary } from "react-error-boundary";
 import Fallback from "@/src/components/Error/Error";
+import Head from "next/head";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
 
@@ -44,6 +45,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               <GithubProvider>
 
                   <SideMenu>
+                    <Head>
+                      <title>TidyTime</title>
+                    </Head>
                     <MenuSideBar />
                     {loading ?
                       <Loader />

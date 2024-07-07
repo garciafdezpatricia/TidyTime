@@ -104,7 +104,7 @@ export default function Tidier() {
                     <p>{t('tidier.availableTime')}</p>
                     <div className="from-hour">
                         <div className="input-container">
-                            <input type="time" className="input-from" value={availableTime} onChange={handleFromHourChange}/>
+                            <input title={t('tidier.availableTime')} type="time" className="input-from" value={availableTime} onChange={handleFromHourChange}/>
                             <RxClock className="clock-from"/>
                         </div>
                     </div>

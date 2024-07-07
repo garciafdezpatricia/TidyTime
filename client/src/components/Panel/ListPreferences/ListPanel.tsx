@@ -60,20 +60,22 @@ export default function ListPanel() {
                             return (
                                 <div key={index} className="individual-label">
                                     <input style={{backgroundColor: column.color}}
+                                        title={column.color ?? 'color'}
                                         type="color"
                                         defaultValue={column.color}
                                         onChange={(e) => handleLabelColor(e.target.value, index)}
                                     />
                                     <input 
+                                        title={column.name ?? "tag"}
                                         type="text" 
                                         defaultValue={column.name}
                                         onChange={(e) => handleLabelRename(e.target.value, index)}
                                     />
-                                    <button  
+                                    <p  
                                         onClick={() => handleLabelDeletion(index)}
                                         className="delete-label-button">
                                         <RiDeleteBin5Fill />
-                                    </button>
+                                    </p>
                                 </div>
                             )
                         })
@@ -86,11 +88,11 @@ export default function ListPanel() {
                         <div className="loader"></div>
                     </div>
                 }
-                <button 
+                <div 
                     onClick={addNewInput}
                     className="new-label">
                     <LuListPlus />
-                </button>
+                </div>
             </section>
             <section className="show-tasks-in-calendar">
                 <p>{t('preferences.list.showTasks')}</p>

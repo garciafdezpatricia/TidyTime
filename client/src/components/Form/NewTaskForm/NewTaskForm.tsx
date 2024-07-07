@@ -58,6 +58,7 @@ export default function NewTaskForm() {
                 color={"#000000"}
                 onClick={createNewTask}/>
             <input 
+                title={t('list.newTask')}
                 placeholder={t('list.newTask')}
                 ref={newTask} 
                 type="text"
