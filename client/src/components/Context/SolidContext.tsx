@@ -2,7 +2,7 @@ import { ReactNode, SetStateAction, createContext, useContext, useEffect, useSta
 import { Session } from "@inrupt/solid-client-authn-browser"
 
 /**
- * Interface for the task context of the application.
+ * Interface for the Solid context of the application.
  */
 export interface ISessionContext {
     solidSession?: Session | null,
@@ -18,10 +18,10 @@ const defaultContext: ISessionContext ={
     userName: '',
     setUserName: () => {},
 }
-// context with the default task context
+// context with the default Solid context
 const SessionContext = createContext<ISessionContext>(defaultContext);
 /**
- * Custom hook to access the task context.
+ * Custom hook to access the Solid context.
  * @returns task context
  */
 export function useSessionContext() {
@@ -34,7 +34,7 @@ export interface ISolidContextProvider {
     children: ReactNode;
 }
 /**
- * Context provider. Makes the task context accessible for children.
+ * Context provider. Makes the Solid context accessible for children.
  * @param children corresponds to the children of the component
  * @returns context provider
  */

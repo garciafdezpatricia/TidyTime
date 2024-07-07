@@ -34,8 +34,6 @@ export default function Card({cardIndex, title, list, columnIndex, handleMoveTas
     }
 
     const handleCard = () => {
-        console.log("pase por aqui  y tasks es ", tasks);
-        console.log("pase por aqui  y listIndex es ", listIndex);
         if (tasks !== undefined && listIndex !== -1) {
             setSelectedListId(list);
             //const taskIndex = tasks[listIndex].value.findIndex((task) => task.taskIndexInList === taskIndexinList) ?? -1;

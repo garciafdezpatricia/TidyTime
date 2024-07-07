@@ -77,7 +77,6 @@ export function useGoogleHandler() {
                     credentials: 'include'
                 });
                 const data = await aresponse.json();
-                console.log(data.authorizationUrl);
                 setAuthUrl(data.authorizationUrl);
             } catch (error) {
                 console.error('Error al obtener la URL de autorización', error);
@@ -233,7 +232,6 @@ export function useGoogleHandler() {
                 
                 // filter new events that we dont have in events
                 const newEvents = data.filter(newEvent => !prevEvents.some(event => event.googleId === newEvent.googleId));
-                //TODO: for each new event, create it and save it to the pod
                 for (const newEvent of newEvents) {
                     await createEvent(newEvent);
                 }
@@ -343,6 +341,9 @@ export function useGoogleHandler() {
                         reject(new Error("Server appears to be down"));
                     }
                 })
+                .catch(error => {
+                    console.error(error);
+                });
         });
     }
 

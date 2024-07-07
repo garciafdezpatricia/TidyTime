@@ -1,6 +1,8 @@
 import { ReactNode, createContext, useContext, useState } from "react";
-import { CalendarItem, Event } from "@/src/model/Scheme";
 
+/**
+ * Interface for the Google context of the application.
+ */
 export interface IGithubContext {
     githubLoggedIn: boolean,
     setGithubLoggedIn: React.Dispatch<React.SetStateAction<boolean>>,
@@ -15,10 +17,10 @@ const defaultContext: IGithubContext={
     userData: null,
     setUserData: () => {},
 }
-// context with the default event context
+// context with the default GitHub context
 const GithubContext = createContext<IGithubContext>(defaultContext);
 /**
- * Custom hook to access the task context.
+ * Custom hook to access the GitHub context.
  * @returns task context
  */
 export function useGithubContext() {
@@ -31,7 +33,7 @@ export interface IGithubContextProvider {
     children: ReactNode;
 }
 /**
- * Context provider. Makes the task context accessible for children.
+ * Context provider. Makes the GitHub context accessible for children.
  * @param children corresponds to the children of the component
  * @returns context provider
  */

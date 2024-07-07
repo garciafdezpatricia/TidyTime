@@ -26,7 +26,10 @@ const decrypt = (hash) => {
   return decrypted.toString();
 }
 
-// =============================================================
+// ======================= ROUTES ==========================
+/**
+ * Redirects the user to the GitHub authorization
+ */
 router.get('/github/auth', async (req, res) => {
     res.redirect("https://github.com/login/oauth/authorize?client_id=" 
     + process.env.GITHUB_CLIENT_ID + "&scope=repo")
@@ -60,18 +63,25 @@ router.get("/github/auth/callback", async function (req, res) {
         res.redirect(`${process.env.FRONT_URL}/list?status=failure`)
       }
     } catch(error) {
+        console.log(error);
         res.redirect(`${process.env.FRONT_URL}/list?status=failure`)
     };
 });
 
 router.get("/github/logout", async function (req, res) {
-  if (req.cookies.access_token) {
-    res.clearCookie('access_token');
+  try {
+    if (req.cookies.access_token) {
+      res.clearCookie('access_token');
+    }
+    res.json({status: true, data: "Succesfully logged out!"});
+  } catch (error) {
+    console.log(error);
   }
-  res.json({status: true, data: "Succesfully logged out!"});
 });
 
-
+/**
+ * Retreieves the authenticated user data.
+ */
 router.get("/github/user/data", async function (req, res) {
   try {
     if (!req.cookies.access_token) {
@@ -91,12 +101,15 @@ router.get("/github/user/data", async function (req, res) {
     res.json({status: true, data: userData});
 
   } catch (error) {
+    console.log(error);
     res.json({status: false, data: "Error when fetching user data"});
   }
 });
 
+/**
+ * Retrieves all the open issues assigned to the authenticated user.
+ */
 router.get("/github/issues/get", async function (req, res) {
-  console.log("user", req.query.user)
   try {
     if (!req.cookies.access_token) {
       res.json({status: false, data: "Cookie access not found"});
@@ -113,15 +126,17 @@ router.get("/github/issues/get", async function (req, res) {
         },
       }
     );
-    console.log("response", response);
     const data = await response.json();
-    console.log("data", data);
     res.json({status: true, data: data});
   } catch (error) {
+    console.log(error);
     res.json({status: false, data: "Error when fetching issues"});
   }
 });
 
+/**
+ * Close an existing issue in GitHub
+ */
 router.post("/github/issues/close", async function (req, res) {
   try {
     if (!req.cookies.access_token) {
@@ -142,10 +157,14 @@ router.post("/github/issues/close", async function (req, res) {
     const data = await response.json();
     res.json({status: true, data: data});
   } catch (error) {
+    console.log(error);
     res.json({status: false, data: "Error when updating the issue"});
   }
 });
 
+/**
+ * Open an existing issue in GitHub
+ */
 router.post("/github/issues/open", async function (req, res) {
   try {
     if (!req.cookies.access_token) {
@@ -166,10 +185,14 @@ router.post("/github/issues/open", async function (req, res) {
     const data = await response.json();
     res.json({status: true, data: data});
   } catch (error) {
+    console.log(error);
     res.json({status: false, data: "Error when updating the issue"});
   }
 });
 
+/**
+ * Update an existing issue in GitHub
+ */
 router.post("/github/issues/update", async function (req, res) {
   try {
     if (!req.cookies.access_token) {
@@ -194,6 +217,7 @@ router.post("/github/issues/update", async function (req, res) {
     const data = await response.json();
     res.json({status: true, data: data});
   } catch (error) {
+    console.log(error);
     res.json({status: false, data: "Error when updating the issue"});
   }
 });

@@ -5,7 +5,6 @@ const { addStringNoLocale, createThing, getSolidDataset, createContainerAt,
     getPodUrlAll,  buildThing, createSolidDataset, setThing,
     saveSolidDatasetAt, getInteger, getStringNoLocaleAll, getBoolean, 
     getThingAll, removeAll, deleteSolidDataset, removeThing,
-    getDate,
     getDatetime} = require("@inrupt/solid-client");
 const { Session, getSessionFromStorage } = require("@inrupt/solid-client-authn-node");
 const { foaf, vcard } = require('rdf-namespaces');
@@ -263,9 +262,9 @@ async function getBoardColumnsConfiguration(session) {
 }
 
 /**
- * Stores the board columns in the user's pod
- * @param {*} session contains the user's session
- * @param {*} boardColumns contains the board columns to be stored: string[]
+ * Stores the board columns in the user's pod.
+ * @param {*} session contains the user's session.
+ * @param {*} boardColumns contains the board columns to be stored: string[].
  * @returns 
  */
 async function storeBoardColumns(session, boardColumns) {
@@ -294,6 +293,11 @@ async function storeBoardColumns(session, boardColumns) {
 }
 
 // calendar view, week start and show tasks in calendar (change that bit to calendar panel)
+/**
+ * Retrieves the configuration stored for the calendar module.
+ * @param {*} session contains the user's session.
+ * @returns object containing configuration.
+ */
 async function getCalendarConfiguration(session) {
     try {
         if (session) {
@@ -316,6 +320,12 @@ async function getCalendarConfiguration(session) {
     }
 }
 
+/**
+ * Retrieves the task ids from the task record.
+ * @param {*} session contains the user's session.
+ * @param {*} things contains the things from the application dataset.
+ * @returns 
+ */
 function getTasksIds(session, things) {
     if (session) {
         const taskRecordThing = things.filter((thing) => thing.url.includes("#taskRecord"))[0];
@@ -328,6 +338,12 @@ function getTasksIds(session, things) {
 }
  
 // TODO: make getEVentsIds and getTasksIds the same function -> make taskRecord smth like dataRecord
+/**
+ * Retrieves the event ids from the event record
+ * @param {*} session contains the user's session.
+ * @param {*} things contains the things from the application dataset.
+ * @returns 
+ */
 function getEventsIds(session, things) {
     if (session) {
         const eventRecordThing = things.filter((thing) => thing.url.includes("#eventRecord"))[0];
@@ -339,7 +355,12 @@ function getEventsIds(session, things) {
     }
 }
 
-// get task from task dataset
+/**
+ * Retrieves the task from the task dataset.
+ * @param {*} session contains the user's session.
+ * @param {*} taskId contains the task id.
+ * @returns task object.
+ */
 async function getTask(session, taskId) {
     if (session) {
         const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
@@ -381,7 +402,11 @@ async function getTask(session, taskId) {
     }
 }
 
-// get all data
+/**
+ * Retrieves all the application data.
+ * @param {*} session contains the user's session.
+ * @returns object containing all the data.
+ */
 async function getApplicationData(session) {
     try {
         if (session) {
@@ -396,7 +421,6 @@ async function getApplicationData(session) {
             const eventResponse = await getEvents(session);
             if (eventResponse.status === "success") {
                 events = eventResponse.data.events;
-                console.log("los events", eventResponse.data.events);
             }
             return { status: "success", tasks: {tasks: tasks, listNames: listNames}, events: events };
         }
@@ -408,7 +432,11 @@ async function getApplicationData(session) {
     }
 }
 
-//config labels
+/**
+ * Get all the labels.
+ * @param {*} session contains the user's session.
+ * @returns object containing all the labels.
+ */
 async function getLabels(session) {
     try {
         if (session) {
@@ -430,12 +458,15 @@ async function getLabels(session) {
             return labels;
         }
     } catch (error) {
-        console.log("error en linea 377");
         return [];
     }
 }
 
-// tasks and list names
+/**
+ * Retreieves the tasks and the task lists.
+ * @param {*} session contains the user's session.
+ * @returns object containing task and task lists.
+ */
 async function getTasks(session) {
     try {
         if (session) {
@@ -471,6 +502,11 @@ async function getTasks(session) {
     }
 }
 
+/**
+ * Creates a thing for a task.
+ * @param {*} task contains the task.
+ * @returns the thing representing the task.
+ */
 async function createTaskThing(task) {
     let newTask = buildThing(createThing({name: "task"}))
     .addStringNoLocale(TASK_ID, task.id)
@@ -490,6 +526,11 @@ async function createTaskThing(task) {
     return newTask;
 }
 
+/**
+ * Creates a thing for an event.
+ * @param {*} event contains the event.
+ * @returns the thing representing the event.
+ */
 async function createEventThing(event) {
     let newEvent = buildThing(createThing({name: "event"}))
     .addStringNoLocale(EVENT_ID, event.eventId)
@@ -507,6 +548,12 @@ async function createEventThing(event) {
     return newEvent;
 }
 
+/**
+ * Creates a new task.
+ * @param {*} session contains the user's session.
+ * @param {*} task contains the task to be created.
+ * @returns 
+ */
 async function createTask(session, task) {
     try {
         if (session) {
@@ -555,6 +602,12 @@ async function createTask(session, task) {
     }
 }
 
+/**
+ * Creates a new event.
+ * @param {*} session contains the user's session.
+ * @param {*} event contains the event to be created.
+ * @returns 
+ */
 async function createEvent(session, event) {
     try {
         if (session) {
@@ -590,6 +643,13 @@ async function createEvent(session, event) {
     }
 }
 
+/**
+ * Updates a task.
+ * @param {*} session contains the user's session.
+ * @param {*} task contains the task to be updated.
+ * @param {*} updateAll flag to indicate whether all the task should be updated or just the status.
+ * @returns 
+ */
 async function updateTask(session, task, updateAll) {
     if (session) {
         try {
@@ -638,6 +698,12 @@ async function updateTask(session, task, updateAll) {
     }
 }
 
+/**
+ * Updates an event.
+ * @param {*} session contains the user's session.
+ * @param {*} event contains the event to be updated.
+ * @returns 
+ */
 async function updateEvent(session, event) {
     if (session) {
         try {
@@ -661,6 +727,12 @@ async function updateEvent(session, event) {
     }
 }
 
+/**
+ * Updates the task status.
+ * @param {*} session contains the user's session.
+ * @param {*} task contains the task to be updated.
+ * @returns 
+ */
 async function updateTaskStatus(session, task) {
     if (session) {
         try {
@@ -685,6 +757,12 @@ async function updateTaskStatus(session, task) {
     }
 }
 
+/**
+ * Deletes a task from the Solid POD.
+ * @param {*} session contains the user's session.
+ * @param {*} task to be deleted.
+ * @returns 
+ */
 async function deleteTask(session, task) {
     if (session) {
         try {
@@ -718,6 +796,12 @@ async function deleteTask(session, task) {
     }
 }
 
+/**
+ * Deletes an event from the Solid POD.
+ * @param {*} session contains the user's session
+ * @param {*} event to be deleted.
+ * @returns 
+ */
 async function deleteEvent(session, event) {
     if (session) {
         try {
@@ -750,6 +834,12 @@ async function deleteEvent(session, event) {
     }
 }
 
+/**
+ * Deletes task list from the Solid POD.
+ * @param {*} session contains the user's session.
+ * @param {*} tasksIds contains all the tasks to be deleted.
+ * @returns 
+ */
 async function deleteList(session, tasksIds) {
     if (session) {
         try {
@@ -785,6 +875,11 @@ async function deleteList(session, tasksIds) {
     }
 }
 
+/**
+ * Returns all the events.
+ * @param {*} session contains the user's session.
+ * @returns object containing all the events.
+ */
 async function getEvents(session) {
     try {
         if (session) {
@@ -806,6 +901,12 @@ async function getEvents(session) {
     }
 }
 
+/**
+ * Returns the event from the event dataset.
+ * @param {*} session contains the user's session.
+ * @param {*} eventId contains the event id.
+ * @returns object containing the event.
+ */
 async function getEvent(session, eventId) {
     if (session) {
         const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
@@ -819,8 +920,8 @@ async function getEvent(session, eventId) {
             const id = getStringNoLocale(thing, EVENT_ID);
             const title = getStringNoLocale(thing, EVENT_TITLE); //TODO: title and desc can be the same for tasks and events
             const desc = getStringNoLocale(thing, EVENT_DESC) ?? "";
-            const startDate = getDatetime(thing, EVENT_START_DATE); // TODO: date
-            const endDate = getDatetime(thing, EVENT_END_DATE); // TODO: date
+            const startDate = getDatetime(thing, EVENT_START_DATE); 
+            const endDate = getDatetime(thing, EVENT_END_DATE);
             const color = getStringNoLocale(thing, EVENT_COLOR);
             const isTask = getBoolean(thing, EVENT_ISTASK) ?? false;
             const googleHtml = getStringNoLocale(thing, EVENT_GHTML) ?? "";
@@ -835,6 +936,12 @@ async function getEvent(session, eventId) {
     }
 }
 
+/**
+ * Store the task list names.
+ * @param {*} session contains the user's session.
+ * @param {*} listNames contains the names of the task lists.
+ * @returns 
+ */
 async function storeListNames(session, listNames) {
     try {
         if (session) {
@@ -878,6 +985,9 @@ async function storeListNames(session, listNames) {
 
 // ROUTES
 
+/**
+ * Log in to Solid POD.
+ */
 router.get("/solid/login", async function (req, res) {
     try {
         const session = new Session({storage: storage, keepAlive: true});
@@ -900,6 +1010,9 @@ router.get("/solid/login", async function (req, res) {
     }
 });
 
+/**
+ * Callback for login redirection.
+ */
 router.get("/solid/login/callback", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -917,6 +1030,9 @@ router.get("/solid/login/callback", async function (req, res) {
     }
 })
 
+/**
+ * Check the session of the user.
+ */
 router.get("/solid/user/session", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -930,6 +1046,9 @@ router.get("/solid/user/session", async function (req, res) {
     }
 });
 
+/**
+ * Get the profile data from the Solid user.
+ */
 router.get("/solid/user/profile", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -951,10 +1070,14 @@ router.get("/solid/user/profile", async function (req, res) {
             res.send({status: true, data: result});
         }
     } catch (error) {
+        console.log(error);
         res.send({status: false, data: `${error}`});
     }
 });
 
+/**
+ * Perform an application logout from Solid.
+ */
 router.get("/solid/logout", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -965,6 +1088,9 @@ router.get("/solid/logout", async function (req, res) {
     }
 });
 
+/**
+ * Initialize application structure in Solid POD.
+ */
 router.get("/solid/configuration", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -986,7 +1112,9 @@ router.get("/solid/configuration", async function (req, res) {
     }
 });
 
-// check if the config dataset exists
+/**
+ * Check if the configuration dataset exists in the Solid POD.
+ */
 router.get("/solid/configuration/health-check", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1003,7 +1131,9 @@ router.get("/solid/configuration/health-check", async function (req, res) {
     }
 });
 
-// get calendar view, week start and show tasks
+/**
+ * Retrieve configuration for the calendar panel from the Solid POD.
+ */
 router.get("/solid/configuration/calendar", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1015,7 +1145,9 @@ router.get("/solid/configuration/calendar", async function (req, res) {
     }
 })
 
-// get board columns
+/**
+ * Retrieve configuration for the board panel from the Solid POD.
+ */
 router.get("/solid/configuration/board", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1031,6 +1163,9 @@ router.get("/solid/configuration/board", async function (req, res) {
     }
 })
 
+/**
+ * Store application configuration to the Solid POD.
+ */
 router.post("/solid/configuration/store", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1047,6 +1182,9 @@ router.post("/solid/configuration/store", async function (req, res) {
     }
 });
 
+/**
+ * Store lists to the solid POD.
+ */
 router.post("/solid/data/store/listNames", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1059,6 +1197,9 @@ router.post("/solid/data/store/listNames", async function (req, res) {
     }
 });
 
+/**
+ * Delete list from the Solid POD.
+ */
 router.post("/solid/data/store/lists/delete", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1073,6 +1214,9 @@ router.post("/solid/data/store/lists/delete", async function (req, res) {
     }
 });
 
+/**
+ * Store board columns to the Solid POD.
+ */
 router.post("/solid/data/store/boardColumns", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1085,6 +1229,9 @@ router.post("/solid/data/store/boardColumns", async function (req, res) {
     }
 });
 
+/**
+ * Create new task in the Solid POD.
+ */
 router.post("/solid/data/store/tasks/create", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1097,6 +1244,9 @@ router.post("/solid/data/store/tasks/create", async function (req, res) {
     }
 });
 
+/**
+ * Change the status of the task of the Solid POD.
+ */
 router.post("/solid/data/store/task/done", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1109,6 +1259,9 @@ router.post("/solid/data/store/task/done", async function (req, res) {
     }
 });
 
+/**
+ * Retrieve the status of the task from Solid POD.
+ */
 router.post("/solid/data/store/task/status", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1121,6 +1274,9 @@ router.post("/solid/data/store/task/status", async function (req, res) {
     }
 });
 
+/**
+ * Update task on Solid POD.
+ */
 router.post("/solid/data/store/tasks/update", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1133,6 +1289,9 @@ router.post("/solid/data/store/tasks/update", async function (req, res) {
     }
 });
 
+/**
+ * Delete task from solid POD.
+ */
 router.post("/solid/data/store/tasks/delete", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1145,6 +1304,9 @@ router.post("/solid/data/store/tasks/delete", async function (req, res) {
     }
 });
 
+/**
+ * Create new event on Solid POD.
+ */
 router.post("/solid/data/store/events/create", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1157,6 +1319,9 @@ router.post("/solid/data/store/events/create", async function (req, res) {
     }
 });
 
+/**
+ * Update event of Solid POD.
+ */
 router.post("/solid/data/store/events/update", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1169,6 +1334,9 @@ router.post("/solid/data/store/events/update", async function (req, res) {
     }
 });
 
+/**
+ * Delete event from Solid POD.
+ */
 router.post("/solid/data/store/events/delete", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1181,7 +1349,9 @@ router.post("/solid/data/store/events/delete", async function (req, res) {
     }
 });
 
-// get all data
+/**
+ * Get all application data from Solid POD.
+ */
 router.get("/solid/data/get", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1194,12 +1364,14 @@ router.get("/solid/data/get", async function (req, res) {
             res.send({status: "whatever"});
         }
     } catch (error) {
+        console.log(error);
         res.send({status: "whatever"});
-        console.log("error en linea 970");
     }
 })
 
-// get labels
+/**
+ * Get labels from Solid POD.
+ */
 router.get("/solid/data/labels/get", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
@@ -1210,23 +1382,27 @@ router.get("/solid/data/labels/get", async function (req, res) {
             res.send({status: "empty"});
         }
     } catch (error) {
-        console.log("error en linea 997");
         res.send({status: "fail"});
+        console.log(error);
     }
 })
 
-// get tasks
+/**
+ * Get tasks from Solid POD.
+ */
 router.get("/solid/data/tasks/get", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);
         const result = await getTasks(session);
         res.send({status: result.status, data: result});
     } catch (error) {
-        console.log("error en linea 1009");
+        console.log(error);
     }
 })
 
-// get events
+/**
+ * Get events from Solid POD.
+ */
 router.get("/solid/data/events/get", async function (req, res) {
     try {
         const session = await getSessionFromStorage(req.cookies.inruptSessionId, storage);

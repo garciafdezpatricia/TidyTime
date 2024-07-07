@@ -41,7 +41,7 @@ export default function Board({handleCardClick} : Props) {
                 if (!result[task.status]) {
                     result[task.status] = [];
                 }
-                result[task.status].push({...task}); // TODO: ahora no hace falta esto porque las tasks tienen un id no?
+                result[task.status].push({...task}); // TODO: check the necessity of this
             })
         })
         setBoardItems(result);

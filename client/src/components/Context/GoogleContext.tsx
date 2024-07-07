@@ -2,7 +2,7 @@ import { ReactNode, createContext, useContext, useState } from "react";
 import { CalendarItem, Event } from "@/src/model/Scheme";
 
 /**
- * Interface for the task context of the application.
+ * Interface for the Google context of the application.
  */
 export interface IGoogleContext {
     loggedIn: boolean,
@@ -15,7 +15,6 @@ export interface IGoogleContext {
     setAuthUrl: React.Dispatch<React.SetStateAction<string>>,
 }
 
-// TODO: replace it with solid logic
 // const with default context (it's not the one from the user's pod)
 const defaultContext: IGoogleContext={
     loggedIn: false,
@@ -27,10 +26,10 @@ const defaultContext: IGoogleContext={
     setLoggedIn: () => {},
     setAuthUrl: () => {},
 }
-// context with the default event context
+// context with the default Google context
 const GoogleContext = createContext<IGoogleContext>(defaultContext);
 /**
- * Custom hook to access the task context.
+ * Custom hook to access the Google context.
  * @returns task context
  */
 export function useGoogleContext() {
@@ -43,7 +42,7 @@ export interface IGoogleContextProvider {
     children: ReactNode;
 }
 /**
- * Context provider. Makes the task context accessible for children.
+ * Context provider. Makes the Google context accessible for children.
  * @param children corresponds to the children of the component
  * @returns context provider
  */

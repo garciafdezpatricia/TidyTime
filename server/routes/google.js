@@ -38,7 +38,6 @@ const getEmail = async (req) => {
                     reject(err);
                 } else {
                     const email = res.data.emailAddresses[0].value;
-                    console.log('Email del usuario:', email);
                     resolve(email);
                 }
             });
@@ -47,12 +46,14 @@ const getEmail = async (req) => {
 
 // ===================== ROUTES =====================
 
+/**
+ * Callback for the authentication.
+ */
 router.get('/google/auth/callback', async (req, res) => {
     const userId = req.query.state;
     const oauth2Client = userClients[userId];
 
     const { tokens } = await oauth2Client.getToken(req.query.code);
-    console.log(tokens);
     oauth2Client.setCredentials(tokens);
     try {
         const email = await getEmail(req);
@@ -62,6 +63,9 @@ router.get('/google/auth/callback', async (req, res) => {
     }
 });
   
+/**
+ * Generates the authentication url to which the user must be redirected.
+ */
 router.get('/google/auth/url', (req, res) => {
     const userId = getUserId(req);
     let oauth2Client = userClients[userId];
@@ -85,12 +89,19 @@ router.get('/google/auth/url', (req, res) => {
 })
 
 router.get('/google/auth/logout', (req, res) => {
-    const userId = getUserId(req);
-    const oauth2Client = userClients[userId];
-    oauth2Client.setCredentials(null);
-    res.json({status: 'success'});
+    try {
+        const userId = getUserId(req);
+        const oauth2Client = userClients[userId];
+        oauth2Client.setCredentials(null);
+        res.json({status: 'success'});
+    } catch (error) {
+        console.log(error);
+    }
 })
 
+/**
+ * Checks if the email of the authenticated user is the same as the one received.
+ */
 router.post('/google/auth/email', async (req, res) => {
     const emailToCheck = req.body.email;
     try {
@@ -148,8 +159,11 @@ router.post("/google/events/get", async function (req, response) {
     );
 });
 
+/**
+ * Update an event in Google.
+ */
 router.post('/google/events/update', async function(req, response) {
-    const userId = getUserId(req); // Implement this function
+    const userId = getUserId(req); 
     const oauth2Client = userClients[userId];
 
     const calendar = google.calendar({version: 'v3', auth: oauth2Client});
@@ -172,8 +186,11 @@ router.post('/google/events/update', async function(req, response) {
     });
 })
 
+/**
+ * Insert a new event in the primary Google calendar of the user.
+ */
 router.post('/google/events/insert', async function (req, response) {
-    const userId = getUserId(req); // Implement this function
+    const userId = getUserId(req); 
     const oauth2Client = userClients[userId];
 
     const calendar = google.calendar({version: 'v3', auth: oauth2Client});
@@ -199,8 +216,11 @@ router.post('/google/events/insert', async function (req, response) {
     });
 });
 
+/**
+ * Retrieve the list of calendars of the user.
+ */
 router.get('/google/calendar/list', async function (req, res) {
-    const userId = getUserId(req); // Implement this function
+    const userId = getUserId(req); 
     const oauth2Client = userClients[userId];
 
     const calendar = google.calendar({version: 'v3', auth: oauth2Client});

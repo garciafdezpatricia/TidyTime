@@ -125,16 +125,16 @@ export function mostDifficultyFirst(tasks: Task[], availableHours: number, avail
 }
 
 export function earliestDeadlineFirst(tasks: Task[], availableHours: number, availableMinutes: number): ScheduleItem[] {
-    // Ordena las tareas por fecha límite, poniendo las tareas sin fecha límite al final
+    // Sort tasks by due date. Tasks without it go to the end
     tasks.sort((task1, task2) => {
         if (task1.endDate && task2.endDate) {
             return new Date(task1.endDate).getTime() - new Date(task2.endDate).getTime();
         } else if (task1.endDate) {
-            return -1; // Las tareas con fecha van primero
+            return -1; 
         } else if (task2.endDate) {
-            return 1; // Las tareas sin fecha van después
+            return 1; 
         } else {
-            return 0; // Ambas tareas sin fecha se consideran iguales
+            return 0; 
         }
     });
 
@@ -144,7 +144,7 @@ export function earliestDeadlineFirst(tasks: Task[], availableHours: number, ava
     let availableTime = convertTimeToMinutes(availableHours, availableMinutes);
 
     for (let task of tasks) {
-        // Si agregar la tarea actual excede el tiempo disponible, termina la planificación
+        // If adding the current task exceeds the time, finish
         const difficulty = task.difficulty && task.difficulty !== 0 ? task.difficulty : 1;
         let durationMinutes = Math.min(difficulty * 20, availableTime);
         if (currentTime + durationMinutes > availableTime) {
@@ -153,14 +153,14 @@ export function earliestDeadlineFirst(tasks: Task[], availableHours: number, ava
             break;
         }
 
-        // Agrega la tarea al horario
+        // add task to the plan
         addTaskBlock(schedule, task, durationMinutes);
         currentTime += durationMinutes;
 
-        // Si agregar un descanso excede el tiempo disponible o si esta es la última tarea, no agrega un descanso
+        // If adding a break exceeds the time or is the last task, dont add the break
         if (currentTime + breakTime >= availableTime || task === tasks[tasks.length - 1]) continue;
 
-        // Agrega un descanso al horario
+        // Add a break to the plan
         addBreak(schedule, 'Break', breakTime);
         currentTime += breakTime;
     }

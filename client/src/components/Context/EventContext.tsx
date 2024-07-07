@@ -4,7 +4,7 @@ import {v4 as uuid} from "uuid";
 import { useTaskContext } from "./TaskContext";
 
 /**
- * Interface for the task context of the application.
+ * Interface for the event context of the application.
  */
 export interface IEventContext {
     events: Event[],
@@ -30,8 +30,8 @@ const defaultContext: IEventContext={
 // context with the default event context
 const EventContext = createContext<IEventContext>(defaultContext);
 /**
- * Custom hook to access the task context.
- * @returns task context
+ * Custom hook to access the event context.
+ * @returns event context
  */
 export function useEventContext() {
     return useContext(EventContext)
@@ -43,7 +43,7 @@ export interface IEventContextProvider {
     children: ReactNode;
 }
 /**
- * Context provider. Makes the task context accessible for children.
+ * Context provider. Makes the event context accessible for children.
  * @param children corresponds to the children of the component
  * @returns context provider
  */
@@ -58,15 +58,15 @@ export function EventProvider({children} : IEventContextProvider) {
 
     useEffect(() => {
       if (showTasksInCalendar && tasks) {
-        // Filtrar las tareas que tienen fecha definida
+        // Filter tasks with defined date
         const listOfTasks = tasks.map((tasklist) => tasklist.value);
         const tasksWithEndDate = listOfTasks.flat().filter(task => task.endDate);
       
-        // Convertir las tareas en eventos
+        // Parse tasks into events
         const taskEvents = tasksWithEndDate.map(task => task ={
           // @ts-ignore
           start: new Date(task.endDate),
-          // @ts-ignore sabemos que tienen fecha porque estan filtradas
+          // @ts-ignore there's a date because they were filtered
           end: new Date(task.endDate),
           title: task.title,
           desc: task.desc ?? "",
@@ -75,19 +75,19 @@ export function EventProvider({children} : IEventContextProvider) {
           color: "#3bb4ff"
         });
       
-        // Filtrar los eventos originales que no son tareas
+        // Filter initial events that are not tasks
         const nonTaskEvents = events.filter(event => !event.isTask);
       
-        // Unir los eventos originales con los nuevos eventos de tareas
+        // Unify events with the tasks events
         const updatedEvents = [...nonTaskEvents, ...taskEvents];
       
-        // Actualizar el estado de los eventos
+        // Update event state
         setEvents(updatedEvents);
       } else {
         const nonTasksEvents = events.filter(event => !event.isTask);
         setEvents(nonTasksEvents);
       }
-    }, [tasks, showTasksInCalendar]); // Dependencias de useEffect
+    }, [tasks, showTasksInCalendar]);
 
     const value ={events, setEvents, selectedEventId, setSelectedEventId, weekStart, setWeekStart, eventView, setEventView};
 

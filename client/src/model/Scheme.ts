@@ -1,5 +1,3 @@
-import { uuid } from "uuidv4";
-
 export interface Task {
     id: string,
     title: string,
@@ -24,10 +22,10 @@ export function taskToListOfTaskList(tasks: Task[]) {
         // get list index from task
         const { listIndex, ...rest } = task;
         if (!result.find((list) => list.key === listIndex)) {
-            result.push({key: listIndex, value: []}); // Si no existe una lista para este índice, la creamos
+            result.push({key: listIndex, value: []}); // if there is not a list for the index, create it
         }
         const index = result.findIndex((list) => list.key === listIndex);
-        result[index].value.push(task); // Agregamos la tarea a la lista correspondiente
+        result[index].value.push(task); // push the task
     }
     return result;
 }
