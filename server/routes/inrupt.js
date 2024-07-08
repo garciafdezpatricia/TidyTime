@@ -886,7 +886,7 @@ async function getEvents(session) {
             let events = [];
             const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
             const rootStorage = `${storage}/TidyTime`;
-
+            
             const dataset = await getSolidDataset(`${rootStorage}/data`, {fetch: session.fetch});
             const things = getThingAll(dataset);
             const eventsIds = getEventsIds(session, things);
@@ -897,6 +897,7 @@ async function getEvents(session) {
         if (error.response && error.response.status === 404) {
             return {status: "empty"};    
         }
+        console.log(error);
         return {status: "fail"};
     }
 }
@@ -908,32 +909,39 @@ async function getEvents(session) {
  * @returns object containing the event.
  */
 async function getEvent(session, eventId) {
-    if (session) {
-        const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
-        const rootStorage = `${storage}/TidyTime`;
-
-        const taskDataset = await getSolidDataset(`${rootStorage}/events/${eventId}`, {fetch: session.fetch});
-        const things = getThingAll(taskDataset);
-        const thing = things.filter((thing) => thing.url.includes("#event"))[0];
-        let result = null
-        if (thing) {
-            const id = getStringNoLocale(thing, EVENT_ID);
-            const title = getStringNoLocale(thing, EVENT_TITLE); //TODO: title and desc can be the same for tasks and events
-            const desc = getStringNoLocale(thing, EVENT_DESC) ?? "";
-            const startDate = getDatetime(thing, EVENT_START_DATE); 
-            const endDate = getDatetime(thing, EVENT_END_DATE);
-            const color = getStringNoLocale(thing, EVENT_COLOR);
-            const isTask = getBoolean(thing, EVENT_ISTASK) ?? false;
-            const googleHtml = getStringNoLocale(thing, EVENT_GHTML) ?? "";
-            const googleId = getStringNoLocale(thing, EVENT_GID) ?? "";
-            const googleCalendar = getStringNoLocale(thing, EVENT_GCALENDAR) ?? "";
-            result = { eventId: id, title: title, desc: desc, start: startDate, end: endDate,
-                color: color, isTask: isTask, googleHTML: googleHtml, googleId: googleId,
-                googleCalendar: googleCalendar
-            };
-        } 
-        return result;
+    try {
+        if (session) {
+            const storage = await getPodUrlAll(session.info.webId, {fetch: session.fetch});
+            const rootStorage = `${storage}/TidyTime`;
+    
+            const taskDataset = await getSolidDataset(`${rootStorage}/events/${eventId}`, {fetch: session.fetch});
+            const things = getThingAll(taskDataset);
+            const thing = things.filter((thing) => thing.url.includes("#event"))[0];
+            let result = null
+            if (thing) {
+                const id = getStringNoLocale(thing, EVENT_ID);
+                const title = getStringNoLocale(thing, EVENT_TITLE); //TODO: title and desc can be the same for tasks and events
+                const desc = getStringNoLocale(thing, EVENT_DESC) ?? "";
+                const startDate = getDatetime(thing, EVENT_START_DATE); 
+                const endDate = getDatetime(thing, EVENT_END_DATE);
+                const color = getStringNoLocale(thing, EVENT_COLOR);
+                const isTask = getBoolean(thing, EVENT_ISTASK) ?? false;
+                const googleHtml = getStringNoLocale(thing, EVENT_GHTML) ?? "";
+                const googleId = getStringNoLocale(thing, EVENT_GID) ?? "";
+                const googleCalendar = getStringNoLocale(thing, EVENT_GCALENDAR) ?? "";
+                result = { eventId: id, title: title, desc: desc, start: startDate, end: endDate,
+                    color: color, isTask: isTask, googleHTML: googleHtml, googleId: googleId,
+                    googleCalendar: googleCalendar
+                };
+                return result;
+            } 
+            return result;
+        }
+    } catch (error) {
+        console.log(error);
+        return null;
     }
+    
 }
 
 /**

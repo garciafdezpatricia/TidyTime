@@ -1,4 +1,4 @@
-import { Calendar, View, dayjsLocalizer } from "react-big-calendar";
+import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import dayjs from "dayjs";
 import enLocale from 'dayjs/locale/en';
@@ -158,6 +158,9 @@ export default function CalendarComponent() {
     noEventsInRange: `${t('calendar.messages.noEventsInRange')}`,
   };
 
+  // workaround for react big calendar View import bug
+  type View = "month" | "week" | "work_week" | "day" | "agenda";
+
   return (
     <>
       <Calendar 
@@ -168,7 +171,7 @@ export default function CalendarComponent() {
         onSelectSlot={(data) => handleSelectSlot(data)}
         onSelectEvent={(data) => handleSelectEvent(data)}
         selectable
-        defaultView={eventView as View}
+        defaultView={eventView !== undefined ? eventView.toLowerCase() as View : "month"}
         messages={messages}
       ></Calendar>
     {

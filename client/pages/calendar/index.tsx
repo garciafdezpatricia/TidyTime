@@ -14,6 +14,7 @@ export default function Calendar() {
     const { getSession, getCalendarConfiguration } = useInruptHandler();
     const { checkAuthentication } = useGoogleHandler();
 
+    const [firstRender, setFirstRender] = useState(true);
     const [reRender, setRerender] = useState(Math.random());
     const [loading, setLoading] = useState(true);
     const router = useRouter();
@@ -25,8 +26,10 @@ export default function Calendar() {
     const initialActions = async () => {
         const params = new URLSearchParams(location.search);
         const emailParam = params.get('user');
-        const isUserLoggedIn = localStorage.getItem('googleLoggedIn');    
-        await checkAuthentication(emailParam, isUserLoggedIn);
+        const isUserLoggedIn = localStorage.getItem('googleLoggedIn');
+        if (emailParam || isUserLoggedIn) {
+            await checkAuthentication(emailParam, isUserLoggedIn);
+        }    
         await getCalendarConfiguration();
     };
 
@@ -42,8 +45,9 @@ export default function Calendar() {
 
     useEffect(() => {
         checkAuth();
-        if (solidSession?.info.isLoggedIn) {
+        if (solidSession?.info.isLoggedIn && firstRender) {
             initialActions();
+            setFirstRender(false);
         }
         setLoading(false);
     }, [solidSession])

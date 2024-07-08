@@ -118,12 +118,17 @@ router.post('/google/auth/email', async (req, res) => {
 router.post("/google/events/get", async function (req, response) {
     const userId = getUserId(req); // Implement this function
     const oauth2Client = userClients[userId];
-    
+    // to avoid saturating the pod, just import two month away events
+    const now = new Date(); // current date
+    const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1); // first day of last month
+    const lastDayNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0); // last day next month
     const { calendarId } = req.body;
     const calendar = google.calendar({version: 'v3', auth: oauth2Client});
     calendar.events.list(
         {
             calendarId: calendarId,
+            timeMin: firstDayLastMonth.toISOString(),
+            timeMax: lastDayNextMonth.toISOString()
         },
         (err, res) => {
             if (err) return console.error('Error al buscar eventos:', err);
@@ -131,6 +136,7 @@ router.post("/google/events/get", async function (req, response) {
             if (retrievedEvents.length) {
                 const events = retrievedEvents.map((event, i) => {
                     let start, end;
+                    console.log("el evento", event);
                     // all day events only have the property date. Otherwise, they include date time and time zone
                     if (event.start.dateTime && event.end.dateTime) {
                         start = moment(event.start.dateTime).tz(event.start.timeZone).utc();

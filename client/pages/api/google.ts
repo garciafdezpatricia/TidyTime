@@ -93,13 +93,16 @@ export function useGoogleHandler() {
                     localStorage.setItem("googleLoggedIn", emailParam);
                     if (!loggedIn) {
                         setLoggedIn(true);
+                        return true;
                     }
                 } else {
                     setLoggedIn(false);
+                    return false;
                 }
             } catch (error) {
                 toast.error(t('toast.errorAuthn'))
                 setLoggedIn(false);
+                return false;
             }
         }
         // if user in local storage
@@ -110,13 +113,16 @@ export function useGoogleHandler() {
                 if (!isAuthenticated) {
                     localStorage.removeItem('googleLoggedIn');
                 }    
+                return true;
             } catch (error) {
                 toast.error(t('toast.errorAuthn'))
                 localStorage.removeItem('googleLoggedIn');
                 setLoggedIn(false);
+                return false;
             }
         } else {
             setLoggedIn(false);
+            return false;
         }
     };
 
