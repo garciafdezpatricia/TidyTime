@@ -8,8 +8,8 @@
     "start": "node server",
     "dev": "nodemon server"
   },
-  "author": "Patricia Garcia",
-  "license": "ISC",
+  "author": "Patricia García Fernández",
+  "license": "Apache-2.0",
   "dependencies": {
     "@inrupt/solid-client": "^2.0.1",
     "@inrupt/solid-client-access-grants": "^3.0.2",
