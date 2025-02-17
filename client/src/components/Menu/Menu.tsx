@@ -95,15 +95,6 @@ export function MenuSideBar() {
                     <Icon src="menu/calendar.svg" alt="Calendar" />
                     <p className="menu-button-text">{t('sidemenu.calendar')}</p>
                 </button>
-                <button data-testid='menu-button-tidier' className="menu-button" 
-                    onClick={() => { 
-                        if (solidSession?.info.isLoggedIn) {
-                            router.push('/tidier')
-                        }
-                    }}>
-                    <Icon src="menu/tidier.svg" alt="Tidier" />
-                    <p className="menu-button-text">Tidier</p>
-                </button>
                 <section className="sidebar-menu-settings-mobile">
                     <button data-testid='menu-button-settings-mobile' className="menu-button" 
                         onClick={() => { 

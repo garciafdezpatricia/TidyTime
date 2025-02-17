@@ -15,7 +15,6 @@
 @use "../pages/calendar/calendar.scss";
 @use "../pages/board/board.scss";
 @use "../pages/list/list.scss";
-@use "../pages/tidier/tidier.scss";
 @use "../pages/settings/settings.scss";
 @use "../src/components/SearchBar/SearchBar.scss";
 @use "../src/components/ComboBox/CheckableComboBox.scss";
@@ -34,7 +33,6 @@
 @use "../src/components/Panel/BoardPreferences/BoardPanel.scss";
 @use "../src/components/Panel/ListPreferences/ListPanel.scss";
 @use "../src/components/Panel/StatisticsPanel/StatisticsPanel.scss";
-@use "../src/components/List/CheckableTaskList.scss";
 @use "../src/components/Error/Error.scss";
 
 @font-face {
