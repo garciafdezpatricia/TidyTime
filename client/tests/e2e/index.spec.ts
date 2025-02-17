@@ -56,13 +56,6 @@ test.describe('user can manage index page', () => {
         await expect(page).toHaveURL('http://localhost:3000/calendar', {timeout: 3 * 60 * 1000});
     });
 
-    test('user can navigate to tidier section', async ({ page }) => {
-        // tidier button
-        await page.getByTestId('menu-button-tidier').click();
-        // tidier url
-        await expect(page).toHaveURL('http://localhost:3000/tidier', {timeout: 3 * 60 * 1000});
-    });
-
     test('user can navigate to preferences section', async ({ page }) => {
         const isMobile = await page.evaluate(() => window.innerWidth <= 800);
         const testId = isMobile ? "menu-button-settings-mobile" : "menu-button-settings";

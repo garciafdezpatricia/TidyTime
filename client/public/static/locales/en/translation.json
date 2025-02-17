@@ -11,7 +11,6 @@
         "list": "List",
         "board": "Board",
         "calendar": "Calendar",
-        "tidier": "Tidier",
         "settings": "Preferences"
     },
     "deletePanel": {
@@ -161,14 +160,6 @@
             "notes": "Add notes...",
             "color": "Color:"
         }
-    },
-    "tidier": {
-        "title": "What shall get done today...",
-        "tasksToGetDone": "Tasks to get done:",
-        "noLists": "No lists to show",
-        "dueDatePrior": "Prioritize due date",
-        "difficultyPrior": "Prioritize difficulty",
-        "availableTime": "Available time:"
     },
     "preferences": {
         "savePreferences": "Save preferences",
